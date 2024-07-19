@@ -1,0 +1,9 @@
+- [ ] Add README.md
+- [ ] Login/signup
+- [ ] Database
+- [ ] Basic UI
+- [ ] Pfp
+- [ ] About me
+- [ ] Logout
+- [ ] Create post
+- [ ] Publish post

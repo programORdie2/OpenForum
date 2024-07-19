@@ -1,0 +1,20 @@
+<input id="email" type="email" placeholder="Email" />
+<input id="password" type="password" placeholder="Password" />
+<input id="username" type="text" placeholder="Username" />
+
+<br>
+
+<button id="login">Login</button>
+<button id="register">Register</button>
+
+<br>
+
+<input id="token" type="text" placeholder="Token" />
+<button id="validate">Validate</button>
+
+<script src="/scripts/auth.js"></script>
+<script>
+    document.getElementById("login").addEventListener("click", login);
+    document.getElementById("register").addEventListener("click", register);
+    document.getElementById("validate").addEventListener("click", validate);
+</script>
