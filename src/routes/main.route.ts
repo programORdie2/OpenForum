@@ -6,6 +6,9 @@ import * as webController from "../controllers/www.controller";
 const router = Router();
 
 router.get("/", webController.sendHomepage);
+router.get("/login", webController.sendLoginpage);
+router.get("/register", webController.sendRegisterpage);
+router.get("/logout", webController.logout);
 
 router.get("*", webController.handleNoView);
 

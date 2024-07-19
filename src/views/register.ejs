@@ -1,0 +1,22 @@
+<form id="register-form">
+    <input id="email" type="email" placeholder="email" autocomplete="email" />
+    <br>
+    <input id="password" type="password" placeholder="password" autocomplete="new-password" />
+    <br><br>
+    <input type="text" id="username" placeholder="username"/>
+    <br><br>
+    <input type="submit" id="register" value="Register"/>
+</form>
+
+<p>Already have an account?<a href="/login">Login</a></p>
+
+<script src="/scripts/auth.js"></script>
+<script>
+    document.getElementById("register").addEventListener("click", async (e) => {
+        e.preventDefault();
+        
+        const success = await register();
+        if (success) window.location.href = "/";
+        else alert("Registration failed");
+    });
+</script>

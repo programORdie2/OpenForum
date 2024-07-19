@@ -1,13 +1,19 @@
-import { Response, NextFunction } from "express";
+import { Response } from "express";
 import { CustomRequest } from "../customTypes";
 import { existsSync } from "fs";
 
+function renderPage(req: CustomRequest, res: Response, page: string, customTitle: string = "Social Media", status: number = 200) {
+    const user = req.user;
+    const description = "Social media for everyone";
+    res.status(status).render(page, { title: customTitle, user: user, description: description });
+}
+
 function send404page(req: CustomRequest, res: Response) {
-    res.status(404).render("404");
+    renderPage(req, res, "404", "404 - Page not found", 404);
 }
 
 function send500page(req: CustomRequest, res: Response) {
-    res.status(500).render("500");
+    renderPage(req, res, "500", "500 - Internal server error", 500);
 }
 
 function handleNoView(req: CustomRequest, res: Response) {
@@ -27,7 +33,28 @@ function handleNoView(req: CustomRequest, res: Response) {
 }
 
 function sendHomepage(req: CustomRequest, res: Response) {
-    res.render("index");
+    renderPage(req, res, "index", "Social Media", 200);
 }
 
-export { send404page, send500page, sendHomepage, handleNoView };
+function sendLoginpage(req: CustomRequest, res: Response) {
+    if (req.user?.authenticated) {
+        res.redirect("/");
+        return;
+    }
+    renderPage(req, res, "login", "Login - Social Media", 200);
+}
+
+function sendRegisterpage(req: CustomRequest, res: Response) {
+    if (req.user?.authenticated) {
+        res.redirect("/");
+        return;
+    }
+    renderPage(req, res, "register", "Register - Social Media", 200);
+}
+
+function logout(req: CustomRequest, res: Response) {
+    res.clearCookie("token");
+    res.redirect("/");
+}
+
+export { send404page, send500page, sendHomepage, handleNoView, sendLoginpage, logout, sendRegisterpage };

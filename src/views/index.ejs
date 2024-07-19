@@ -1,20 +1,19 @@
-<input id="email" type="email" placeholder="Email" />
-<input id="password" type="password" placeholder="Password" />
-<input id="username" type="text" placeholder="Username" />
+<!DOCTYPE html>
+<html lang="en">
 
-<br>
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<button id="login">Login</button>
-<button id="register">Register</button>
+        <title><%- title %></title>
+        <meta name="description" content="<%- description %>">
 
-<br>
+        <link rel="stylesheet" href="/css/main.css">
+    </head>
 
-<input id="token" type="text" placeholder="Token" />
-<button id="validate">Validate</button>
+    <body>
+        <%- include('partials/navbar', { user: user }) %>
+    </body>
 
-<script src="/scripts/auth.js"></script>
-<script>
-    document.getElementById("login").addEventListener("click", login);
-    document.getElementById("register").addEventListener("click", register);
-    document.getElementById("validate").addEventListener("click", validate);
-</script>
+</html>

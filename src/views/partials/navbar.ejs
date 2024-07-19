@@ -1,0 +1,14 @@
+<div class="navbar">
+    <a href="/">Home</a>
+
+    <% if (user.authenticated) { %>
+        <div>
+            <p>Hello <%= user.username %></p>
+            <p>Email: <%= user.email %></p>
+
+            <a href="/logout">Logout</a>
+        </div>
+    <% } else { %>
+        <a href="/login">Login</a>
+    <% } %>
+</div>

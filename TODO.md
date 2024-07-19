@@ -1,5 +1,5 @@
 - [ ] Add README.md
-- [ ] Login/signup
+- [x] Login/signup
 - [x] Database
 - [ ] Basic UI
 - [ ] Pfp

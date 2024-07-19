@@ -1,0 +1,20 @@
+<form id="login-form">
+    <input id="email" type="email" placeholder="email" autocomplete="email" />
+    <br>
+    <input id="password" type="password" placeholder="password" autocomplete="current-password" />
+    <br><br>
+    <input type="submit" id="login" value="Login"/>
+</form>
+
+<p>Don't have an account?<a href="/register">Register</a></p>
+
+<script src="/scripts/auth.js"></script>
+<script>
+    document.getElementById("login").addEventListener("click", async (e) => {
+        e.preventDefault();
+        
+        const success = await login();
+        if (success) window.location.href = "/";
+        else alert("Login failed");
+    });
+</script>
