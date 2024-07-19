@@ -1,38 +1,33 @@
 import dotenv from "dotenv";
 dotenv.config();
 
-import express, { Express, Response, NextFunction } from "express";
+import express, { Express } from "express";
 import cookieParser from "cookie-parser";
 
-import { CustomRequest } from "./customTypes";
+import asyncHandler from "./utils/asyncHandler";
+
 import auth from "./middleware/auth.middleware";
+import errorMiddleware from "./middleware/error.middleware";
+
+import main from "./routes/main.route";
 import api from "./routes/api.route";
 
 import connectDB from "./services/database";
 
-const asyncHandler = (fn: Function) => (req: CustomRequest, res: Response, next: NextFunction) => {
-  return Promise.resolve(fn(req, res, next)).catch(next);
-}
 const app: Express = express();
+app.set("view engine", "ejs");
+app.set("views", __dirname + "/views");
+app.use(express.static(__dirname + "/static"));
 
 app.use(express.json());
 app.use(cookieParser());
 
 app.use(asyncHandler(auth));
 
+app.use("/", main);
 app.use("/api", api);
 
-app.get("*", (req: CustomRequest, res: Response) => {
-  let filepath: string = req.path;
-  if (filepath.endsWith("/")) {
-    filepath += "index.html";
-  }
-  if (filepath.split(".").length === 0) {
-    filepath += ".html";
-  }
-
-  res.sendFile(__dirname + "/static/" + filepath);
-});
+app.use(errorMiddleware);
 
 async function start() {
   await connectDB();
