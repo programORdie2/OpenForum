@@ -1,18 +1,13 @@
-interface User {
-    username: string;
-    email: string;
-    password: string;
-    userId: string;
-}
+import mongoose from 'mongoose';
 
-interface Database {
-    users: {
-        [key: string]: User;
-    };
-}
-
-const database: Database = {
-    users: {}
+async function connectDB() {
+  try {
+    await mongoose.connect('mongodb://localhost:27017/blogdb');
+    console.log('MongoDB connected');
+  } catch (error) {
+    console.error('MongoDB connection error:', error);
+    process.exit(1);
+  }
 };
 
-export default database
+export default connectDB;

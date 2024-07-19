@@ -1,6 +1,6 @@
 - [ ] Add README.md
 - [ ] Login/signup
-- [ ] Database
+- [x] Database
 - [ ] Basic UI
 - [ ] Pfp
 - [ ] About me

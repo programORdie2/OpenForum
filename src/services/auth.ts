@@ -3,7 +3,7 @@ import bcrypt from 'bcrypt';
 import { v4 as uuidv4 } from 'uuid';
 
 import { validateEmail, validatePassword, validateUsername } from './validator';
-import database from './database';
+import { User } from '../models/user.model';
 
 
 // Generate JWT
@@ -38,7 +38,8 @@ async function registerUser(email: string, password: string, username: string) {
 
 
     // Check if user already exists
-    if (database.users[email]) return { succes: false, message: "User already exists" };
+    const existingUser = await User.findOne({ email });
+    if (existingUser) return { succes: false, message: "User already exists" };
 
     // Hash password
     const hashedPassword = hashPassword(password);
@@ -46,13 +47,9 @@ async function registerUser(email: string, password: string, username: string) {
     // Generate a user id
     const userId = generateUserId();
 
-    // Add user to database
-    database.users[email] = {
-        username,
-        email,
-        password: hashedPassword,
-        userId
-    };
+    // Add the user in the database
+    const user = new User({ username, email, password: hashedPassword, userId });
+    await user.save();
 
     // Generate token
     const token = generateToken(userId);
@@ -62,7 +59,7 @@ async function registerUser(email: string, password: string, username: string) {
 
 // Login user
 async function loginUser(email: string, password: string) {
-    const user = database.users[email];
+    const user = await User.findOne({ email });
 
     if (!user) return { succes: false, message: "User does not exist" };
     if (!bcrypt.compareSync(password, user.password)) return { succes: false, message: "Wrong password" };
@@ -73,7 +70,7 @@ async function loginUser(email: string, password: string) {
 }
 
 // Validate token
-function validateToken(token: string) {
+async function validateToken(token: string) {
     let result: string | JwtPayload | undefined;
 
     try {
@@ -85,7 +82,7 @@ function validateToken(token: string) {
     if (!result) return { succes: false, message: "Invalid token" };
 
     const userId = typeof result === 'string' ? result : result.id;
-    const user = Object.values(database.users).find(user => user.userId === userId);
+    const user = await User.findOne({ userId });
 
     if (!user) return { succes: false, message: "User does not exist" };
 

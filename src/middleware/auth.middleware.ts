@@ -3,7 +3,7 @@ import * as auth from "../services/auth";
 
 import { CustomRequest } from "../customTypes";
 
-export default (req: CustomRequest, res: Response, next: NextFunction) => {
+export default async (req: CustomRequest, res: Response, next: NextFunction) => {
     const cookies = req.cookies;
     const token = cookies["token"];
 
@@ -14,7 +14,7 @@ export default (req: CustomRequest, res: Response, next: NextFunction) => {
         return next();
     }
 
-    const result = auth.validateToken(token);
+    const result = await auth.validateToken(token);
     if (result.succes) {
         req.user = {
             authenticated: true,
