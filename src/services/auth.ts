@@ -8,10 +8,11 @@ import { User } from '../models/user.model';
 import { uploadDefaultAvater } from './imageDatabase';
 import { UPLOAD_PATH } from '../config';
 
+import { JWT_SECRET } from '../config';
+
 
 // Generate JWT
 function generateToken(id: string) {
-    const JWT_SECRET = process.env.JWT_SECRET as Secret;
     return jwt.sign({ id }, JWT_SECRET, { expiresIn: "30d" });
 };
 

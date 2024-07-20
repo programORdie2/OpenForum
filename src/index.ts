@@ -1,6 +1,8 @@
 import dotenv from "dotenv";
 dotenv.config();
 
+import { PORT } from "./config";
+
 import express, { Express } from "express";
 import cookieParser from "cookie-parser";
 
@@ -34,10 +36,8 @@ app.use(errorMiddleware);
 async function start() {
   await connectDB();
 
-  const port = process.env.PORT;
-
-  app.listen(port, () => {
-    console.log(`[server]: Server is running at http://localhost:${port}`);
+  app.listen(PORT, () => {
+    console.log(`[server]: Server is running at http://localhost:${PORT}`);
   });
 }
 
