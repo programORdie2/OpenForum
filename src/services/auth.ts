@@ -65,7 +65,8 @@ async function registerUser(email: string, password: string, username: string) {
         password: hashedPassword, 
         userId, 
         secretId, 
-        avatar: avatarPath
+        avatar: avatarPath,
+        displayName: username
     });
     await user.save();
 
@@ -104,7 +105,7 @@ async function validateToken(token: string) {
 
     if (!user) return { succes: false, message: "User does not exist" };
 
-    return { succes: true, username: user.username, email: user.email, avatar: user.avatar };
+    return { succes: true, username: user.username, email: user.email, avatar: user.avatar, pronounce: user.pronounce, bio: user.bio, displayName: user.displayName };
 }
 
 export { registerUser, loginUser, validateToken }

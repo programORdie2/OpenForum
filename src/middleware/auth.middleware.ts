@@ -7,7 +7,7 @@ export default async (req: CustomRequest, res: Response, next: NextFunction) => 
     let token: string | undefined;
 
     if (req.headers.authorization) {
-        token = req.headers.authorization.split(" ")[1];
+        token = req.headers.authorization;
     } else {
         const cookies = req.cookies;
         token = cookies["token"];
@@ -26,7 +26,10 @@ export default async (req: CustomRequest, res: Response, next: NextFunction) => 
             authenticated: true,
             username: result.username,
             email: result.email,
-            avatar: result.avatar
+            avatar: result.avatar,
+            pronounce: result.pronounce,
+            bio: result.bio,
+            displayName: result.displayName
         }
         return next();
     }

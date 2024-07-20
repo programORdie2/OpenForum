@@ -1,0 +1,16 @@
+input, textarea {
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+.avatar {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 1rem;
+}
+
+.preview-avatar {
+    width: 100px;
+    height: 100px;
+}

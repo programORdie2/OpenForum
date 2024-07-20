@@ -6,6 +6,9 @@ interface CustomRequest extends Request {
         username?: string;
         email?: string;
         avatar?: string;
+        pronounce?: string;
+        bio?: string;
+        displayName?: string;
     }
 }
 

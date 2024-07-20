@@ -38,12 +38,16 @@ function sendHomepage(req: CustomRequest, res: Response) {
     renderPage(req, res, "index", "Social Media", 200);
 }
 
-function sendLoginpage(req: CustomRequest, res: Response) {
+type CustomResponse = {
+    loginRedirectUri?: string;
+}
+function sendLoginpage(req: CustomRequest, res: CustomResponse & Response) {
+    const redirectUri = res.loginRedirectUri || undefined;
     if (req.user?.authenticated) {
-        res.redirect("/");
+        res.redirect(redirectUri || "/");
         return;
     }
-    renderPage(req, res, "login", "Login - Social Media", 200);
+    renderPage(req, res, "login", "Login - Social Media", 200, { redirect: redirectUri });
 }
 
 function sendRegisterpage(req: CustomRequest, res: Response) {
@@ -70,4 +74,14 @@ async function sendUserProfilepage(req: CustomRequest, res: Response) {
     renderPage(req, res, "userProfile", `${userData.username} - Social Media`, 200, { profile: userData });
 }
 
-export { send404page, send500page, sendHomepage, handleNoView, sendLoginpage, logout, sendRegisterpage, sendUserProfilepage };
+async function sendSettingspage(req: CustomRequest, res: Response & CustomResponse) {
+    const user = req.user;
+    if (!user?.authenticated) {
+        res.loginRedirectUri = "/settings";
+        sendLoginpage(req, res);
+        return;
+    }
+    renderPage(req, res, "settings", "Settings - Social Media", 200, { data: user });
+}
+
+export { send404page, send500page, sendHomepage, handleNoView, sendLoginpage, logout, sendRegisterpage, sendUserProfilepage, sendSettingspage };

@@ -11,6 +11,8 @@ router.get("/login", webController.sendLoginpage);
 router.get("/register", webController.sendRegisterpage);
 router.get("/logout", webController.logout);
 
+router.get("/settings", webController.sendSettingspage);
+
 router.get("/@:username", webController.sendUserProfilepage);
 
 router.get("*", webController.handleNoView);

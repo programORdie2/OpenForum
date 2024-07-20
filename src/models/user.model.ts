@@ -18,6 +18,7 @@ const userSchema = new mongoose.Schema({
     pronounce: { type: String, default: "" },
     bio: { type: String, default: "" },
     avatar: { type: String, required: true },
+    displayName: { type: String, required: true },
 
     following: { type: Array, default: [] },
     followers: { type: Array, default: [] },

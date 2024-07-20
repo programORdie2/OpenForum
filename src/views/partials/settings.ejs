@@ -1,0 +1,23 @@
+<div class="settings">
+    <div>
+        <h2>Profile</h2>
+
+        <label for="displayName">Name</label>
+        <input type="text" id="displayName" name="displayName" data-value="<%- data.displayName %>" value="<%- data.displayName %>" placeholder="John Doe" autocomplete="name" />
+
+        <label for="bio">Bio</label>
+        <textarea id="bio" name="bio" data-value="<%- data.bio %>" placeholder="Tell us a little bit about yourself"><%- data.bio %></textarea>
+
+        <label for="pronounce">Pronounce</label>
+        <input type="text" id="pronounce" name="pronounce" data-value="<%- data.pronounce %>" value="<%- data.pronounce %>" placeholder="he/him" autocomplete="off" />
+
+        <label for="avatar">Avatar</label>
+        <div class="avatar">
+             <!-- TODO: Make avatar preview -->
+            <img class="preview-avatar" src="<%- data.avatar %>" />
+            <input type="file" id="avatar" accept="image/*" name="avatar" />
+        </div>
+    </div>
+</div>
+
+<div id="unsavedChanges" style="display: none;">You have unsaved changes! <a id="saveChanges">Save now</a></div>

@@ -1,6 +1,9 @@
 - [ ] Add README.md
 - [x] Login/signup
 - [x] Database
+- [x] Basic user settings
+- [ ] More user settings
+- [ ] Login ratelimiting
 - [ ] Basic UI
 - [x] Pfp
 - [ ] About me
