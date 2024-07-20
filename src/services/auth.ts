@@ -46,13 +46,14 @@ async function registerUser(email: string, password: string, username: string) {
 
     // Generate a user id
     const userId = generateUserId();
+    const secretId = generateUserId();
 
     // Add the user in the database
-    const user = new User({ username, email, password: hashedPassword, userId });
+    const user = new User({ username, email, password: hashedPassword, userId, secretId });
     await user.save();
 
     // Generate token
-    const token = generateToken(userId);
+    const token = generateToken(secretId);
 
     return { succes: true, token };
 }
@@ -64,7 +65,7 @@ async function loginUser(email: string, password: string) {
     if (!user) return { succes: false, message: "User does not exist" };
     if (!bcrypt.compareSync(password, user.password)) return { succes: false, message: "Wrong password" };
 
-    const token = generateToken(user.userId);
+    const token = generateToken(user.secretId);
 
     return { succes: true, token };
 }
@@ -81,8 +82,8 @@ async function validateToken(token: string) {
 
     if (!result) return { succes: false, message: "Invalid token" };
 
-    const userId = typeof result === 'string' ? result : result.id;
-    const user = await User.findOne({ userId });
+    const secretId = typeof result === 'string' ? result : result.id;
+    const user = await User.findOne({ secretId });
 
     if (!user) return { succes: false, message: "User does not exist" };
 

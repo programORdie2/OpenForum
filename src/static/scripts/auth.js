@@ -36,7 +36,12 @@ async function register() {
     });
 
     const result = await response.json();
-    console.log(result);
+    
+    if (!result.succes) return false;
+
+    document.cookie = `token=${result.token}; path=/; max-age=${60 * 60 * 24 * 30};`;
+
+    return true;
 }
 
 async function validate() {

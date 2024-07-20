@@ -3,7 +3,7 @@
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    padding: 0.5rem 1rem;
+    padding: 0rem;
     gap: 1rem;
     height: var(--navbar-height);
 
@@ -15,4 +15,64 @@
 
     background-color: var(--navbar-background);
     border-bottom: var(--navbar-border-bottom);
+}
+
+.user-info {
+    position: relative;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+
+    height: var(--navbar-height);
+    padding-right: 1em;
+}
+
+.user-info .username {
+    cursor: pointer;
+    height: var(--navbar-height);
+    padding: 0em;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+.user-info .user-actions {
+    position: absolute;
+    top: var(--navbar-height);
+    right: 0;
+    background-color: var(--navbar-background);
+    border: var(--navbar-border-bottom);
+
+    width: 130px;
+
+    transform: translateY(-10px);
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.user-info .user-actions.active {
+    visibility: visible;
+    opacity: 1;
+    transform: translateY(0px);
+}
+
+.navbar .home {
+    height: var(--navbar-height);
+    padding: 0em 1em;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+.user-actions * {
+    display: block;
+    padding: 0.3rem 0.5rem;
 }

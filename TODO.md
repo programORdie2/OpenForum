@@ -4,6 +4,6 @@
 - [ ] Basic UI
 - [ ] Pfp
 - [ ] About me
-- [ ] Logout
+- [x] Logout
 - [ ] Create post
 - [ ] Publish post

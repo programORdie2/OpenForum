@@ -1,14 +1,21 @@
 <div class="navbar">
-    <a href="/">Home</a>
+    <a href="/" class="home">Home</a>
 
     <% if (user.authenticated) { %>
-        <div>
-            <p>Hello <%= user.username %></p>
-            <p>Email: <%= user.email %></p>
+        <div class="user-info">
+            <p class="username"><%= user.username %></p>
 
-            <a href="/logout">Logout</a>
+            <div class="user-actions">
+                <a href="/@<%= user.username %>">Profile</a>
+                <a href="/logout">Logout</a>
+            </div>
         </div>
     <% } else { %>
-        <a href="/login">Login</a>
+            <div class="user-info">
+                <a href="/register">Register</a>
+                <a href="/login">Login</a>
+            </div>
     <% } %>
 </div>
+
+<script defer src="/scripts/navbar.js"></script>

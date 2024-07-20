@@ -2,10 +2,12 @@ import { Response } from "express";
 import { CustomRequest } from "../customTypes";
 import { existsSync } from "fs";
 
-function renderPage(req: CustomRequest, res: Response, page: string, customTitle: string = "Social Media", status: number = 200) {
+import { loadUserProfile } from "../services/userProfileLoader";
+
+function renderPage(req: CustomRequest, res: Response, page: string, customTitle: string = "Social Media", status: number = 200, data?: object) {
     const user = req.user;
     const description = "Social media for everyone";
-    res.status(status).render(page, { title: customTitle, user: user, description: description });
+    res.status(status).render(page, { title: customTitle, user: user, description: description, ...data });
 }
 
 function send404page(req: CustomRequest, res: Response) {
@@ -57,4 +59,15 @@ function logout(req: CustomRequest, res: Response) {
     res.redirect("/");
 }
 
-export { send404page, send500page, sendHomepage, handleNoView, sendLoginpage, logout, sendRegisterpage };
+async function sendUserProfilepage(req: CustomRequest, res: Response) {
+    const username = req.params.username;
+
+    const userData = await loadUserProfile(username);
+    if (!userData) {
+        send404page(req, res);
+        return;
+    }
+    renderPage(req, res, "userProfile", `${userData.username} - Social Media`, 200, { profile: userData });
+}
+
+export { send404page, send500page, sendHomepage, handleNoView, sendLoginpage, logout, sendRegisterpage, sendUserProfilepage };
