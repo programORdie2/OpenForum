@@ -5,6 +5,7 @@ interface CustomRequest extends Request {
         authenticated: boolean;
         username?: string;
         email?: string;
+        avatar?: string;
     }
 }
 

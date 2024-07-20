@@ -5,6 +5,9 @@ import { v4 as uuidv4 } from 'uuid';
 import { validateEmail, validatePassword, validateUsername } from './validator';
 import { User } from '../models/user.model';
 
+import { uploadDefaultAvater } from './imageDatabase';
+import { UPLOAD_PATH } from '../config';
+
 
 // Generate JWT
 function generateToken(id: string) {
@@ -47,9 +50,21 @@ async function registerUser(email: string, password: string, username: string) {
     // Generate a user id
     const userId = generateUserId();
     const secretId = generateUserId();
+    
+    const avatarPath = `${UPLOAD_PATH}/avatars/${userId}.png`;
+
+    // Upload default avatar
+    await uploadDefaultAvater(avatarPath);
 
     // Add the user in the database
-    const user = new User({ username, email, password: hashedPassword, userId, secretId });
+    const user = new User({ 
+        username, 
+        email, 
+        password: hashedPassword, 
+        userId, 
+        secretId, 
+        avatar: avatarPath
+    });
     await user.save();
 
     // Generate token
@@ -87,7 +102,7 @@ async function validateToken(token: string) {
 
     if (!user) return { succes: false, message: "User does not exist" };
 
-    return { succes: true, username: user.username, email: user.email };
+    return { succes: true, username: user.username, email: user.email, avatar: user.avatar };
 }
 
 export { registerUser, loginUser, validateToken }

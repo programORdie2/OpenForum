@@ -2,7 +2,7 @@
 - [x] Login/signup
 - [x] Database
 - [ ] Basic UI
-- [ ] Pfp
+- [x] Pfp
 - [ ] About me
 - [x] Logout
 - [ ] Create post

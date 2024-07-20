@@ -19,7 +19,8 @@ export default async (req: CustomRequest, res: Response, next: NextFunction) => 
         req.user = {
             authenticated: true,
             username: result.username,
-            email: result.email
+            email: result.email,
+            avatar: result.avatar
         }
         return next();
     }

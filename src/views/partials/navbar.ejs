@@ -3,7 +3,7 @@
 
     <% if (user.authenticated) { %>
         <div class="user-info">
-            <p class="username"><%= user.username %></p>
+            <p class="username"><img src="<%= user.avatar %>" /><%= user.username %></p>
 
             <div class="user-actions">
                 <a href="/@<%= user.username %>">Profile</a>

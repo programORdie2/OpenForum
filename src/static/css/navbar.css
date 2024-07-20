@@ -76,3 +76,9 @@
     display: block;
     padding: 0.3rem 0.5rem;
 }
+
+.user-info img {
+    height: calc(var(--navbar-height) - 10px);
+    width: calc(var(--navbar-height) - 10px);
+    border-radius: 50%;
+}
