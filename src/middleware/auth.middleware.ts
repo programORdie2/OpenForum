@@ -4,8 +4,14 @@ import * as auth from "../services/auth";
 import { CustomRequest } from "../customTypes";
 
 export default async (req: CustomRequest, res: Response, next: NextFunction) => {
-    const cookies = req.cookies;
-    const token = cookies["token"];
+    let token: string | undefined;
+
+    if (req.headers.authorization) {
+        token = req.headers.authorization.split(" ")[1];
+    } else {
+        const cookies = req.cookies;
+        token = cookies["token"];
+    }
 
     if (!token) {
         req.user = {

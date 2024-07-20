@@ -12,11 +12,13 @@
 
 <script src="/scripts/auth.js"></script>
 <script>
+    const redirect = new URLSearchParams(window.location.search).get("redirect") || "/";
+
     document.getElementById("register").addEventListener("click", async (e) => {
         e.preventDefault();
         
         const success = await register();
-        if (success) window.location.href = "/";
+        if (success) window.location.href = redirect;
         else alert("Registration failed");
     });
 </script>

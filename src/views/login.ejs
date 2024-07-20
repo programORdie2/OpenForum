@@ -10,11 +10,13 @@
 
 <script src="/scripts/auth.js"></script>
 <script>
+    const redirect = new URLSearchParams(window.location.search).get("redirect") || "/";
+
     document.getElementById("login").addEventListener("click", async (e) => {
         e.preventDefault();
         
         const success = await login();
-        if (success) window.location.href = "/";
+        if (success) window.location.href = redirect;
         else alert("Login failed");
     });
 </script>

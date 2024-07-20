@@ -16,7 +16,10 @@ async function login() {
 
     const result = await response.json();
     
-    if (!result.succes) return false;
+    if (!result.succes) {
+        console.log(result);
+        return false;
+    };
 
     document.cookie = `token=${result.token}; path=/; max-age=${60 * 60 * 24 * 30};`;
 

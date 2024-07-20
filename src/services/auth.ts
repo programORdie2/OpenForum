@@ -58,7 +58,8 @@ async function registerUser(email: string, password: string, username: string) {
 
     // Add the user in the database
     const user = new User({ 
-        username, 
+        username,
+        username_lowercase: username.toLowerCase(),
         email, 
         password: hashedPassword, 
         userId, 
