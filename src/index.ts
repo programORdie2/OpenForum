@@ -16,6 +16,7 @@ import api from "./routes/api.route";
 import uploads from "./routes/uploads.route";
 
 import connectDB from "./services/database";
+import logger from "./utils/logger.util";
 
 const app: Express = express();
 app.set("view engine", "ejs");
@@ -37,8 +38,31 @@ async function start() {
   await connectDB();
 
   app.listen(PORT, () => {
-    console.log(`[server]: Server is running at http://localhost:${PORT}`);
+    logger.log(`Server is running at http://localhost:${PORT}`);
   });
 }
 
-start()
+start();
+
+// Don't shut down the server directly
+process.stdin.resume();
+
+function exitHandler(error: Error | string | null) {
+  if (error) {
+    let type: string;
+    if (error === "SIGTERM" || error === "SIGINT") {
+      type = error;
+    } else {
+      type = "uncaughtException";
+
+      logger.critical(error);
+    }
+    logger.critical(`Server is shutting down due to: ${type}`);
+  }
+
+  process.exit();
+}
+
+process.on("SIGINT", exitHandler.bind(null, "SIGINT"));
+process.on("SIGTERM", exitHandler.bind(null, "SIGTERM"));
+process.on("uncaughtException", exitHandler);

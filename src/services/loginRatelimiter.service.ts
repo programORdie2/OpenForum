@@ -1,5 +1,6 @@
 import cote from 'cote';
 import { MAX_LOGIN_ATTEMPTS } from '../config';
+import logger from '../utils/logger.util';
 
 // Create a new requester (client)
 const requester = new cote.Requester({ name: 'ratelimiter' });
@@ -14,7 +15,7 @@ async function checkLogin(email: string) {
         }
         return true
     } catch (error) {
-        console.error("error", error)
+        logger.error("error", error)
         return true
     }
 }

@@ -1,15 +1,16 @@
 import mongoose from 'mongoose';
 import { DATABASE_URL } from '../config';
+import logger from '../utils/logger.util';
 
 async function connectDB() {
   try {
-    console.log('Connecting to MongoDB...');
+    logger.log('Connecting to MongoDB...');
     
     await mongoose.connect(DATABASE_URL);
     
-    console.log('MongoDB connected');
+    logger.log('MongoDB connected');
   } catch (error) {
-    console.error('MongoDB connection error:', error);
+    logger.critical('MongoDB connection error:', error);
     process.exit(1);
   }
 };
