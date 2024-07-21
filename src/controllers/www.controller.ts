@@ -38,16 +38,12 @@ function sendHomepage(req: CustomRequest, res: Response) {
     renderPage(req, res, "index", "Social Media", 200);
 }
 
-type CustomResponse = {
-    loginRedirectUri?: string;
-}
-function sendLoginpage(req: CustomRequest, res: CustomResponse & Response) {
-    const redirectUri = res.loginRedirectUri || undefined;
+function sendLoginpage(req: CustomRequest, res: Response) {
     if (req.user?.authenticated) {
-        res.redirect(redirectUri || "/");
+        res.redirect("/");
         return;
     }
-    renderPage(req, res, "login", "Login - Social Media", 200, { redirect: redirectUri });
+    renderPage(req, res, "login", "Login - Social Media", 200);
 }
 
 function sendRegisterpage(req: CustomRequest, res: Response) {
@@ -74,11 +70,10 @@ async function sendUserProfilepage(req: CustomRequest, res: Response) {
     renderPage(req, res, "userProfile", `${userData.username} - Social Media`, 200, { profile: userData });
 }
 
-async function sendSettingspage(req: CustomRequest, res: Response & CustomResponse) {
+async function sendSettingspage(req: CustomRequest, res: Response) {
     const user = req.user;
     if (!user?.authenticated) {
-        res.loginRedirectUri = "/settings";
-        sendLoginpage(req, res);
+        res.redirect("/login?redirect=/settings")
         return;
     }
     renderPage(req, res, "settings", "Settings - Social Media", 200, { data: user });

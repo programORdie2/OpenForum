@@ -3,7 +3,7 @@
 - [x] Database
 - [x] Basic user settings
 - [ ] More user settings
-- [ ] Login ratelimiting
+- [x] Login ratelimiting
 - [ ] Basic UI
 - [x] Pfp
 - [ ] About me
