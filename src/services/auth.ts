@@ -42,9 +42,13 @@ async function registerUser(email: string, password: string, username: string) {
     if (!validateUsername(username)) return { succes: false, message: "Invalid username" };
 
 
-    // Check if user already exists
-    const existingUser = await User.findOne({ email });
-    if (existingUser) return { succes: false, message: "User already exists" };
+    // Check if email already exists
+    let existingUser = await User.findOne({ email });
+    if (existingUser) return { succes: false, message: "Email already in use" };
+
+    // Check if username already exists
+    existingUser = await User.findOne({ username_lowercase: username.toLowerCase() });
+    if (existingUser) return { succes: false, message: "Username already in use" };
 
     // Hash password
     const hashedPassword = hashPassword(password);
@@ -53,7 +57,7 @@ async function registerUser(email: string, password: string, username: string) {
     const userId = generateUserId();
     const secretId = generateUserId();
     
-    const avatarPath = `${UPLOAD_PATH}/avatars/${userId}.png`;
+    const avatarPath = `uploads/avatars/${userId}.png`;
 
     // Upload default avatar
     await uploadDefaultAvater(avatarPath);
@@ -78,10 +82,10 @@ async function registerUser(email: string, password: string, username: string) {
 }
 
 // Login user
-async function loginUser(email: string, password: string) {
-    if (!await checkLogin(email)) return { succes: false, message: "Too many login attempts" };
+async function loginUser(emailorusername: string, password: string) {
+    if (!await checkLogin(emailorusername)) return { succes: false, message: "Too many login attempts" };
 
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email: emailorusername }) || await User.findOne({ username_lowercase: emailorusername.toLowerCase() });
 
     if (!user) return { succes: false, message: "User does not exist" };
     if (!bcrypt.compareSync(password, user.password)) return { succes: false, message: "Wrong password" };

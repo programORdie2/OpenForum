@@ -6,7 +6,7 @@
 - [x] Login ratelimiting
 - [ ] Basic UI
 - [x] Pfp
-- [ ] About me
+- [x] About me
 - [x] Logout
 - [ ] Create post
 - [ ] Publish post
