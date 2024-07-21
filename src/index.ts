@@ -66,3 +66,5 @@ function exitHandler(error: Error | string | null) {
 process.on("SIGINT", exitHandler.bind(null, "SIGINT"));
 process.on("SIGTERM", exitHandler.bind(null, "SIGTERM"));
 process.on("uncaughtException", exitHandler);
+
+let error: string = 5;
