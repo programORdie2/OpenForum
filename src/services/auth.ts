@@ -36,6 +36,8 @@ function generateUserId() {
 
 // Register user
 async function registerUser(email: string, password: string, username: string) {
+    email = email.toLowerCase();
+
     // Validate email, password and username
     if (!validateEmail(email)) return { succes: false, message: "Invalid email" };
     if (!validatePassword(password)) return { succes: false, message: "Invalid password" };
@@ -83,9 +85,11 @@ async function registerUser(email: string, password: string, username: string) {
 
 // Login user
 async function loginUser(emailorusername: string, password: string) {
+    emailorusername = emailorusername.toLowerCase();
+
     if (!await checkLogin(emailorusername)) return { succes: false, message: "Too many login attempts" };
 
-    const user = await User.findOne({ email: emailorusername }) || await User.findOne({ username_lowercase: emailorusername.toLowerCase() });
+    const user = await User.findOne({ email: emailorusername }) || await User.findOne({ username_lowercase: emailorusername });
 
     if (!user) return { succes: false, message: "User does not exist" };
     if (!bcrypt.compareSync(password, user.password)) return { succes: false, message: "Wrong password" };
