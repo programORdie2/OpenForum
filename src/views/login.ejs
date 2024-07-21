@@ -10,7 +10,7 @@
 
 <script src="/scripts/auth.js"></script>
 <script>
-    const redirect = <% if (redirect) { %>"<%= redirect %>"<% } %> || new URLSearchParams(window.location.search).get("redirect") || "/";
+    const redirect = <% if (redirect) { %>"<%= redirect %>"<% } else { %> new URLSearchParams(window.location.search).get("redirect") || "/" <% } %>;
 
     document.getElementById("login").addEventListener("click", async (e) => {
         e.preventDefault();

@@ -9,6 +9,7 @@ import { uploadDefaultAvater } from './imageDatabase';
 import { UPLOAD_PATH } from '../config';
 
 import { JWT_SECRET } from '../config';
+import checkLogin from './loginRatelimiter.service';
 
 
 // Generate JWT
@@ -78,6 +79,8 @@ async function registerUser(email: string, password: string, username: string) {
 
 // Login user
 async function loginUser(email: string, password: string) {
+    if (!await checkLogin(email)) return { succes: false, message: "Too many login attempts" };
+
     const user = await User.findOne({ email });
 
     if (!user) return { succes: false, message: "User does not exist" };
