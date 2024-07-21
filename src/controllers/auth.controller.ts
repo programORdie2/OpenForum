@@ -1,4 +1,4 @@
-import * as auth from "../services/auth";
+import * as auth from "../services/auth.service";
 import { CustomRequest } from "../customTypes";
 import { Response } from "express";
 

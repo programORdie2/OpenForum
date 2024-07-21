@@ -1,5 +1,5 @@
 import { Response, NextFunction } from "express";
-import * as auth from "../services/auth";
+import * as auth from "../services/auth.service";
 
 import { CustomRequest } from "../customTypes";
 

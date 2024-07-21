@@ -2,14 +2,15 @@ import jwt, { Secret, JwtPayload } from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import { v4 as uuidv4 } from 'uuid';
 
-import { validateEmail, validatePassword, validateUsername } from './validator';
+import { validateEmail, validatePassword, validateUsername } from './validator.service';
 import { User } from '../models/user.model';
 
-import { uploadDefaultAvater } from './imageDatabase';
+import { uploadDefaultAvater } from './imageDatabase.service';
 import { UPLOAD_PATH } from '../config';
 
 import { JWT_SECRET } from '../config';
 import checkLogin from './loginRatelimiter.service';
+import normalizeEmail from '../utils/normalizeEmail.util';
 
 
 // Generate JWT
@@ -36,7 +37,7 @@ function generateUserId() {
 
 // Register user
 async function registerUser(email: string, password: string, username: string) {
-    email = email.toLowerCase();
+    email = normalizeEmail(email);
 
     // Validate email, password and username
     if (!validateEmail(email)) return { succes: false, message: "Invalid email" };
@@ -85,7 +86,7 @@ async function registerUser(email: string, password: string, username: string) {
 
 // Login user
 async function loginUser(emailorusername: string, password: string) {
-    emailorusername = emailorusername.toLowerCase();
+    emailorusername = normalizeEmail(emailorusername);
 
     if (!await checkLogin(emailorusername)) return { succes: false, message: "Too many login attempts" };
 

@@ -15,7 +15,7 @@ import main from "./routes/main.route";
 import api from "./routes/api.route";
 import uploads from "./routes/uploads.route";
 
-import connectDB from "./services/database";
+import connectDB from "./services/database.service";
 import logger from "./utils/logger.util";
 
 const app: Express = express();

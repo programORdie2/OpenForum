@@ -2,7 +2,7 @@ import { Response } from "express";
 import { CustomRequest } from "../customTypes";
 import { existsSync } from "fs";
 
-import { loadUserProfile } from "../services/userProfileLoader";
+import { loadUserProfile } from "../services/userProfileLoader.service";
 
 function renderPage(req: CustomRequest, res: Response, page: string, customTitle: string = "Social Media", status: number = 200, data?: object, extraCss: Array<string> = [], extraJs: Array<string> = []) {
     const user = req.user;
