@@ -4,10 +4,14 @@ import { existsSync } from "fs";
 
 import { loadUserProfile } from "../services/userProfileLoader";
 
-function renderPage(req: CustomRequest, res: Response, page: string, customTitle: string = "Social Media", status: number = 200, data?: object) {
+function renderPage(req: CustomRequest, res: Response, page: string, customTitle: string = "Social Media", status: number = 200, data?: object, extraCss: Array<string> = [], extraJs: Array<string> = []) {
     const user = req.user;
     const description = "Social media for everyone";
-    res.status(status).render(page, { title: customTitle, user: user, description: description, ...data });
+
+    const allData = { title: customTitle, user: user, description: description, ...data, partialData: {}, partialName: "partials/" + page, extraCss, extraJs };
+    allData.partialData = allData;
+
+    res.status(status).render("main", allData);
 }
 
 function send404page(req: CustomRequest, res: Response) {
@@ -43,7 +47,7 @@ function sendLoginpage(req: CustomRequest, res: Response) {
         res.redirect("/");
         return;
     }
-    renderPage(req, res, "login", "Login - Social Media", 200);
+    renderPage(req, res, "login", "Login - Social Media", 200, {}, ["/css/login.css"], ["/scripts/auth.js"]);
 }
 
 function sendRegisterpage(req: CustomRequest, res: Response) {
@@ -51,7 +55,7 @@ function sendRegisterpage(req: CustomRequest, res: Response) {
         res.redirect("/");
         return;
     }
-    renderPage(req, res, "register", "Register - Social Media", 200);
+    renderPage(req, res, "register", "Register - Social Media", 200, {}, ["/css/register.css"], ["/scripts/auth.js"]);
 }
 
 function logout(req: CustomRequest, res: Response) {
@@ -67,7 +71,7 @@ async function sendUserProfilepage(req: CustomRequest, res: Response) {
         send404page(req, res);
         return;
     }
-    renderPage(req, res, "userProfile", `${userData.username} - Social Media`, 200, { profile: userData });
+    renderPage(req, res, "userProfile", `${userData.username} - Social Media`, 200, { profile: userData }, ["/css/userProfile.css"], []);
 }
 
 async function sendSettingspage(req: CustomRequest, res: Response) {
@@ -76,7 +80,7 @@ async function sendSettingspage(req: CustomRequest, res: Response) {
         res.redirect("/login?redirect=/settings")
         return;
     }
-    renderPage(req, res, "settings", "Settings - Social Media", 200, { data: user });
+    renderPage(req, res, "settings", "Settings - Social Media", 200, { data: user }, ["/css/settings.css"], ["/scripts/settings.js"]);
 }
 
 export { send404page, send500page, sendHomepage, handleNoView, sendLoginpage, logout, sendRegisterpage, sendUserProfilepage, sendSettingspage };
