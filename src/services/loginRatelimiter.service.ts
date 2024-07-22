@@ -1,14 +1,13 @@
-import cote from 'cote';
 import { MAX_LOGIN_ATTEMPTS } from '../config';
 import logger from '../utils/logger.util';
-
-// Create a new requester (client)
-const requester = new cote.Requester({ name: 'ratelimiter' });
 
 async function checkLogin(email: string) {
     // Send a 'user' event with the email
     try {
-        const attempts = await requester.send({ type: 'user', email });
+        const _attempts = await fetch(`http://localhost:3003/user/${email}`, {
+            method: 'POST',
+        });
+        const attempts = (await _attempts.json()).attempts;
 
         if (attempts > MAX_LOGIN_ATTEMPTS) {
             return false

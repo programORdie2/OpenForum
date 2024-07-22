@@ -1,12 +1,11 @@
-const cote = require('cote');
+const express = require('express');
+
+const app = express();
 
 const emailCounter = {};
 
-// Create a new responder (server)
-const responder = new cote.Responder({ name: 'ratelimiter' });
-
-responder.on('user', (req, cb) => {
-  const email = req.email;
+app.post('/user/:email', (req, res) => {
+  const email = req.params.email;
 
   if (emailCounter[email]) {
     emailCounter[email]++;
@@ -19,5 +18,7 @@ responder.on('user', (req, cb) => {
     }, 60000);
   }
 
-  cb(null, emailCounter[email]);
+  res.json({ attempts: emailCounter[email] });
 });
+
+app.listen(3003);
