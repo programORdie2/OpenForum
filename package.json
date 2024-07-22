@@ -9,7 +9,7 @@
   },
   "keywords": [],
   "author": "programORdie",
-  "license": "MIT",
+  "license": "AGPL-3.0",
   "description": "",
   "dependencies": {
     "bcrypt": "^5.1.1",

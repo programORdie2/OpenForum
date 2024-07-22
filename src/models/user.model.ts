@@ -13,12 +13,14 @@ const userSchema = new mongoose.Schema({
     permissions: { type: Object, default: {mod: false, admin: false} },
 
     posts: { type: Array, default: [] },
-    comments: { type: Array, default: [] },
+    reactions: { type: Array, default: [] },
+    likes: { type: Array, default: [] },
 
     pronounce: { type: String, default: "" },
     bio: { type: String, default: "" },
     avatar: { type: String, required: true },
     displayName: { type: String, required: true },
+    location: { type: String, default: "" },
 
     following: { type: Array, default: [] },
     followers: { type: Array, default: [] },

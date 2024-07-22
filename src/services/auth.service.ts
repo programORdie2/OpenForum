@@ -6,7 +6,6 @@ import { validateEmail, validatePassword, validateUsername } from './validator.s
 import { User } from '../models/user.model';
 
 import { uploadDefaultAvater } from './imageDatabase.service';
-import { UPLOAD_PATH } from '../config';
 
 import { JWT_SECRET } from '../config';
 import checkLogin from './loginRatelimiter.service';
@@ -60,7 +59,7 @@ async function registerUser(email: string, password: string, username: string) {
     const userId = generateUserId();
     const secretId = generateUserId();
     
-    const avatarPath = `uploads/avatars/${userId}.png`;
+    const avatarPath = `avatars/${userId}.png`;
 
     // Upload default avatar
     await uploadDefaultAvater(avatarPath);
@@ -73,7 +72,7 @@ async function registerUser(email: string, password: string, username: string) {
         password: hashedPassword, 
         userId, 
         secretId, 
-        avatar: avatarPath,
+        avatar: "/uploads/" + avatarPath,
         displayName: username
     });
     await user.save();

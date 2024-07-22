@@ -47,4 +47,8 @@ async function changeEmail(req: CustomRequest, res: Response) {
     await change(req, res, "email");
 }
 
-export { changeBio, changeDisplayName, changePronounce, changeAvatar, changeUsername, changeEmail };
+async function changeLocation(req: CustomRequest, res: Response) {
+    await change(req, res, "location");
+}
+
+export { changeBio, changeDisplayName, changePronounce, changeAvatar, changeUsername, changeEmail, changeLocation };
