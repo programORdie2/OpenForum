@@ -1,4 +1,4 @@
-- [ ] Add README.md
+- [x] Add README.md
 - [x] Login/signup
 - [x] Database
 - [x] Basic user settings
