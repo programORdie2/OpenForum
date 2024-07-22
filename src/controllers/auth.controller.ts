@@ -32,4 +32,8 @@ async function validateController(req: CustomRequest, res: Response) {
     res.json(result);
 }
 
-export { loginController, registerController, validateController }
+export {
+    loginController,
+    registerController,
+    validateController
+}

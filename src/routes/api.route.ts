@@ -1,6 +1,7 @@
 import { loginController, registerController, validateController } from "../controllers/auth.controller";
 import * as settingsController from "../controllers/settings.controller";
 import * as apiController from "../controllers/apiGet.controller";
+import * as postContoller from "../controllers/post.controller";
 
 import asyncHandler from "../utils/asyncHandler.util";
 
@@ -20,6 +21,8 @@ router.post('/user/email', asyncHandler(settingsController.changeEmail));
 router.post('/user/location', asyncHandler(settingsController.changeLocation));
 
 router.get('/users/:username', asyncHandler(apiController.getProfile));
+
+router.post('/posts/create', asyncHandler(postContoller.createPost));
 
 router.all("*", (req, res) => {
     res.status(404).json({ succes: false, message: "Route not found or method not allowed" });

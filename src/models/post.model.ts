@@ -10,6 +10,8 @@ const postSchema = new mongoose.Schema({
     content: { type: String, required: true },
     reactions: { type: Array, default: [] },
     likes: { type: Array, default: [] },
+
+    public: { type: Boolean, default: false },
 });
 
 const Post = mongoose.model("Post", postSchema);

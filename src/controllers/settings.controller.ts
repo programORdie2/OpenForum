@@ -19,7 +19,7 @@ async function change(req: CustomRequest, res: Response, settingName: string) {
     }
 
     const result = await setSetting(user.id as string, settingName, value);
-    
+
     res.json({ succes: result });
 }
 
@@ -51,4 +51,12 @@ async function changeLocation(req: CustomRequest, res: Response) {
     await change(req, res, "location");
 }
 
-export { changeBio, changeDisplayName, changePronounce, changeAvatar, changeUsername, changeEmail, changeLocation };
+export {
+    changeBio,
+    changeDisplayName,
+    changePronounce,
+    changeAvatar,
+    changeUsername, 
+    changeEmail, 
+    changeLocation
+};

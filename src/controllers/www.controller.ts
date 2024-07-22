@@ -83,4 +83,14 @@ async function sendSettingspage(req: CustomRequest, res: Response) {
     renderPage(req, res, "settings", "Settings - Social Media", 200, { data: user }, ["/css/settings.css"], ["/scripts/settings.js"]);
 }
 
-export { send404page, send500page, sendHomepage, handleNoView, sendLoginpage, logout, sendRegisterpage, sendUserProfilepage, sendSettingspage };
+export { 
+    send404page, 
+    send500page, 
+    sendHomepage, 
+    handleNoView, 
+    sendLoginpage, 
+    logout, 
+    sendRegisterpage, 
+    sendUserProfilepage, 
+    sendSettingspage
+};
