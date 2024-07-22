@@ -1,14 +1,20 @@
 const nameInput = document.getElementById("displayName");
 const bioInput = document.getElementById("bio");
 const pronounceInput = document.getElementById("pronounce");
-
+const avatarInput = document.getElementById("avatar");
+const avatarPreview = document.getElementById("preview-avatar");
 const saveButton = document.getElementById("saveChanges");
+
+let avatarChanged = false;
 
 function checkChanges() {
     if (nameInput.value == "") {
         return false;
     }
     if (nameInput.value != nameInput.getAttribute("data-value") || bioInput.value != bioInput.getAttribute("data-value") || pronounceInput.value != pronounceInput.getAttribute("data-value")) {
+        return true;
+    }
+    if (avatarChanged) {
         return true;
     }
     return false;
@@ -27,6 +33,10 @@ function getChanges() {
 
     if (pronounceInput.value != pronounceInput.getAttribute("data-value")) {
         changes.push({ name: "pronounce", value: pronounceInput.value });
+    }
+
+    if (avatarChanged) {
+        changes.push({ name: "avatar", value: avatarPreview.src });
     }
 
     return changes;
@@ -78,7 +88,32 @@ function saveChanges() {
     pronounceInput.setAttribute("data-value", pronounceInput.value);
     hideUnsavedChanges();
 
+    avatarChanged = false;
+
     document.querySelector(".user-info .username .text").innerText = nameInput.value;
+    document.querySelector(".user-info .username img").src = avatarPreview.src;
 }
 
 saveButton.addEventListener("click", saveChanges);
+
+avatarInput.addEventListener("change", (e) => {
+    const file = e.target.files[0];
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => {
+        avatarPreview.src = reader.result;
+        avatarChanged = true;
+        onAnyInput(e);
+
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
+
+        avatarPreview.onload = () => {
+            canvas.width = 200;
+            canvas.height = 200;
+            ctx.drawImage(avatarPreview, 0, 0, 200, 200);
+            const dataURL = canvas.toDataURL("image/png");
+            avatarPreview.src = dataURL;
+        };
+    };
+});

@@ -18,7 +18,7 @@ async function change(req: CustomRequest, res: Response, settingName: string) {
         return;
     }
 
-    const result = await setSetting(user.email as string, settingName, value);
+    const result = await setSetting(user.id as string, settingName, value);
     
     res.json({ succes: result });
 }
@@ -35,4 +35,8 @@ async function changePronounce(req: CustomRequest, res: Response) {
     await change(req, res, "pronounce");
 }
 
-export { changeBio, changeDisplayName, changePronounce };
+async function changeAvatar(req: CustomRequest, res: Response) {
+    await change(req, res, "avatar");
+}
+
+export { changeBio, changeDisplayName, changePronounce, changeAvatar };

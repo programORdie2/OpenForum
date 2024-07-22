@@ -29,7 +29,8 @@ export default async (req: CustomRequest, res: Response, next: NextFunction) => 
             avatar: result.avatar,
             pronounce: result.pronounce,
             bio: result.bio,
-            displayName: result.displayName
+            displayName: result.displayName,
+            id: result.id,
         }
         return next();
     }
