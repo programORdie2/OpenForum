@@ -24,6 +24,8 @@ router.get('/users/:username', asyncHandler(apiController.getProfile));
 
 router.post('/posts/create', asyncHandler(postContoller.createPost));
 
+router.get('/posts/:postId', asyncHandler(postContoller.getPost));
+
 router.all("*", (req, res) => {
     res.status(404).json({ succes: false, message: "Route not found or method not allowed" });
 })

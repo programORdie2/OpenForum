@@ -21,9 +21,18 @@ async function createPost(authorId: string, title: string, topic: string, conten
     return post;
 }
 
-async function getPost(postId: string) {
+async function getPost(postId: string, requesterId: string | undefined) {
     const post = await Post.findOne({ postId });
-    return post;
+
+    if (!post) {
+        return { succes: false, message: "Post does not exist" };
+    }
+
+    if (requesterId && post.authorId !== requesterId && !post.public) {
+        return { succes: false, message: "Unauthorized" };
+    }
+
+    return { succes: true, post };
 }
 
 export { createPost, getPost };

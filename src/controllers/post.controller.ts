@@ -19,4 +19,12 @@ async function createPost(req: CustomRequest, res: Response) {
     res.json({ succes: true, post: post });
 }
 
-export { createPost }
+async function getPost(req: CustomRequest, res: Response) {
+    const userId = req.user?.id;
+    const postId = req.params.postId;
+
+    const post = await postManager.getPost(postId, userId);
+    res.json(post);
+}
+
+export { createPost, getPost }
