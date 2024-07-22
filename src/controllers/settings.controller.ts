@@ -39,4 +39,12 @@ async function changeAvatar(req: CustomRequest, res: Response) {
     await change(req, res, "avatar");
 }
 
-export { changeBio, changeDisplayName, changePronounce, changeAvatar };
+async function changeUsername(req: CustomRequest, res: Response) {
+    await change(req, res, "username");
+}
+
+async function changeEmail(req: CustomRequest, res: Response) {
+    await change(req, res, "email");
+}
+
+export { changeBio, changeDisplayName, changePronounce, changeAvatar, changeUsername, changeEmail };

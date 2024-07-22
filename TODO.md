@@ -2,7 +2,7 @@
 - [x] Login/signup
 - [x] Database
 - [x] Basic user settings
-- [ ] More user settings
+- [x] More user settings
 - [x] Login ratelimiting
 - [ ] Basic UI
 - [x] Pfp

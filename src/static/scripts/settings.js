@@ -3,6 +3,8 @@ const bioInput = document.getElementById("bio");
 const pronounceInput = document.getElementById("pronounce");
 const avatarInput = document.getElementById("avatar");
 const avatarPreview = document.getElementById("preview-avatar");
+const usernameInput = document.getElementById("username");
+const emailInput = document.getElementById("email");
 const saveButton = document.getElementById("saveChanges");
 
 let avatarChanged = false;
@@ -11,7 +13,7 @@ function checkChanges() {
     if (nameInput.value == "") {
         return false;
     }
-    if (nameInput.value != nameInput.getAttribute("data-value") || bioInput.value != bioInput.getAttribute("data-value") || pronounceInput.value != pronounceInput.getAttribute("data-value")) {
+    if (nameInput.value != nameInput.getAttribute("data-value") || bioInput.value != bioInput.getAttribute("data-value") || pronounceInput.value != pronounceInput.getAttribute("data-value") || usernameInput.value != usernameInput.getAttribute("data-value") || emailInput.value != emailInput.getAttribute("data-value")) {
         return true;
     }
     if (avatarChanged) {
@@ -33,6 +35,14 @@ function getChanges() {
 
     if (pronounceInput.value != pronounceInput.getAttribute("data-value")) {
         changes.push({ name: "pronounce", value: pronounceInput.value });
+    }
+
+    if (usernameInput.value != usernameInput.getAttribute("data-value")) {
+        changes.push({ name: "username", value: usernameInput.value });
+    }
+
+    if (emailInput.value != emailInput.getAttribute("data-value")) {
+        changes.push({ name: "email", value: emailInput.value });
     }
 
     if (avatarChanged) {
@@ -63,6 +73,8 @@ function onAnyInput(e) {
 nameInput.addEventListener("input", onAnyInput);
 bioInput.addEventListener("input", onAnyInput);
 pronounceInput.addEventListener("input", onAnyInput);
+usernameInput.addEventListener("input", onAnyInput);
+emailInput.addEventListener("input", onAnyInput);
 
 function saveChanges() {
     const changes = getChanges();
@@ -80,18 +92,25 @@ function saveChanges() {
         if (!res.ok) {
             console.log("Failed to save changes");
             alert("Failed to save changes");
+
+            setTimeout(() => {
+                window.location.reload();
+            }, 2000);
         }
     });
 
     nameInput.setAttribute("data-value", nameInput.value);
     bioInput.setAttribute("data-value", bioInput.value);
     pronounceInput.setAttribute("data-value", pronounceInput.value);
+    usernameInput.setAttribute("data-value", usernameInput.value);
+    emailInput.setAttribute("data-value", emailInput.value);
     hideUnsavedChanges();
 
     avatarChanged = false;
 
     document.querySelector(".user-info .username .text").innerText = nameInput.value;
     document.querySelector(".user-info .username img").src = avatarPreview.src;
+    document.querySelector(".user-info .user-actions .profile-link").href = `/@${usernameInput.value}`
 }
 
 saveButton.addEventListener("click", saveChanges);

@@ -3,19 +3,33 @@
         <h2>Profile</h2>
 
         <label for="displayName">Name</label>
-        <input type="text" id="displayName" name="displayName" data-value="<%- data.displayName %>" value="<%- data.displayName %>" placeholder="John Doe" autocomplete="name" />
+        <input type="text" id="displayName" name="displayName" data-value="<%- data.displayName %>"
+            value="<%- data.displayName %>" placeholder="John Doe" autocomplete="name" />
 
         <label for="bio">Bio</label>
-        <textarea id="bio" name="bio" data-value="<%- data.bio %>" placeholder="Tell us a little bit about yourself"><%- data.bio %></textarea>
+        <textarea id="bio" name="bio" data-value="<%- data.bio %>"
+            placeholder="Tell us a little bit about yourself"><%- data.bio %></textarea>
 
         <label for="pronounce">Pronounce</label>
-        <input type="text" id="pronounce" name="pronounce" data-value="<%- data.pronounce %>" value="<%- data.pronounce %>" placeholder="he/him" autocomplete="off" />
+        <input type="text" id="pronounce" name="pronounce" data-value="<%- data.pronounce %>"
+            value="<%- data.pronounce %>" placeholder="he/him" autocomplete="off" />
 
         <label for="avatar">Avatar</label>
         <div class="avatar">
             <img class="preview-avatar" id="preview-avatar" src="<%- data.avatar %>" />
             <input type="file" id="avatar" accept="image/*" name="avatar" />
         </div>
+    </div>
+
+    <div>
+        <h2>Account</h2>
+        <label for="username">Username</label>
+        <input type="text" id="username" name="username" data-value="<%- data.username %>" value="<%- data.username %>"
+            placeholder="john_doe" autocomplete="off" />
+
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" data-value="<%- data.email %>" value="<%- data.email %>"
+            placeholder="me@example.com" autocomplete="email" />
     </div>
 </div>
 

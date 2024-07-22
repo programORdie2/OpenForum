@@ -14,6 +14,8 @@ router.post("/user/bio", asyncHandler(settingsController.changeBio));
 router.post("/user/displayname", asyncHandler(settingsController.changeDisplayName));
 router.post("/user/pronounce", asyncHandler(settingsController.changePronounce));
 router.post('/user/avatar', asyncHandler(settingsController.changeAvatar));
+router.post('/user/username', asyncHandler(settingsController.changeUsername));
+router.post('/user/email', asyncHandler(settingsController.changeEmail));
 
 router.all("*", (req, res) => {
     res.status(404).json({ succes: false, message: "Route not found or method not allowed" });

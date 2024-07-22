@@ -6,9 +6,9 @@
             <p class="username"><img src="<%= user.avatar %>" /><span class="text"><%= user.displayName %></span></p>
 
             <div class="user-actions">
-                <a href="/@<%= user.username %>">Profile</a>
-                <a href="/settings">Settings</a>
-                <a href="/logout">Logout</a>
+                <a class="profile-link" href="/@<%= user.username %>">Profile</a>
+                <a class="settings-link" href="/settings">Settings</a>
+                <a class="logout-link" href="/logout">Logout</a>
             </div>
         </div>
     <% } else { %>
