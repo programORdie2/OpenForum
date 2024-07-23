@@ -7,11 +7,14 @@ const postSchema = new mongoose.Schema({
     topic: { type: String, required: true },
 
     createdAt: { type: Date, default: Date.now },
+    updatedAt: { type: Date, default: Date.now },
+    publischedAt: { type: Date },
     content: { type: String, required: true },
     reactions: { type: Array, default: [] },
     likes: { type: Array, default: [] },
 
     public: { type: Boolean, default: false },
+    serializedTitle: { type: String, default: "" },
 });
 
 const Post = mongoose.model("Post", postSchema);

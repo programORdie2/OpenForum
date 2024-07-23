@@ -3,6 +3,7 @@ import { CustomRequest } from "../customTypes";
 import { existsSync } from "fs";
 
 import { loadUserProfile } from "../services/userProfileLoader.service";
+import * as postManager from "../services/postManager.service";
 
 function renderPage(req: CustomRequest, res: Response, page: string, customTitle: string = "Social Media", status: number = 200, data?: object, extraCss: Array<string> = [], extraJs: Array<string> = []) {
     const user = req.user;
@@ -83,6 +84,24 @@ async function sendSettingspage(req: CustomRequest, res: Response) {
     renderPage(req, res, "settings", "Settings - Social Media", 200, { data: user }, ["/css/settings.css"], ["/scripts/settings.js"]);
 }
 
+async function sendPostPage(req: CustomRequest, res: Response) {
+    const userId = req.user?.id;
+    const postId = req.params.postId;
+
+    const post = await postManager.getPost(postId, userId);
+
+    if (!post || !post.succes || !post.post) {
+        send404page(req, res);
+        return;
+    }
+
+    renderPage(req, res, "post", `${post.post?.title} - Social Media`, 200, { post: post.post }, ["/css/post.css"], ["/scripts/post.js"]);
+}
+
+function sendCreatePostPage(req: CustomRequest, res: Response) {
+    renderPage(req, res, "createPost", "Create Post - Social Media", 200, {}, ["/css/createPost.css"], ["/scripts/createPost.js"]);
+}
+
 export { 
     send404page, 
     send500page, 
@@ -92,5 +111,7 @@ export {
     logout, 
     sendRegisterpage, 
     sendUserProfilepage, 
-    sendSettingspage
+    sendSettingspage,
+    sendPostPage,
+    sendCreatePostPage
 };

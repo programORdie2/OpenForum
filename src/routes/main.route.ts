@@ -1,5 +1,4 @@
-import { CustomRequest } from "../customTypes";
-import { Router, Response } from "express";
+import { Router } from "express";
 
 import * as webController from "../controllers/www.controller";
 

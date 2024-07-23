@@ -12,6 +12,7 @@ import auth from "./middleware/auth.middleware";
 import errorMiddleware from "./middleware/error.middleware";
 
 import main from "./routes/main.route";
+import posts from "./routes/posts.route";
 import api from "./routes/api.route";
 import uploads from "./routes/uploads.route";
 
@@ -29,6 +30,7 @@ app.use(cookieParser());
 app.use(asyncHandler(auth));
 
 app.use("/api", api);
+app.use("/posts", posts);
 app.use("/uploads", uploads);
 app.use("/", main);
 
