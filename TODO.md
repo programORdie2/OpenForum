@@ -8,5 +8,8 @@
 - [x] Pfp
 - [x] About me
 - [x] Logout
-- [ ] Create post
+- [x] Create post
 - [ ] Publish post
+- [ ] String sterilization
+- [x] Dipslay posts on profile
+- [ ] Manage posts

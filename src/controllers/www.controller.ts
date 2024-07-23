@@ -2,7 +2,7 @@ import { Response } from "express";
 import { CustomRequest } from "../customTypes";
 import { existsSync } from "fs";
 
-import { loadUserProfile } from "../services/userProfileLoader.service";
+import { loadUserProfile, loadUserProfileById } from "../services/userProfileLoader.service";
 import * as postManager from "../services/postManager.service";
 
 function renderPage(req: CustomRequest, res: Response, page: string, customTitle: string = "Social Media", status: number = 200, data?: object, extraCss: Array<string> = [], extraJs: Array<string> = []) {
@@ -72,6 +72,7 @@ async function sendUserProfilepage(req: CustomRequest, res: Response) {
         send404page(req, res);
         return;
     }
+
     renderPage(req, res, "userProfile", `${userData.username} - Social Media`, 200, { profile: userData }, ["/css/userProfile.css"], []);
 }
 
@@ -95,11 +96,23 @@ async function sendPostPage(req: CustomRequest, res: Response) {
         return;
     }
 
-    renderPage(req, res, "post", `${post.post?.title} - Social Media`, 200, { post: post.post }, ["/css/post.css"], ["/scripts/post.js"]);
+    renderPage(req, res, "post", `${post.post.title} - Social Media`, 200, { post: post.post }, ["/css/post.css"], ["/scripts/post.js"]);
 }
 
 function sendCreatePostPage(req: CustomRequest, res: Response) {
     renderPage(req, res, "createPost", "Create Post - Social Media", 200, {}, ["/css/createPost.css"], ["/scripts/createPost.js"]);
+}
+
+async function sendDashboardpage(req: CustomRequest, res: Response) {
+    const user = req.user;
+    if (!user?.authenticated) {
+        res.redirect("/login?redirect=/dashboard");
+        return;
+    }
+
+    const posts = await postManager.getUserPosts(user.id as string);    
+
+    renderPage(req, res, "dashboard", "Dashboard - Social Media", 200, { posts: posts.posts }, ["/css/dashboard.css"], ["/scripts/dashboard.js"]);
 }
 
 export { 
@@ -113,5 +126,6 @@ export {
     sendUserProfilepage, 
     sendSettingspage,
     sendPostPage,
-    sendCreatePostPage
+    sendCreatePostPage,
+    sendDashboardpage
 };

@@ -1,0 +1,16 @@
+<div class="posts">
+    <% if (posts.length == 0) { %>
+        <p>No posts yet</p>
+    <% } else { %>
+        <% for (const post of posts) { %>
+            <div class="post">
+                <h2><a href="/posts/<%= post.postId %>"><%= post.title %></a></h2>
+                <p>Topic: <%= post.topic %></p>
+                <p>Created: <%= post.createdAt %></p>
+                <p>Edited: <%= post.updatedAt %></p>
+                <p>Public: <%= post.public %></p>
+                <p>Published: <%= post.publishedAt %></p>
+            </div>
+        <% } %>
+    <% } %>
+</div>

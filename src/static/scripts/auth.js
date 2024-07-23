@@ -1,12 +1,9 @@
 const API_ROUTE = "/api";
-const LOGIN_ROUTE = API_ROUTE + "/login";
-const REGISTER_ROUTE = API_ROUTE + "/register";
-const VALIDATE_ROUTE = API_ROUTE + "/validate";
 
 async function login() {
     const email = document.getElementById("email").value;
     const password = document.getElementById("password").value;
-    const response = await fetch(LOGIN_ROUTE, {
+    const response = await fetch(`${API_ROUTE}/login`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -30,7 +27,7 @@ async function register() {
     const email = document.getElementById("email").value;
     const password = document.getElementById("password").value;
     const username = document.getElementById("username").value;
-    const response = await fetch(REGISTER_ROUTE, {
+    const response = await fetch(`${API_ROUTE}/register}`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -50,7 +47,7 @@ async function register() {
 async function validate() {
     const token = document.getElementById("token").value;
 
-    const response = await fetch(VALIDATE_ROUTE, {
+    const response = await fetch(`${API_ROUTE}/validate`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",

@@ -1,6 +1,7 @@
 import { Post } from "../models/post.model";
 import { User } from "../models/user.model";
 import { validatePostTitle, validateTopic } from "./validator.service";
+import { loadUserProfileById } from "./userProfileLoader.service";
 
 function serializeTitle(title: string) {
     return title.toLowerCase().replace(/ /g, '-');
@@ -40,14 +41,14 @@ async function createPost(authorId: string, title: string, topic: string, conten
     });
     await post.save();
 
-    await User.updateOne({ userId: authorId }, { $push: { posts: postId } });
+    await User.updateOne({ userId: authorId }, { $push: { posts: getPostData(post) } });
 
     return post;
 }
 
 async function getPost(postId: string, requesterId: string | undefined) {
     postId = postId.toLowerCase();
-    const post = await Post.findOne({ postId });
+    const post = await Post.findOne({ postId });    
 
     if (!post) {
         return { succes: false, message: "Post does not exist" };
@@ -57,7 +58,134 @@ async function getPost(postId: string, requesterId: string | undefined) {
         return { succes: false, message: "Unauthorized" };
     }
 
-    return { succes: true, post };
+    const _author = await loadUserProfileById(post.authorId);
+    let author = { username: "[deleted user]", displayName: "[deleted user]", avatar: "/uploads/avatars/defaults/1.png" };
+
+    if (_author) {
+        author.username = _author.username;
+        author.displayName = _author.displayName;
+        author.avatar = _author.avatar;
+    }
+
+    const postData = {
+        ...getPostData(post),
+        author: author,
+    };
+
+    return { succes: true, post: postData };
 }
 
-export { createPost, getPost };
+async function publishPost(postId: string) {
+    // Asume the author is authenticated
+    const post = await Post.findOne({ postId });
+    if (!post) {
+        return { succes: false, message: "Post does not exist" };
+    }
+    if (post.public) {
+        return { succes: false, message: "Post already published" };
+    }
+
+    post.public = true;
+    post.publischedAt = new Date();
+    await post.save();
+
+    // Update user
+    await User.updateOne({ userId: post.authorId }, { $pull: { posts: { postId: post.postId } }, $push: { posts: getPostData(post) } });
+
+    return { succes: true, post: post };
+}
+
+async function unpublishPost(postId: string) {
+    // Asume the author is authenticated
+    const post = await Post.findOne({ postId });
+    if (!post) {
+        return { succes: false, message: "Post does not exist" };
+    }
+    if (!post.public) {
+        return { succes: false, message: "Post already unpublished" };
+    }
+
+    post.public = false;
+    post.publischedAt = null;
+    await post.save();
+
+    // Update user
+    await User.updateOne({ userId: post.authorId }, { $pull: { posts: { postId: post.postId } }, $push: { posts: getPostData(post) } });
+
+    return { succes: true, post: post };
+}
+
+async function deletePost(postId: string) {
+    // Asume the author is authenticated
+    const post = await Post.findOne({ postId });
+    if (!post) {
+        return { succes: false, message: "Post does not exist" };
+    }
+    await Post.deleteOne({ postId });
+
+    // Update user
+    await User.updateOne({ userId: post.authorId }, { $pull: { posts: { postId } } });
+
+    return { succes: true };
+}
+
+async function updatePost(postId: string, title: string | undefined, content: string | undefined) {
+    // Asume the author is authenticated
+    const post = await Post.findOne({ postId });
+    if (!post) {
+        return { succes: false, message: "Post does not exist" };
+    }
+
+    if (!title && !content) {
+        return { succes: false, message: "Nothing to update" };
+    }
+
+    const now = new Date();
+    if (title) {
+        const serializedTitle = serializeTitle(title);
+
+        post.title = title;
+        post.serializedTitle = serializedTitle;
+        post.id = generateRandomId(serializedTitle);
+    }
+    if (content) {
+        post.content = content;
+    }
+    
+    post.updatedAt = now;
+    await post.save();
+
+    // Update user
+    User.updateOne({ userId: post.authorId }, { $pull: { posts: { postId: postId } }, $push: { posts: getPostData(post) } });
+
+    return { succes: true, post: post };
+}
+
+function getPostData(post: any) {
+    return {
+        postId: post.postId,
+        title: post.title,
+        topic: post.topic,
+        content: post.content,
+        authorId: post.authorId,
+        createdAt: post.createdAt,
+        updatedAt: post.updatedAt,
+        public: post.public,
+        publishedAt: post.publischedAt,
+    };
+}
+
+async function getUserPosts(userId: string) {
+    // Asume the author is authenticated
+    const user = await User.findOne({ userId: userId });
+
+    if (!user) {
+        return { succes: false, message: "User does not exist" };
+    }
+
+    const posts = user.posts;
+
+    return { succes: true, posts: posts };
+}
+
+export { createPost, getPost, publishPost, unpublishPost, deletePost, updatePost, getUserPosts };

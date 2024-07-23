@@ -1,4 +1,5 @@
 import { Router } from "express";
+import asyncHandler from "../utils/asyncHandler.util";
 
 import * as webController from "../controllers/www.controller";
 
@@ -10,9 +11,10 @@ router.get("/login", webController.sendLoginpage);
 router.get("/register", webController.sendRegisterpage);
 router.get("/logout", webController.logout);
 
-router.get("/settings", webController.sendSettingspage);
+router.get("/settings", asyncHandler(webController.sendSettingspage));
+router.get("/dashboard", asyncHandler(webController.sendDashboardpage));
 
-router.get("/@:username", webController.sendUserProfilepage);
+router.get("/@:username", asyncHandler(webController.sendUserProfilepage));
 
 router.get("*", webController.handleNoView);
 
