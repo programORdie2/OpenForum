@@ -45,7 +45,7 @@ async function register() {
 }
 
 async function validate() {
-    const token = document.getElementById("token").value;
+    const token = document.cookie.split("token=")[1].split(";")[0];
 
     const response = await fetch(`${API_ROUTE}/validate`, {
         method: "POST",
@@ -56,6 +56,8 @@ async function validate() {
     });
 
     const result = await response.json();
+
+    console.log(result);
     
     if (!result.succes) return false;
 

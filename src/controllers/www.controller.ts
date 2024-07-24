@@ -147,6 +147,27 @@ async function sendPostManagerpage(req: CustomRequest, res: Response) {
     renderPage(req, res, "postManager", "Post Manager - Social Media", 200, { post: post.post }, ["/css/postManager.css"], ["/scripts/postManager.js"]);
 }
 
+async function sendPostEditpage(req: CustomRequest, res: Response) {
+    const postId = req.params.postId;
+    const user = req.user;
+    if (!user?.authenticated) {
+        res.redirect("/login?redirect=/" + postId + "/edit");
+        return;
+    }
+    const post = await postManager.getPost(postId, user.id as string);
+    if (!post || !post.succes || !post.post) {
+        send404page(req, res);
+        return;
+    }
+
+    if (post.post.authorId != user.id) {
+        send404page(req, res);
+        return;
+    }
+
+    renderPage(req, res, "postEdit", "Post Edit - Social Media", 200, { post: post.post }, ["/css/postEdit.css"], ["/scripts/editPost.js"]);
+}
+
 export { 
     send404page, 
     send500page, 
@@ -160,5 +181,6 @@ export {
     sendPostPage,
     sendCreatePostPage,
     sendDashboardpage,
-    sendPostManagerpage
+    sendPostManagerpage,
+    sendPostEditpage
 };

@@ -66,10 +66,51 @@ async function deletePost(req: CustomRequest, res: Response) {
     res.json(result);
 }
 
+async function setTitle(req: CustomRequest, res: Response) {
+    const user = req.user;
+    const postId = req.params.postId;
+    const { title } = req.body;
+
+    if (!user?.authenticated) {
+        res.status(401).json({ succes: false, message: "Unauthorized" });
+        return;
+    }
+
+    if (!title) {
+        res.status(400).json({ succes: false, message: "Missing title" });
+        return;
+    }
+
+    const result = await postManager.updatePost(postId, user.id as string, title, undefined);
+    res.json(result);
+}
+
+async function setContent(req: CustomRequest, res: Response) {
+    const user = req.user;
+    const postId = req.params.postId;
+    const { content } = req.body;
+
+    if (!user?.authenticated) {
+        res.status(401).json({ succes: false, message: "Unauthorized" });
+        return;
+    }
+
+    if (!content) {
+        res.status(400).json({ succes: false, message: "Missing content" });
+        return;
+    }
+
+    const result = await postManager.updatePost(postId, user.id as string, undefined, content);
+    res.json(result);
+}
+
+
 export { 
     createPost, 
     getPost, 
     publishPost, 
     unpublishPost,
-    deletePost
+    deletePost,
+    setTitle,
+    setContent
 }

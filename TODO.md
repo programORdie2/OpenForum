@@ -13,7 +13,7 @@
 - [x] String sterilization
 - [x] Dipslay posts on profile
 - [x] Delete posts
-- [ ] Edit posts
+- [x] Edit posts
 - [x] Post views
 - [ ] React to post
 - [x] User location

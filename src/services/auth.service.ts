@@ -89,7 +89,8 @@ async function loginUser(emailorusername: string, password: string) {
 
     if (!await checkLogin(emailorusername)) return { succes: false, message: "Too many login attempts" };
 
-    const user = await User.findOne({ email: emailorusername }) || await User.findOne({ username_lowercase: emailorusername });
+    let user = await User.findOne({ email: emailorusername });
+    if (!user) user = await User.findOne({ username_lowercase: emailorusername });
 
     if (!user) return { succes: false, message: "User does not exist" };
     if (!bcrypt.compareSync(password, user.password)) return { succes: false, message: "Wrong password" };

@@ -23,6 +23,9 @@ router.post('/user/location', asyncHandler(settingsController.changeLocation));
 router.get('/users/:username', asyncHandler(apiController.getProfile));
 
 router.post('/posts/create', asyncHandler(postContoller.createPost));
+router.post('/posts/:postId/title', asyncHandler(postContoller.setTitle));
+router.post('/posts/:postId/content', asyncHandler(postContoller.setContent));
+
 router.post('/posts/:postId/publish', asyncHandler(postContoller.publishPost));
 router.post('/posts/:postId/unpublish', asyncHandler(postContoller.unpublishPost));
 router.delete('/posts/:postId/delete', asyncHandler(postContoller.deletePost));

@@ -111,7 +111,7 @@ async function getPost(postId: string, requesterId: string | undefined, countsAs
         author.avatar = _author.avatar;
     }
 
-    if (requesterId===undefined) requesterId = "[guest]";
+    if (requesterId===undefined) requesterId = "[guest"+Math.floor(Math.random() * 100000000)+"]";
 
 
     if (countsAsView) {
@@ -205,11 +205,15 @@ async function deletePost(postId: string, requesterId: string) {
     return { succes: true };
 }
 
-async function updatePost(postId: string, title: string | undefined, content: string | undefined) {
+async function updatePost(postId: string, requesterId: string, title: string | undefined, content: string | undefined) {
     // Asume the author is authenticated
     const post = await Post.findOne({ postId });
     if (!post) {
         return { succes: false, message: "Post does not exist" };
+    }
+
+    if (post.authorId !== requesterId) {
+        return { succes: false, message: "Unauthorized" };
     }
 
     if (!title && !content) {
@@ -222,7 +226,7 @@ async function updatePost(postId: string, title: string | undefined, content: st
 
         post.title = title;
         post.serializedTitle = serializedTitle;
-        post.id = generateRandomId(serializedTitle);
+        post.postId = await generateRandomId(serializedTitle);
     }
     if (content) {
         post.content = content;
