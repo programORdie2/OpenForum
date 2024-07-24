@@ -18,6 +18,31 @@ async function generateRandomId(serializedTitle: string) {
     return randomId;
 }
 
+function getPostData(post: any) {
+    const views = getViews(post.views);
+    return {
+        postId: post.postId,
+        title: post.title,
+        topic: post.topic,
+        content: post.content,
+        authorId: post.authorId,
+        createdAt: post.createdAt,
+        updatedAt: post.updatedAt,
+        public: post.public,
+        publishedAt: post.publischedAt,
+        totalViews: views.totalViews,
+        uniqueViews: views.uniqueViews
+    };
+}
+
+function getViews(views: Map<string, number>) {
+    const totalViews = Array.from(views.values()).reduce((a, b) => a + b, 0);
+    const uniqueViews = views.size;
+
+    return { totalViews, uniqueViews };
+}
+
+
 async function createPost(authorId: string, title: string, topic: string, content: string) {
     // Asume the author is authenticated
 
@@ -47,7 +72,7 @@ async function createPost(authorId: string, title: string, topic: string, conten
     return post;
 }
 
-async function getPost(postId: string, requesterId: string | undefined) {
+async function getPost(postId: string, requesterId: string | undefined, countsAsView: boolean = false) {
     postId = postId.toLowerCase();
     const post = await Post.findOne({ postId });    
 
@@ -66,6 +91,22 @@ async function getPost(postId: string, requesterId: string | undefined) {
         author.username = _author.username;
         author.displayName = _author.displayName;
         author.avatar = _author.avatar;
+    }
+
+    if (requesterId===undefined) requesterId = "[guest]";
+
+
+    if (countsAsView) {
+        if (post.views.get(requesterId)) {
+            post.views.set(requesterId, (post.views.get(requesterId) as number) + 1);
+        } else {
+            post.views.set(requesterId, 1);
+        }
+    
+        // Else it won't save
+        post.markModified('views');
+        
+        await post.save();
     }
 
     const postData = {
@@ -171,20 +212,6 @@ async function updatePost(postId: string, title: string | undefined, content: st
     await User.updateOne({ userId: post.authorId }, { $push: { posts: getPostData(post) } });
 
     return { succes: true, post: post };
-}
-
-function getPostData(post: any) {
-    return {
-        postId: post.postId,
-        title: post.title,
-        topic: post.topic,
-        content: post.content,
-        authorId: post.authorId,
-        createdAt: post.createdAt,
-        updatedAt: post.updatedAt,
-        public: post.public,
-        publishedAt: post.publischedAt,
-    };
 }
 
 async function getUserPosts(userId: string) {

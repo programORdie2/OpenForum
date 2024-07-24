@@ -14,6 +14,6 @@
 - [x] Dipslay posts on profile
 - [ ] Delete posts
 - [ ] Edit posts
-- [ ] Post view
+- [x] Post views
 - [ ] React to post
 - [ ] User location

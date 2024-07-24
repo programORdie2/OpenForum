@@ -89,7 +89,7 @@ async function sendPostPage(req: CustomRequest, res: Response) {
     const userId = req.user?.id;
     const postId = req.params.postId;
 
-    const post = await postManager.getPost(postId, userId);
+    const post = await postManager.getPost(postId, userId, true);
 
     if (!post || !post.succes || !post.post) {
         send404page(req, res);

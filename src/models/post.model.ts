@@ -15,6 +15,8 @@ const postSchema = new mongoose.Schema({
 
     public: { type: Boolean, default: false },
     serializedTitle: { type: String, default: "" },
+
+    views: { type: Map, of: Number, default: {} },
 });
 
 const Post = mongoose.model("Post", postSchema);
