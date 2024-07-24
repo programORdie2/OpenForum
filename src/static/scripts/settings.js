@@ -5,6 +5,7 @@ const avatarInput = document.getElementById("avatar");
 const avatarPreview = document.getElementById("preview-avatar");
 const usernameInput = document.getElementById("username");
 const emailInput = document.getElementById("email");
+const locationInput = document.getElementById("location");
 const saveButton = document.getElementById("saveChanges");
 
 let avatarChanged = false;
@@ -13,7 +14,7 @@ function checkChanges() {
     if (nameInput.value == "") {
         return false;
     }
-    if (nameInput.value != nameInput.getAttribute("data-value") || bioInput.value != bioInput.getAttribute("data-value") || pronounceInput.value != pronounceInput.getAttribute("data-value") || usernameInput.value != usernameInput.getAttribute("data-value") || emailInput.value != emailInput.getAttribute("data-value")) {
+    if (nameInput.value != nameInput.getAttribute("data-value") || bioInput.value != bioInput.getAttribute("data-value") || pronounceInput.value != pronounceInput.getAttribute("data-value") || usernameInput.value != usernameInput.getAttribute("data-value") || emailInput.value != emailInput.getAttribute("data-value") || locationInput.value != locationInput.getAttribute("data-value")) {
         return true;
     }
     if (avatarChanged) {
@@ -43,6 +44,10 @@ function getChanges() {
 
     if (emailInput.value != emailInput.getAttribute("data-value")) {
         changes.push({ name: "email", value: emailInput.value });
+    }
+
+    if (locationInput.value != locationInput.getAttribute("data-value")) {
+        changes.push({ name: "location", value: locationInput.value });
     }
 
     if (avatarChanged) {
@@ -75,6 +80,7 @@ bioInput.addEventListener("input", onAnyInput);
 pronounceInput.addEventListener("input", onAnyInput);
 usernameInput.addEventListener("input", onAnyInput);
 emailInput.addEventListener("input", onAnyInput);
+locationInput.addEventListener("input", onAnyInput);
 
 function saveChanges() {
     const changes = getChanges();
@@ -89,28 +95,36 @@ function saveChanges() {
             body: JSON.stringify({ value: change.value })
         });
 
-        if (!res.ok) {
-            console.log("Failed to save changes");
-            alert("Failed to save changes");
+        const data = await res.json();
+        console.log(data);
 
-            setTimeout(() => {
-                window.location.reload();
-            }, 2000);
+        if (!data.succes) {
+            console.log("Failed to save changes of " + change.name);
+            alert("Failed to save changes of " + change.name);
+        } else {
+            if (change.name == "displayname") {
+                nameInput.setAttribute("data-value", nameInput.value);
+                document.querySelector(".user-info .username .text").innerText = nameInput.value;
+            } else if (change.name == "avatar") {
+                avatarPreview.src = change.value;
+                avatarChanged = false;
+                document.querySelector(".user-info .username img").src = avatarPreview.src;
+            } else if (change.name == "username") {
+                usernameInput.setAttribute("data-value", usernameInput.value);
+                document.querySelector(".user-info .user-actions .profile-link").href = `/@${usernameInput.value}`
+            } else if (change.name == "email") {
+                emailInput.setAttribute("data-value", emailInput.value);
+            } else if (change.name == "location") {
+                locationInput.setAttribute("data-value", locationInput.value);
+            } else if (change.name == "bio") {
+                bioInput.setAttribute("data-value", bioInput.value);
+            } else if (change.name == "pronounce") {
+                pronounceInput.setAttribute("data-value", pronounceInput.value);
+            }
         }
     });
 
-    nameInput.setAttribute("data-value", nameInput.value);
-    bioInput.setAttribute("data-value", bioInput.value);
-    pronounceInput.setAttribute("data-value", pronounceInput.value);
-    usernameInput.setAttribute("data-value", usernameInput.value);
-    emailInput.setAttribute("data-value", emailInput.value);
     hideUnsavedChanges();
-
-    avatarChanged = false;
-
-    document.querySelector(".user-info .username .text").innerText = nameInput.value;
-    document.querySelector(".user-info .username img").src = avatarPreview.src;
-    document.querySelector(".user-info .user-actions .profile-link").href = `/@${usernameInput.value}`
 }
 
 saveButton.addEventListener("click", saveChanges);

@@ -16,4 +16,4 @@
 - [ ] Edit posts
 - [x] Post views
 - [ ] React to post
-- [ ] User location
+- [x] User location

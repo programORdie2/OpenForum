@@ -9,6 +9,7 @@ interface CustomRequest extends Request {
         pronounce?: string;
         bio?: string;
         displayName?: string;
+        location?: string;
         id?: string;
     }
 }

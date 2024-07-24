@@ -15,6 +15,7 @@ function prep_return(user: any) {
         pronounce: user.pronounce,
         bio: user.bio,
         displayName: user.displayName,
+        location: user.location,
         posts: getPostDatas(user.posts),
     };
 }

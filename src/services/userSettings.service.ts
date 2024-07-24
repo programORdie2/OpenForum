@@ -33,6 +33,7 @@ async function setSetting(id: string, settingsName: string, settingsValue: strin
         if (res.modifiedCount > 0) {
             return true;
         }
+
         return false;
     }
 
@@ -41,6 +42,9 @@ async function setSetting(id: string, settingsName: string, settingsValue: strin
     if (res.modifiedCount > 0) {
         return true;
     }
+    
+    console.log("User: " + id + " not found in database");
+
     return false;
 }
 

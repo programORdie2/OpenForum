@@ -30,6 +30,7 @@ export default async (req: CustomRequest, res: Response, next: NextFunction) => 
             pronounce: result.pronounce,
             bio: result.bio,
             displayName: result.displayName,
+            location: result.location,
             id: result.id,
         }
         return next();
