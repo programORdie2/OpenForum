@@ -53,9 +53,23 @@ async function unpublishPost(req: CustomRequest, res: Response) {
     res.json(result);
 }
 
+async function deletePost(req: CustomRequest, res: Response) {
+    const postId = req.params.postId;
+    const user = req.user;
+
+    if (!user?.authenticated) {
+        res.status(401).json({ succes: false, message: "Unauthorized" });
+        return;
+    }
+
+    const result = await postManager.deletePost(postId, user.id as string);
+    res.json(result);
+}
+
 export { 
     createPost, 
     getPost, 
     publishPost, 
-    unpublishPost
+    unpublishPost,
+    deletePost
 }

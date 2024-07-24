@@ -185,12 +185,18 @@ async function unpublishPost(postId: string, requesterId: string) {
     return { succes: true, post: post };
 }
 
-async function deletePost(postId: string) {
+async function deletePost(postId: string, requesterId: string) {
     // Asume the author is authenticated
     const post = await Post.findOne({ postId });
+    
     if (!post) {
         return { succes: false, message: "Post does not exist" };
     }
+
+    if (post.authorId !== requesterId) {
+        return { succes: false, message: "Unauthorized" };
+    }
+
     await Post.deleteOne({ postId });
 
     // Update user

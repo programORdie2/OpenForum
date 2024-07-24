@@ -12,7 +12,7 @@
 - [x] Publish post
 - [x] String sterilization
 - [x] Dipslay posts on profile
-- [ ] Delete posts
+- [x] Delete posts
 - [ ] Edit posts
 - [x] Post views
 - [ ] React to post
