@@ -10,7 +10,7 @@
 - [x] Logout
 - [x] Create post
 - [x] Publish post
-- [ ] String sterilization
+- [x] String sterilization
 - [x] Dipslay posts on profile
 - [ ] Delete posts
 - [ ] Edit posts

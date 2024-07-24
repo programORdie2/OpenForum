@@ -116,7 +116,17 @@ async function validateToken(token: string) {
 
     if (!user) return { succes: false, message: "User does not exist" };
 
-    return { succes: true, username: user.username, email: user.email, avatar: user.avatar, pronounce: user.pronounce, bio: user.bio, displayName: user.displayName, location: user.location, id: user.userId };
+    return { 
+        succes: true, 
+        username: user.username, 
+        email: user.email, 
+        avatar: user.avatar, 
+        pronounce: user.pronounce, 
+        bio: user.bio, 
+        displayName: user.displayName, 
+        location: user.location, 
+        id: user.userId 
+    };
 }
 
 export { registerUser, loginUser, validateToken }

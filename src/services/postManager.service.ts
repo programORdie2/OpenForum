@@ -1,5 +1,6 @@
 import { Post } from "../models/post.model";
 import { User } from "../models/user.model";
+import serialize from "../utils/serialize.util";
 import { validatePostTitle, validateTopic } from "../utils/validator.util";
 import { loadUserProfileById } from "./userProfileLoader.service";
 
@@ -18,8 +19,25 @@ async function generateRandomId(serializedTitle: string) {
     return randomId;
 }
 
-function getPostData(post: any) {
+function getPostData(post: any, serialized: boolean = false) {
     const views = getViews(post.views);
+
+    if (serialized) {
+        return {
+            postId: post.postId,
+            title: serialize(post.title),
+            topic: serialize(post.topic),
+            content: serialize(post.content),
+            authorId: post.authorId,
+            createdAt: post.createdAt,
+            updatedAt: post.updatedAt,
+            public: post.public,
+            publishedAt: post.publischedAt,
+            totalViews: views.totalViews,
+            uniqueViews: views.uniqueViews
+        };
+    }
+
     return {
         postId: post.postId,
         title: post.title,
@@ -67,7 +85,7 @@ async function createPost(authorId: string, title: string, topic: string, conten
     });
     await post.save();
 
-    await User.updateOne({ userId: authorId }, { $push: { posts: getPostData(post) } });
+    await User.updateOne({ userId: authorId }, { $push: { posts: getPostData(post, true) } });
 
     return post;
 }
@@ -110,7 +128,7 @@ async function getPost(postId: string, requesterId: string | undefined, countsAs
     }
 
     const postData = {
-        ...getPostData(post),
+        ...getPostData(post, true),
         author: author,
     };
 
@@ -137,7 +155,7 @@ async function publishPost(postId: string, requesterId: string) {
 
     // Update user
     await User.updateOne({ userId: post.authorId }, { $pull: { posts: { postId: post.postId } } });
-    await User.updateOne({ userId: post.authorId }, { $push: { posts: getPostData(post) } });
+    await User.updateOne({ userId: post.authorId }, { $push: { posts: getPostData(post, true) } });
 
     return { succes: true, post: post };
 }
@@ -162,7 +180,7 @@ async function unpublishPost(postId: string, requesterId: string) {
 
     // Update user
     await User.updateOne({ userId: post.authorId }, { $pull: { posts: { postId: post.postId } } });
-    await User.updateOne({ userId: post.authorId }, { $push: { posts: getPostData(post) } });
+    await User.updateOne({ userId: post.authorId }, { $push: { posts: getPostData(post, true) } });
 
     return { succes: true, post: post };
 }
@@ -209,7 +227,7 @@ async function updatePost(postId: string, title: string | undefined, content: st
 
     // Update user
     await User.updateOne({ userId: post.authorId }, { $pull: { posts: { postId: postId } } });
-    await User.updateOne({ userId: post.authorId }, { $push: { posts: getPostData(post) } });
+    await User.updateOne({ userId: post.authorId }, { $push: { posts: getPostData(post, true) } });
 
     return { succes: true, post: post };
 }

@@ -1,4 +1,5 @@
 import { User } from "../models/user.model";
+import serialize from "../utils/serialize.util";
 
 function getPostDatas(posts: Array<any>) {
     const publicPosts = posts.filter((post) => post.public);
@@ -9,13 +10,13 @@ function getPostDatas(posts: Array<any>) {
 function prep_return(user: any) {
     if (!user) return null;
     return {
-        username: user.username,
+        username: serialize(user.username),
         createdAt: user.createdAt,
         avatar: user.avatar,
-        pronounce: user.pronounce,
-        bio: user.bio,
-        displayName: user.displayName,
-        location: user.location,
+        pronounce: serialize(user.pronounce),
+        bio: serialize(user.bio),
+        displayName: serialize(user.displayName),
+        location: serialize(user.location),
         posts: getPostDatas(user.posts),
     };
 }

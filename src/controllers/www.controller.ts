@@ -2,14 +2,23 @@ import { Response } from "express";
 import { CustomRequest } from "../customTypes";
 import { existsSync } from "fs";
 
-import { loadUserProfile, loadUserProfileById } from "../services/userProfileLoader.service";
+import { loadUserProfile } from "../services/userProfileLoader.service";
 import * as postManager from "../services/postManager.service";
 
 function renderPage(req: CustomRequest, res: Response, page: string, customTitle: string = "Social Media", status: number = 200, data?: object, extraCss: Array<string> = [], extraJs: Array<string> = []) {
     const user = req.user;
     const description = "Social media for everyone";
 
-    const allData = { title: customTitle, user: user, description: description, ...data, partialData: {}, partialName: "partials/" + page, extraCss, extraJs };
+    const allData = { 
+        title: customTitle,
+        user: user,
+        description: description,
+        partialData: {},
+        partialName: "partials/" + page,
+        extraCss,
+        extraJs,
+        ...data
+    };
     allData.partialData = allData;
 
     res.status(status).render("main", allData);
