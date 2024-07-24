@@ -1,5 +1,5 @@
 import { Response } from "express";
-import { CustomRequest } from "../customTypes";
+import CustomRequest from "../types/CustomRequest";
 import * as postManager from "../services/postManager.service";
 
 async function createPost(req: CustomRequest, res: Response) {

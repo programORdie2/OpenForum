@@ -1,5 +1,5 @@
 import { NextFunction, Response } from "express";
-import { CustomRequest } from "../customTypes";
+import CustomRequest from "../types/CustomRequest";
 
 import { send500page } from "../controllers/www.controller";
 import logger from "../utils/logger.util";

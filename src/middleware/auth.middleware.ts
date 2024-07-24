@@ -1,7 +1,7 @@
 import { Response, NextFunction } from "express";
 import * as auth from "../services/auth.service";
 
-import { CustomRequest } from "../customTypes";
+import CustomRequest from "../types/CustomRequest";
 
 export default async (req: CustomRequest, res: Response, next: NextFunction) => {
     let token: string | undefined;

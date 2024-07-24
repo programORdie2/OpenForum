@@ -1,4 +1,4 @@
-import { CustomRequest } from "../customTypes";
+import CustomRequest from "../types/CustomRequest";
 import { Response } from "express";
 
 import { setSetting } from "../services/userSettings.service";

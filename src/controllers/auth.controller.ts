@@ -1,5 +1,5 @@
 import * as auth from "../services/auth.service";
-import { CustomRequest } from "../customTypes";
+import CustomRequest from "../types/CustomRequest";
 import { Response } from "express";
 
 async function loginController(req: CustomRequest, res: Response) {

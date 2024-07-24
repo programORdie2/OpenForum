@@ -14,4 +14,4 @@ interface CustomRequest extends Request {
     }
 }
 
-export { CustomRequest }
+export default CustomRequest

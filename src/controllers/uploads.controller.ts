@@ -1,5 +1,5 @@
 import { Response } from "express";
-import { CustomRequest } from "../customTypes";
+import CustomRequest from "../types/CustomRequest";
 import { existsSync } from "fs";
 import { UPLOAD_PATH } from "../config";
 import { send404page } from "../controllers/www.controller";
