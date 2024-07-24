@@ -76,7 +76,7 @@ async function getPost(postId: string, requesterId: string | undefined) {
     return { succes: true, post: postData };
 }
 
-async function publishPost(postId: string) {
+async function publishPost(postId: string, requesterId: string) {
     // Asume the author is authenticated
     const post = await Post.findOne({ postId });
     if (!post) {
@@ -86,17 +86,22 @@ async function publishPost(postId: string) {
         return { succes: false, message: "Post already published" };
     }
 
+    if (post.authorId !== requesterId) {
+        return { succes: false, message: "Unauthorized" };
+    }
+
     post.public = true;
     post.publischedAt = new Date();
     await post.save();
 
     // Update user
-    await User.updateOne({ userId: post.authorId }, { $pull: { posts: { postId: post.postId } }, $push: { posts: getPostData(post) } });
+    await User.updateOne({ userId: post.authorId }, { $pull: { posts: { postId: post.postId } } });
+    await User.updateOne({ userId: post.authorId }, { $push: { posts: getPostData(post) } });
 
     return { succes: true, post: post };
 }
 
-async function unpublishPost(postId: string) {
+async function unpublishPost(postId: string, requesterId: string) {
     // Asume the author is authenticated
     const post = await Post.findOne({ postId });
     if (!post) {
@@ -106,12 +111,17 @@ async function unpublishPost(postId: string) {
         return { succes: false, message: "Post already unpublished" };
     }
 
+    if (post.authorId !== requesterId) {
+        return { succes: false, message: "Unauthorized" };
+    }
+
     post.public = false;
     post.publischedAt = null;
     await post.save();
 
     // Update user
-    await User.updateOne({ userId: post.authorId }, { $pull: { posts: { postId: post.postId } }, $push: { posts: getPostData(post) } });
+    await User.updateOne({ userId: post.authorId }, { $pull: { posts: { postId: post.postId } } });
+    await User.updateOne({ userId: post.authorId }, { $push: { posts: getPostData(post) } });
 
     return { succes: true, post: post };
 }
@@ -157,7 +167,8 @@ async function updatePost(postId: string, title: string | undefined, content: st
     await post.save();
 
     // Update user
-    User.updateOne({ userId: post.authorId }, { $pull: { posts: { postId: postId } }, $push: { posts: getPostData(post) } });
+    await User.updateOne({ userId: post.authorId }, { $pull: { posts: { postId: postId } } });
+    await User.updateOne({ userId: post.authorId }, { $push: { posts: getPostData(post) } });
 
     return { succes: true, post: post };
 }

@@ -115,6 +115,29 @@ async function sendDashboardpage(req: CustomRequest, res: Response) {
     renderPage(req, res, "dashboard", "Dashboard - Social Media", 200, { posts: posts.posts }, ["/css/dashboard.css"], ["/scripts/dashboard.js"]);
 }
 
+async function sendPostManagerpage(req: CustomRequest, res: Response) {
+    const postId = req.params.postId;
+
+    const user = req.user;
+    if (!user?.authenticated) {
+        res.redirect("/login?redirect=/" + postId + "/manage");
+        return;
+    }
+
+    const post = await postManager.getPost(postId, user.id as string);
+    if (!post || !post.succes || !post.post) {
+        send404page(req, res);
+        return;
+    }
+
+    if (post.post.authorId != user.id) {
+        send404page(req, res);
+        return;
+    }
+
+    renderPage(req, res, "postManager", "Post Manager - Social Media", 200, { post: post.post }, ["/css/postManager.css"], ["/scripts/postManager.js"]);
+}
+
 export { 
     send404page, 
     send500page, 
@@ -127,5 +150,6 @@ export {
     sendSettingspage,
     sendPostPage,
     sendCreatePostPage,
-    sendDashboardpage
+    sendDashboardpage,
+    sendPostManagerpage
 };

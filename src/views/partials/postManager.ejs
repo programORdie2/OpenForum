@@ -1,0 +1,11 @@
+<p><%= JSON.stringify(post) %></p>
+<h1><%= post.title %></h1>
+<h2><%= post.topic %></h2>
+
+<script>const postId = "<%= post.postId %>"</script>
+
+<% if (post.public) { %>
+    <button id="unpublish-post" class="button">Unpublish</button>
+<% } else { %>
+    <button id="publish-post" class="button">Publish</button>
+<% } %>

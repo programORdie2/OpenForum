@@ -23,7 +23,8 @@ router.post('/user/location', asyncHandler(settingsController.changeLocation));
 router.get('/users/:username', asyncHandler(apiController.getProfile));
 
 router.post('/posts/create', asyncHandler(postContoller.createPost));
-
+router.post('/posts/:postId/publish', asyncHandler(postContoller.publishPost));
+router.post('/posts/:postId/unpublish', asyncHandler(postContoller.unpublishPost));
 router.get('/posts/:postId', asyncHandler(postContoller.getPost));
 
 router.all("*", (req, res) => {

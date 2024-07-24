@@ -9,7 +9,11 @@
 - [x] About me
 - [x] Logout
 - [x] Create post
-- [ ] Publish post
+- [x] Publish post
 - [ ] String sterilization
 - [x] Dipslay posts on profile
-- [ ] Manage posts
+- [ ] Delete posts
+- [ ] Edit posts
+- [ ] Post view
+- [ ] React to post
+- [ ] User location

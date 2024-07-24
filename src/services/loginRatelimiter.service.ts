@@ -1,6 +1,8 @@
 import { MAX_LOGIN_ATTEMPTS } from '../config';
 import logger from '../utils/logger.util';
 
+let local_data: any = {};
+
 async function checkLogin(email: string) {
     // Send a 'user' event with the email
     try {
@@ -14,9 +16,21 @@ async function checkLogin(email: string) {
         }
         return true
     } catch (error) {
-        logger.error("error", error)
+        logger.error("error", error);
+        if (local_data[email]) {
+            local_data[email] += 1
+        } else {
+            local_data[email] = 1
+        }
+        if (local_data[email] > MAX_LOGIN_ATTEMPTS) {
+            return false
+        }
         return true
     }
 }
+
+setInterval(() => {
+    local_data = {}
+}, 60 * 1000)
 
 export default checkLogin

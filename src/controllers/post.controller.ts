@@ -27,4 +27,35 @@ async function getPost(req: CustomRequest, res: Response) {
     res.json(post);
 }
 
-export { createPost, getPost }
+async function publishPost(req: CustomRequest, res: Response) {
+    const postId = req.params.postId;
+    const user = req.user;
+
+    if (!user?.authenticated) {
+        res.status(401).json({ succes: false, message: "Unauthorized" });
+        return;
+    }
+
+    const result = await postManager.publishPost(postId, user.id as string);
+    res.json(result);
+}
+
+async function unpublishPost(req: CustomRequest, res: Response) {
+    const postId = req.params.postId;
+    const user = req.user;
+
+    if (!user?.authenticated) {
+        res.status(401).json({ succes: false, message: "Unauthorized" });
+        return;
+    }
+
+    const result = await postManager.unpublishPost(postId, user.id as string);
+    res.json(result);
+}
+
+export { 
+    createPost, 
+    getPost, 
+    publishPost, 
+    unpublishPost
+}
