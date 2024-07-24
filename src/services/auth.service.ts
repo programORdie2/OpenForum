@@ -2,7 +2,7 @@ import jwt, { Secret, JwtPayload } from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import { v4 as uuidv4 } from 'uuid';
 
-import { validateEmail, validatePassword, validateUsername } from './validator.service';
+import { validateEmail, validatePassword, validateUsername } from '../utils/validator.util';
 import { User } from '../models/user.model';
 
 import { uploadDefaultAvater } from './imageDatabase.service';

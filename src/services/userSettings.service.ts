@@ -1,6 +1,6 @@
 import { User } from "../models/user.model";
 import { uploadAvater } from "./imageDatabase.service";
-import { validateEmail, validateUsername } from "./validator.service";
+import { validateEmail, validateUsername } from "../utils/validator.util";
 
 async function setSetting(id: string, settingsName: string, settingsValue: string) {
     if (settingsName === "avatar") {

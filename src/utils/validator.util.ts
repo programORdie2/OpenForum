@@ -16,9 +16,8 @@ function validateUsername(username: string) {
 }
 
 function validatePostTitle(title: string) {
-    // Lower and uppercase, numbers, spaces, hyphens and underscores, between 3 and 50 characters
-    const re = /^[a-zA-Z0-9\s\-_]{3,50}$/;
-    return re.test(String(title).toLowerCase());
+    // Between 3 and 80 characters
+    return title.length >= 3 && title.length <= 80;
 }
 
 function validateTopic(topic: string) {

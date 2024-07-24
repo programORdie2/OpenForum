@@ -1,10 +1,11 @@
 import { Post } from "../models/post.model";
 import { User } from "../models/user.model";
-import { validatePostTitle, validateTopic } from "./validator.service";
+import { validatePostTitle, validateTopic } from "../utils/validator.util";
 import { loadUserProfileById } from "./userProfileLoader.service";
 
 function serializeTitle(title: string) {
-    return title.toLowerCase().replace(/ /g, '-');
+    // Lowercase, replace spaces with dashes, max length 30, exlude nonalphanumeric characters;
+    return title.slice(0, 30).toLowerCase().replace(/ /g, '-').replace(/[^a-zA-Z0-9-]/g, '');
 }
 
 async function generateRandomId(serializedTitle: string) {
