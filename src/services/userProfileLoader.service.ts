@@ -7,12 +7,12 @@ function getPostDatas(posts: Array<any>) {
     return publicPosts;
 }
 
-function getReactionsData(reactions: any[]) {
-    return reactions.map((reaction: any) => {
+function getcommentsData(comments: any[]) {
+    return comments.map((comment: any) => {
         return {
-            at: reaction.at,
-            postId: reaction.postId,
-            reactionId: reaction.reactionId
+            at: comment.at,
+            postId: comment.postId,
+            commentId: comment.commentId
         };
     });
 }
@@ -28,7 +28,7 @@ function prep_return(user: any) {
         displayName: serialize(user.displayName),
         location: serialize(user.location),
         posts: getPostDatas(user.posts),
-        reactions: getReactionsData(user.reactions)
+        comments: getcommentsData(user.comments)
     };
 }
 

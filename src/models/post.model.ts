@@ -10,10 +10,10 @@ const postSchema = new mongoose.Schema({
     updatedAt: { type: Date, default: Date.now },
     publischedAt: { type: Date },
     content: { type: String, required: true },
-    reactions: { 
+    comments: { 
         type: [{
             userId: { type: String, required: true },
-            reactionId: { type: String, required: true },
+            commentId: { type: String, required: true },
 
             createdAt: { type: Date, default: Date.now },
             updatedAt: { type: Date, default: Date.now },

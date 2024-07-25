@@ -1,14 +1,14 @@
 try {
-    document.getElementById("reaction-submit").addEventListener("click", submitReaction);
+    document.getElementById("comment-submit").addEventListener("click", submitcomment);
 } catch (e) {
     // The user is not logged in
 }
 
 
-async function submitReaction(e) {
+async function submitcomment(e) {
     e.preventDefault();
-    const content = document.getElementById("reaction-content").value;
-    const _res = await fetch("/api/posts/" + postId + "/reactions", {
+    const content = document.getElementById("comment-content").value;
+    const _res = await fetch("/api/posts/" + postId + "/comments", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -16,7 +16,7 @@ async function submitReaction(e) {
         },
         body: JSON.stringify({
             content: content,
-            parentId: document.getElementById("reaction-parent").value,
+            parentId: document.getElementById("comment-parent").value,
         }),
     });
 

@@ -18,16 +18,16 @@ async function generateRandomId(serializedTitle: string) {
     return randomId.replace(/--/g, '-');
 }
 
-function getReactionsData(reactions: any[]) {
-    return reactions.map((reaction: any) => {
+function getcommentsData(comments: any[]) {
+    return comments.map((comment: any) => {
         return {
-            authorId: reaction.userId,
-            content: reaction.content,
-            createdAt: reaction.createdAt,
-            updatedAt: reaction.updatedAt,
-            parent: reaction.parent,
-            reactionId: reaction.reactionId,
-            children: reaction.children
+            authorId: comment.userId,
+            content: comment.content,
+            createdAt: comment.createdAt,
+            updatedAt: comment.updatedAt,
+            parent: comment.parent,
+            commentId: comment.commentId,
+            children: comment.children
         };
     });
 }
@@ -47,7 +47,7 @@ function getPostData(post: any) {
         publishedAt: post.publischedAt,
         totalViews: views.totalViews,
         uniqueViews: views.uniqueViews,
-        reactions: getReactionsData(post.reactions)
+        comments: getcommentsData(post.comments)
     };
 }
 
@@ -225,17 +225,17 @@ async function updatePost(postId: string, requesterId: string, title: string | u
         post.title = title;
         post.serializedTitle = serializedTitle;
         post.postId = await generateRandomId(serializedTitle);
-        post.reactions.forEach(async (reaction) => {
-            const authorId = reaction.userId;
+        post.comments.forEach(async (comment) => {
+            const authorId = comment.userId;
             const author = await User.findOne({ userId: authorId });
-            const reactionId = reaction.reactionId;
+            const commentId = comment.commentId;
 
             if (!author) return;
 
-            const reactionInUser = author.reactions.find((r) => r.reactionId === reactionId);
-            if (!reactionInUser) return;
+            const commentInUser = author.comments.find((r) => r.commentId === commentId);
+            if (!commentInUser) return;
 
-            reactionInUser.postId = post.postId;
+            commentInUser.postId = post.postId;
             await author.save();
         })
     }
@@ -284,32 +284,32 @@ async function reactOnPost(postId: string, requesterId: string, content: string,
         return { succes: false, message: "User does not exist" };
     }
 
-    const reactionId = Math.floor(Math.random() * 1000000000000000000).toString();
+    const commentId = Math.floor(Math.random() * 1000000000000000000).toString();
 
     if (parentId) {
-        const parent = post.reactions.find((reaction) => reaction.reactionId === parentId);
+        const parent = post.comments.find((comment) => comment.commentId === parentId);
         if (!parent) {
             return { succes: false, message: "Parent does not exist" };
         }
 
-        parent.children.push(reactionId);
+        parent.children.push(commentId);
     }
 
-    const reaction = {
+    const comment = {
         userId: requesterId,
         content: content,
-        reactionId: reactionId,
+        commentId: commentId,
         parent: parentId,
     }
 
-    post.reactions.push(reaction);
+    post.comments.push(comment);
 
     await post.save();
 
     // Update user
-    await User.updateOne({ userId: post.authorId }, { $push: { reactions: { postId: post.postId, reactionId } } });
+    await User.updateOne({ userId: post.authorId }, { $push: { comments: { postId: post.postId, commentId } } });
 
-    return { succes: true, reaction: reaction };
+    return { succes: true, comment: comment };
 }
 
 export { createPost, getPost, publishPost, unpublishPost, deletePost, updatePost, getUserPosts, reactOnPost };

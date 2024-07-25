@@ -13,9 +13,9 @@ const userSchema = new mongoose.Schema({
     permissions: { type: Object, default: {mod: false, admin: false} },
 
     posts: { type: Array, default: [] },
-    reactions: { type: [{
+    comments: { type: [{
         postId: { type: String, required: true },
-        reactionId: { type: String, required: true },
+        commentId: { type: String, required: true },
         at: { type: Date, default: Date.now },
     }], default: [] },
     likes: { type: Array, default: [] },

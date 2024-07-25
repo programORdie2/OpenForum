@@ -9,24 +9,24 @@
 <p>Total Views: <%= post.totalViews %></p>
 <p>Unique Views: <%= post.uniqueViews %></p>
 
-<div id="reactions">
-    <% if (post.reactions && post.reactions.length > 0) { %>
-        <% post.reactions.forEach(reaction => { %>
-            <p><%= JSON.stringify(reaction) %></p>
+<div id="comments">
+    <% if (post.comments && post.comments.length > 0) { %>
+        <% post.comments.forEach(comment => { %>
+            <p><%= JSON.stringify(comment) %></p>
         <% }) %>
     <% } else { %>
-        <p>No reactions yet</p>
+        <p>No comments yet</p>
     <% } %>
 </div>
 
 <% if (user.authenticated) { %>
-    <label for="reaction-content">Write a reaction</label>
-    <textarea id="reaction-content" placeholder="Write a reaction"></textarea>
+    <label for="comment-content">Write a comment</label>
+    <textarea id="comment-content" placeholder="Write a comment"></textarea>
 
-    <label for="reaction-parent">Parent</label>
-    <input id="reaction-parent" type="text" placeholder="Parent ID">
+    <label for="comment-parent">Parent</label>
+    <input id="comment-parent" type="text" placeholder="Parent ID">
     
-    <button id="reaction-submit">Submit</button>
+    <button id="comment-submit">Submit</button>
 <% } %>
 
 <script>

@@ -44,12 +44,12 @@
     <% } %>
 </div>
 
-<div class="reactions">
-    <% if (profile.reactions.length > 0) { %>
-        <% for (const reaction of profile.reactions) { %>
-            <p><%= JSON.stringify(reaction) %></p>
+<div class="comments">
+    <% if (profile.comments.length > 0) { %>
+        <% for (const comment of profile.comments) { %>
+            <p><%= JSON.stringify(comment) %></p>
         <% } %>
     <% } else { %>
-        <p>No reactions</p>
+        <p>No comments</p>
     <% } %>
 </div>
