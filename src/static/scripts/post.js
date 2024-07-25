@@ -15,7 +15,8 @@ async function submitReaction(e) {
             "Authorization": `${document.cookie.split("token=")[1].split(";")[0]}`,
         },
         body: JSON.stringify({
-            content: content
+            content: content,
+            parentId: document.getElementById("reaction-parent").value,
         }),
     });
 

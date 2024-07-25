@@ -22,6 +22,10 @@
 <% if (user.authenticated) { %>
     <label for="reaction-content">Write a reaction</label>
     <textarea id="reaction-content" placeholder="Write a reaction"></textarea>
+
+    <label for="reaction-parent">Parent</label>
+    <input id="reaction-parent" type="text" placeholder="Parent ID">
+    
     <button id="reaction-submit">Submit</button>
 <% } %>
 

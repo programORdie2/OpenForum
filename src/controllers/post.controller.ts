@@ -107,7 +107,7 @@ async function setContent(req: CustomRequest, res: Response) {
 async function reactOnPost(req: CustomRequest, res: Response) {
     const user = req.user;
     const postId = req.params.postId;
-    const { content } = req.body;
+    let { content, parentId } = req.body;
 
     if (!user?.authenticated) {
         res.status(401).json({ succes: false, message: "Unauthorized" });
@@ -119,7 +119,9 @@ async function reactOnPost(req: CustomRequest, res: Response) {
         return;
     }
 
-    const result = await postManager.reactOnPost(postId, user.id as string, content);
+    if (!parentId) parentId = undefined;
+
+    const result = await postManager.reactOnPost(postId, user.id as string, content, parentId);
     res.json(result);
 }
 

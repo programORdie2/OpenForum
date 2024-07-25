@@ -1,3 +1,4 @@
+import { log } from "console";
 import { Post } from "../models/post.model";
 import { User } from "../models/user.model";
 import serialize from "../utils/serialize.util";
@@ -25,7 +26,10 @@ function getReactionsData(reactions: any[]) {
             authorId: reaction.userId,
             content: reaction.content,
             createdAt: reaction.createdAt,
-            updatedAt: reaction.updatedAt
+            updatedAt: reaction.updatedAt,
+            parent: reaction.parent,
+            reactionId: reaction.reactionId,
+            children: reaction.children
         };
     });
 }
@@ -251,7 +255,7 @@ async function getUserPosts(userId: string) {
     return { succes: true, posts: posts };
 }
 
-async function reactOnPost(postId: string, requesterId: string, content: string) {
+async function reactOnPost(postId: string, requesterId: string, content: string, parentId?: string) {
     // Asume the author is authenticated
     const post = await Post.findOne({ postId });
     const user = await User.findOne({ userId: requesterId });
@@ -270,11 +274,21 @@ async function reactOnPost(postId: string, requesterId: string, content: string)
 
     const reactionId = Math.floor(Math.random() * 1000000000000000000).toString();
 
+    if (parentId) {
+        const parent = post.reactions.find((reaction) => reaction.reactionId === parentId);
+        if (!parent) {
+            return { succes: false, message: "Parent does not exist" };
+        }
+
+        parent.children.push(reactionId);
+    }
+
     const reaction = {
         userId: requesterId,
         content: content,
         postId: post.postId,
-        reactionId: reactionId
+        reactionId: reactionId,
+        parent: parentId,
     }
 
     post.reactions.push(reaction);

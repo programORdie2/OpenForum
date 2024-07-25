@@ -20,6 +20,10 @@ const postSchema = new mongoose.Schema({
             updatedAt: { type: Date, default: Date.now },
 
             content: { type: String, required: true },
+            parent: { type: String, default: "" },
+            children: { type: Array, default: [] },
+
+            likes: { type: Array, default: [] },
         }],
         default: []
     },
