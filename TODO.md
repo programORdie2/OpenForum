@@ -17,7 +17,7 @@
 - [x] Post views
 - [x] React to post
 - [x] User location
-- [ ] Display reactions on profile
+- [x] Display reactions on profile
 - [ ] Jump to reaction
 - [ ] Visualize reactions
 - [ ] Delete reaction

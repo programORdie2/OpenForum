@@ -7,6 +7,16 @@ function getPostDatas(posts: Array<any>) {
     return publicPosts;
 }
 
+function getReactionsData(reactions: any[]) {
+    return reactions.map((reaction: any) => {
+        return {
+            at: reaction.at,
+            postId: reaction.postId,
+            reactionId: reaction.reactionId
+        };
+    });
+}
+
 function prep_return(user: any) {
     if (!user) return null;
     return {
@@ -18,6 +28,7 @@ function prep_return(user: any) {
         displayName: serialize(user.displayName),
         location: serialize(user.location),
         posts: getPostDatas(user.posts),
+        reactions: getReactionsData(user.reactions)
     };
 }
 

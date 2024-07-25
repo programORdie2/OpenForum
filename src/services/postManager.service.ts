@@ -1,7 +1,5 @@
-import { log } from "console";
 import { Post } from "../models/post.model";
 import { User } from "../models/user.model";
-import serialize from "../utils/serialize.util";
 import { validatePostTitle, validateTopic } from "../utils/validator.util";
 import { loadUserProfileById } from "./userProfileLoader.service";
 
@@ -214,6 +212,10 @@ async function updatePost(postId: string, requesterId: string, title: string | u
 
     if (post.authorId !== requesterId) {
         return { succes: false, message: "Unauthorized" };
+    }
+
+    if (title && post.public) {
+        return { succes: false, message: "Title cannot be updated after publishing" };
     }
 
     if (!title && !content) {

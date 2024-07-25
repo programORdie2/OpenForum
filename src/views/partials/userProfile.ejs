@@ -43,3 +43,13 @@
         <p>No posts</p>
     <% } %>
 </div>
+
+<div class="reactions">
+    <% if (profile.reactions.length > 0) { %>
+        <% for (const reaction of profile.reactions) { %>
+            <p><%= JSON.stringify(reaction) %></p>
+        <% } %>
+    <% } else { %>
+        <p>No reactions</p>
+    <% } %>
+</div>
