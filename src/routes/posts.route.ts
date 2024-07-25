@@ -6,6 +6,7 @@ const router = Router();
 
 router.get("/create", webController.sendCreatePostPage);
 router.get("/:postId", webController.sendPostPage);
+router.get("/:postId/comments/:commentId", webController.sendPostPage);
 router.get("/:postId/manage", webController.sendPostManagerpage);
 router.get("/:postId/edit", webController.sendPostEditpage);
 

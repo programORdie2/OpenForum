@@ -9,6 +9,10 @@
 <p>Total Views: <%= post.totalViews %></p>
 <p>Unique Views: <%= post.uniqueViews %></p>
 
+<% if (highlightedComment) { %>
+    <p><%= JSON.stringify(highlightedComment) %></p>
+<% } %>
+
 <div id="comments">
     <% if (post.comments && post.comments.length > 0) { %>
         <% post.comments.forEach(comment => { %>

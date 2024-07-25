@@ -5,7 +5,7 @@ import { loadUserProfileById } from "./userProfileLoader.service";
 
 function serializeTitle(title: string) {
     // Lowercase, replace spaces with dashes, max length 30, exlude nonalphanumeric characters;
-    return title.slice(0, 30).toLowerCase().replace(/ /g, '-').replace(/[^a-zA-Z0-9-]/g, '');
+    return title.slice(0, 30).toLowerCase().replace(/ /g, '-').replace(/[^a-zA-Z0-9-]/g, '').replace(/--/g, '-');;
 }
 
 async function generateRandomId(serializedTitle: string) {
@@ -15,7 +15,7 @@ async function generateRandomId(serializedTitle: string) {
     const digitsToAdd = 4 - postsAmount.length;
     const randomDigits = Array.from({ length: digitsToAdd }, () => Math.floor(Math.random() * 10));
     const randomId = `${serializedTitle}-${postsAmount.length}${postsAmount}${randomDigits.join('')}`;
-    return randomId.replace(/--/g, '-');
+    return randomId
 }
 
 function generateCommentId() {

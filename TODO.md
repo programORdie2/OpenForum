@@ -18,7 +18,7 @@
 - [x] React to post
 - [x] User location
 - [x] Display comments on profile
-- [ ] Jump to comment
-- [ ] Visualize comments
+- [x] Jump to comment
+- [ ] Like comment
 - [ ] Delete comment
-- [ ] Add likes
+- [ ] Like post

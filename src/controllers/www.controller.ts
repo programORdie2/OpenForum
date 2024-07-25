@@ -105,7 +105,7 @@ async function sendPostPage(req: CustomRequest, res: Response) {
         return;
     }
 
-    renderPage(req, res, "post", `${post.post.title} - Social Media`, 200, { post: post.post }, ["/css/post.css"], ["/scripts/post.js"]);
+    renderPage(req, res, "post", `${post.post.title} - Social Media`, 200, { post: post.post, highlightedComment: req.params.commentId }, ["/css/post.css"], ["/scripts/post.js"]);
 }
 
 function sendCreatePostPage(req: CustomRequest, res: Response) {
