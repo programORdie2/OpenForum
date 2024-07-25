@@ -13,6 +13,16 @@
     <p><%= JSON.stringify(highlightedComment) %></p>
 <% } %>
 
+<p>Likes: <span id="likes-count"><%= post.likes %></span></p>
+
+<% if (post.liked) { %>
+    <button id="like-post" class="button hidden">Like</button>
+    <button id="unlike-post" class="button">Unlike</button>
+<% } else { %>
+    <button id="like-post" class="button">Like</button>
+    <button id="unlike-post" class="button hidden">Unlike</button>
+<% } %>
+
 <div id="comments">
     <% if (post.comments && post.comments.length > 0) { %>
         <% post.comments.forEach(comment => { %>

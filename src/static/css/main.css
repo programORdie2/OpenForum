@@ -17,3 +17,7 @@ body {
     margin-top: var(--navbar-height);
     height: calc(100% - var(--navbar-height));
 }
+
+.hidden {
+    display: none;
+}

@@ -21,4 +21,4 @@
 - [x] Jump to comment
 - [ ] Like comment
 - [ ] Delete comment
-- [ ] Like post
+- [x] Like post

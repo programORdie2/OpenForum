@@ -36,6 +36,10 @@ function getcommentsData(comments: any[]) {
     });
 }
 
+function getLikesAmount(likes: any[]) {
+    return likes.length;
+}
+
 function getPostData(post: any) {
     const views = getViews(post.views);
 
@@ -51,6 +55,7 @@ function getPostData(post: any) {
         publishedAt: post.publischedAt,
         totalViews: views.totalViews,
         uniqueViews: views.uniqueViews,
+        likes: getLikesAmount(post.likes),
         comments: getcommentsData(post.comments)
     };
 }
@@ -129,9 +134,12 @@ async function getPost(postId: string, requesterId: string | undefined, countsAs
         await post.save();
     }
 
+    let liked = post.likes.includes(requesterId);
+
     const postData = {
         ...getPostData(post),
         author: author,
+        liked: liked
     };
 
     return { succes: true, post: postData };
@@ -316,4 +324,50 @@ async function reactOnPost(postId: string, requesterId: string, content: string,
     return { succes: true, comment: comment };
 }
 
-export { createPost, getPost, publishPost, unpublishPost, deletePost, updatePost, getUserPosts, reactOnPost };
+async function likePost(postId: string, requesterId: string) {
+    // Asume the author is authenticated
+    const post = await Post.findOne({ postId });
+    const user = await User.findOne({ userId: requesterId });
+
+    if (!post) {
+        return { succes: false, message: "Post does not exist" };
+    }
+
+    if (!user) {
+        return { succes: false, message: "User does not exist" };
+    }
+
+    if (post.likes.includes(user.userId)) {
+        return { succes: false, message: "Already liked" };
+    }
+
+    post.likes.push(user.userId);
+    await post.save();
+
+    return { succes: true };
+}
+
+async function dislikePost(postId: string, requesterId: string) {
+    // Asume the author is authenticated
+    const post = await Post.findOne({ postId });
+    const user = await User.findOne({ userId: requesterId });
+
+    if (!post) {
+        return { succes: false, message: "Post does not exist" };
+    }
+
+    if (!user) {
+        return { succes: false, message: "User does not exist" };
+    }
+
+    if (!post.likes.includes(user.userId)) {
+        return { succes: false, message: "Not liked" };
+    }
+
+    post.likes.splice(post.likes.indexOf(user.userId), 1);
+    await post.save();
+
+    return { succes: true };
+}
+
+export { createPost, getPost, publishPost, unpublishPost, deletePost, updatePost, getUserPosts, reactOnPost, likePost, dislikePost };

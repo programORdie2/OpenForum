@@ -125,6 +125,32 @@ async function reactOnPost(req: CustomRequest, res: Response) {
     res.json(result);
 }
 
+async function likePost(req: CustomRequest, res: Response) {
+    const user = req.user;
+    const postId = req.params.postId;
+
+    if (!user?.authenticated) {
+        res.status(401).json({ succes: false, message: "Unauthorized" });
+        return;
+    }
+
+    const result = await postManager.likePost(postId, user.id as string);
+    res.json(result);
+}
+
+async function dislikePost(req: CustomRequest, res: Response) {
+    const user = req.user;
+    const postId = req.params.postId;
+
+    if (!user?.authenticated) {
+        res.status(401).json({ succes: false, message: "Unauthorized" });
+        return;
+    }
+
+    const result = await postManager.dislikePost(postId, user.id as string);
+    res.json(result);
+}
+
 
 export { 
     createPost, 
@@ -134,5 +160,7 @@ export {
     deletePost,
     setTitle,
     setContent,
-    reactOnPost
+    reactOnPost,
+    likePost,
+    dislikePost
 }

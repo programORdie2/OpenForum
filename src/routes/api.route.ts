@@ -30,6 +30,8 @@ router.post('/posts/:postId/publish', asyncHandler(postContoller.publishPost));
 router.post('/posts/:postId/unpublish', asyncHandler(postContoller.unpublishPost));
 router.delete('/posts/:postId/delete', asyncHandler(postContoller.deletePost));
 
+router.post('/posts/:postId/like', asyncHandler(postContoller.likePost));
+router.post('/posts/:postId/dislike', asyncHandler(postContoller.dislikePost));
 router.post('/posts/:postId/comments', asyncHandler(postContoller.reactOnPost));
 
 router.get('/posts/:postId', asyncHandler(postContoller.getPost));
