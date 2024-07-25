@@ -280,7 +280,7 @@ async function getUserPosts(userId: string) {
     return { succes: true, posts: posts };
 }
 
-async function reactOnPost(postId: string, requesterId: string, content: string, parentId?: string) {
+async function commentOnPost(postId: string, requesterId: string, content: string, parentId?: string) {
     // Asume the author is authenticated
     const post = await Post.findOne({ postId });
     const user = await User.findOne({ userId: requesterId });
@@ -365,7 +365,7 @@ async function likePost(postId: string, requesterId: string) {
     const post = await Post.findOne({ postId });
     const user = await User.findOne({ userId: requesterId });
 
-    if (!post) {
+    if (!post || (!post.public && post.authorId !== requesterId)) {
         return { succes: false, message: "Post does not exist" };
     }
 
@@ -388,7 +388,7 @@ async function dislikePost(postId: string, requesterId: string) {
     const post = await Post.findOne({ postId });
     const user = await User.findOne({ userId: requesterId });
 
-    if (!post) {
+    if (!post || (!post.public && post.authorId !== requesterId)) {
         return { succes: false, message: "Post does not exist" };
     }
 
@@ -406,4 +406,4 @@ async function dislikePost(postId: string, requesterId: string) {
     return { succes: true };
 }
 
-export { createPost, getPost, publishPost, unpublishPost, deletePost, updatePost, getUserPosts, reactOnPost, likePost, dislikePost, deleteComment };
+export { createPost, getPost, publishPost, unpublishPost, deletePost, updatePost, getUserPosts, commentOnPost, likePost, dislikePost, deleteComment };

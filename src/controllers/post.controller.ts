@@ -104,7 +104,7 @@ async function setContent(req: CustomRequest, res: Response) {
     res.json(result);
 }
 
-async function reactOnPost(req: CustomRequest, res: Response) {
+async function commentOnPost(req: CustomRequest, res: Response) {
     const user = req.user;
     const postId = req.params.postId;
     let { content, parentId } = req.body;
@@ -121,7 +121,7 @@ async function reactOnPost(req: CustomRequest, res: Response) {
 
     if (!parentId) parentId = undefined;
 
-    const result = await postManager.reactOnPost(postId, user.id as string, content, parentId);
+    const result = await postManager.commentOnPost(postId, user.id as string, content, parentId);
     res.json(result);
 }
 
@@ -174,7 +174,7 @@ export {
     deletePost,
     setTitle,
     setContent,
-    reactOnPost,
+    commentOnPost,
     likePost,
     dislikePost,
     deleteComment

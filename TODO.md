@@ -15,7 +15,7 @@
 - [x] Delete posts
 - [x] Edit posts
 - [x] Post views
-- [x] React to post
+- [x] comment to post
 - [x] User location
 - [x] Display comments on profile
 - [x] Jump to comment

@@ -33,7 +33,7 @@ router.delete('/posts/:postId/delete', asyncHandler(postContoller.deletePost));
 router.post('/posts/:postId/like', asyncHandler(postContoller.likePost));
 router.post('/posts/:postId/dislike', asyncHandler(postContoller.dislikePost));
 
-router.post('/posts/:postId/comments', asyncHandler(postContoller.reactOnPost));
+router.post('/posts/:postId/comments', asyncHandler(postContoller.commentOnPost));
 router.delete('/posts/:postId/comments/:commentId/delete', asyncHandler(postContoller.deleteComment));
 
 router.get('/posts/:postId', asyncHandler(postContoller.getPost));
