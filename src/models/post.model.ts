@@ -10,7 +10,19 @@ const postSchema = new mongoose.Schema({
     updatedAt: { type: Date, default: Date.now },
     publischedAt: { type: Date },
     content: { type: String, required: true },
-    reactions: { type: Array, default: [] },
+    reactions: { 
+        type: [{
+            postId: { type: String, required: true },
+            userId: { type: String, required: true },
+            reactionId: { type: String, required: true },
+
+            createdAt: { type: Date, default: Date.now },
+            updatedAt: { type: Date, default: Date.now },
+
+            content: { type: String, required: true },
+        }],
+        default: []
+    },
     likes: { type: Array, default: [] },
 
     public: { type: Boolean, default: false },

@@ -19,24 +19,19 @@ async function generateRandomId(serializedTitle: string) {
     return randomId;
 }
 
-function getPostData(post: any, serialized: boolean = false) {
-    const views = getViews(post.views);
-
-    if (serialized) {
+function getReactionsData(reactions: any[]) {
+    return reactions.map((reaction: any) => {
         return {
-            postId: post.postId,
-            title: serialize(post.title),
-            topic: serialize(post.topic),
-            content: serialize(post.content),
-            authorId: post.authorId,
-            createdAt: post.createdAt,
-            updatedAt: post.updatedAt,
-            public: post.public,
-            publishedAt: post.publischedAt,
-            totalViews: views.totalViews,
-            uniqueViews: views.uniqueViews
+            authorId: reaction.userId,
+            content: reaction.content,
+            createdAt: reaction.createdAt,
+            updatedAt: reaction.updatedAt
         };
-    }
+    });
+}
+
+function getPostData(post: any) {
+    const views = getViews(post.views);
 
     return {
         postId: post.postId,
@@ -49,7 +44,8 @@ function getPostData(post: any, serialized: boolean = false) {
         public: post.public,
         publishedAt: post.publischedAt,
         totalViews: views.totalViews,
-        uniqueViews: views.uniqueViews
+        uniqueViews: views.uniqueViews,
+        reactions: getReactionsData(post.reactions)
     };
 }
 
@@ -85,14 +81,14 @@ async function createPost(authorId: string, title: string, topic: string, conten
     });
     await post.save();
 
-    await User.updateOne({ userId: authorId }, { $push: { posts: getPostData(post, true) } });
+    await User.updateOne({ userId: authorId }, { $push: { posts: getPostData(post) } });
 
     return post;
 }
 
 async function getPost(postId: string, requesterId: string | undefined, countsAsView: boolean = false) {
     postId = postId.toLowerCase();
-    const post = await Post.findOne({ postId });    
+    const post = await Post.findOne({ postId });
 
     if (!post) {
         return { succes: false, message: "Post does not exist" };
@@ -111,24 +107,24 @@ async function getPost(postId: string, requesterId: string | undefined, countsAs
         author.avatar = _author.avatar;
     }
 
-    if (requesterId===undefined) requesterId = "[guest"+Math.floor(Math.random() * 100000000)+"]";
+    if (requesterId === undefined) requesterId = "[guest" + Math.floor(Math.random() * 100000000) + "]";
 
 
-    if (countsAsView) {
+    if (countsAsView && post.public) {
         if (post.views.get(requesterId)) {
             post.views.set(requesterId, (post.views.get(requesterId) as number) + 1);
         } else {
             post.views.set(requesterId, 1);
         }
-    
+
         // Else it won't save
         post.markModified('views');
-        
+
         await post.save();
     }
 
     const postData = {
-        ...getPostData(post, true),
+        ...getPostData(post),
         author: author,
     };
 
@@ -155,7 +151,7 @@ async function publishPost(postId: string, requesterId: string) {
 
     // Update user
     await User.updateOne({ userId: post.authorId }, { $pull: { posts: { postId: post.postId } } });
-    await User.updateOne({ userId: post.authorId }, { $push: { posts: getPostData(post, true) } });
+    await User.updateOne({ userId: post.authorId }, { $push: { posts: getPostData(post) } });
 
     return { succes: true, post: post };
 }
@@ -180,7 +176,7 @@ async function unpublishPost(postId: string, requesterId: string) {
 
     // Update user
     await User.updateOne({ userId: post.authorId }, { $pull: { posts: { postId: post.postId } } });
-    await User.updateOne({ userId: post.authorId }, { $push: { posts: getPostData(post, true) } });
+    await User.updateOne({ userId: post.authorId }, { $push: { posts: getPostData(post) } });
 
     return { succes: true, post: post };
 }
@@ -188,7 +184,7 @@ async function unpublishPost(postId: string, requesterId: string) {
 async function deletePost(postId: string, requesterId: string) {
     // Asume the author is authenticated
     const post = await Post.findOne({ postId });
-    
+
     if (!post) {
         return { succes: false, message: "Post does not exist" };
     }
@@ -231,13 +227,13 @@ async function updatePost(postId: string, requesterId: string, title: string | u
     if (content) {
         post.content = content;
     }
-    
+
     post.updatedAt = now;
     await post.save();
 
     // Update user
     await User.updateOne({ userId: post.authorId }, { $pull: { posts: { postId: postId } } });
-    await User.updateOne({ userId: post.authorId }, { $push: { posts: getPostData(post, true) } });
+    await User.updateOne({ userId: post.authorId }, { $push: { posts: getPostData(post) } });
 
     return { succes: true, post: post };
 }
@@ -255,4 +251,40 @@ async function getUserPosts(userId: string) {
     return { succes: true, posts: posts };
 }
 
-export { createPost, getPost, publishPost, unpublishPost, deletePost, updatePost, getUserPosts };
+async function reactOnPost(postId: string, requesterId: string, content: string) {
+    // Asume the author is authenticated
+    const post = await Post.findOne({ postId });
+    const user = await User.findOne({ userId: requesterId });
+
+    if (!post) {
+        return { succes: false, message: "Post does not exist" };
+    }
+
+    if (!post.public) {
+        return { succes: false, message: "Post is not public" };
+    }
+
+    if (!user) {
+        return { succes: false, message: "User does not exist" };
+    }
+
+    const reactionId = Math.floor(Math.random() * 1000000000000000000).toString();
+
+    const reaction = {
+        userId: requesterId,
+        content: content,
+        postId: post.postId,
+        reactionId: reactionId
+    }
+
+    post.reactions.push(reaction);
+
+    await post.save();
+
+    // Update user
+    await User.updateOne({ userId: post.authorId }, { $push: { reactions: { postId: post.postId, reactionId } } });
+
+    return { succes: true, reaction: reaction };
+}
+
+export { createPost, getPost, publishPost, unpublishPost, deletePost, updatePost, getUserPosts, reactOnPost };

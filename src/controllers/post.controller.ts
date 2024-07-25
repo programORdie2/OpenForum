@@ -104,6 +104,25 @@ async function setContent(req: CustomRequest, res: Response) {
     res.json(result);
 }
 
+async function reactOnPost(req: CustomRequest, res: Response) {
+    const user = req.user;
+    const postId = req.params.postId;
+    const { content } = req.body;
+
+    if (!user?.authenticated) {
+        res.status(401).json({ succes: false, message: "Unauthorized" });
+        return;
+    }
+
+    if (!content) {
+        res.status(400).json({ succes: false, message: "Missing content" });
+        return;
+    }
+
+    const result = await postManager.reactOnPost(postId, user.id as string, content);
+    res.json(result);
+}
+
 
 export { 
     createPost, 
@@ -112,5 +131,6 @@ export {
     unpublishPost,
     deletePost,
     setTitle,
-    setContent
+    setContent,
+    reactOnPost
 }

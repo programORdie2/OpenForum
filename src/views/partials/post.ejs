@@ -8,3 +8,23 @@
 <p>Published: <%= post.publishedAt %></p>
 <p>Total Views: <%= post.totalViews %></p>
 <p>Unique Views: <%= post.uniqueViews %></p>
+
+<div id="reactions">
+    <% if (post.reactions && post.reactions.length > 0) { %>
+        <% post.reactions.forEach(reaction => { %>
+            <p><%= JSON.stringify(reaction) %></p>
+        <% }) %>
+    <% } else { %>
+        <p>No reactions yet</p>
+    <% } %>
+</div>
+
+<% if (user.authenticated) { %>
+    <label for="reaction-content">Write a reaction</label>
+    <textarea id="reaction-content" placeholder="Write a reaction"></textarea>
+    <button id="reaction-submit">Submit</button>
+<% } %>
+
+<script>
+    const postId = '<%= post.postId %>';
+</script>

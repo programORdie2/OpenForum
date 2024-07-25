@@ -30,6 +30,8 @@ router.post('/posts/:postId/publish', asyncHandler(postContoller.publishPost));
 router.post('/posts/:postId/unpublish', asyncHandler(postContoller.unpublishPost));
 router.delete('/posts/:postId/delete', asyncHandler(postContoller.deletePost));
 
+router.post('/posts/:postId/reactions', asyncHandler(postContoller.reactOnPost));
+
 router.get('/posts/:postId', asyncHandler(postContoller.getPost));
 
 router.all("*", (req, res) => {
