@@ -12,10 +12,10 @@ async function generateRandomId(serializedTitle: string) {
     // Generate a random id of 5 digits
     const _postsAmount = await Post.countDocuments({ serializedTitle });
     const postsAmount = _postsAmount.toString();
-    const digitsToAdd = 5 - postsAmount.length;
+    const digitsToAdd = 4 - postsAmount.length;
     const randomDigits = Array.from({ length: digitsToAdd }, () => Math.floor(Math.random() * 10));
-    const randomId = `${serializedTitle}-${postsAmount}${randomDigits.join('')}`;
-    return randomId;
+    const randomId = `${serializedTitle}-${postsAmount.length}${postsAmount}${randomDigits.join('')}`;
+    return randomId.replace(/--/g, '-');
 }
 
 function getReactionsData(reactions: any[]) {
@@ -214,10 +214,6 @@ async function updatePost(postId: string, requesterId: string, title: string | u
         return { succes: false, message: "Unauthorized" };
     }
 
-    if (title && post.public) {
-        return { succes: false, message: "Title cannot be updated after publishing" };
-    }
-
     if (!title && !content) {
         return { succes: false, message: "Nothing to update" };
     }
@@ -229,7 +225,21 @@ async function updatePost(postId: string, requesterId: string, title: string | u
         post.title = title;
         post.serializedTitle = serializedTitle;
         post.postId = await generateRandomId(serializedTitle);
+        post.reactions.forEach(async (reaction) => {
+            const authorId = reaction.userId;
+            const author = await User.findOne({ userId: authorId });
+            const reactionId = reaction.reactionId;
+
+            if (!author) return;
+
+            const reactionInUser = author.reactions.find((r) => r.reactionId === reactionId);
+            if (!reactionInUser) return;
+
+            reactionInUser.postId = post.postId;
+            await author.save();
+        })
     }
+
     if (content) {
         post.content = content;
     }
@@ -266,7 +276,7 @@ async function reactOnPost(postId: string, requesterId: string, content: string,
         return { succes: false, message: "Post does not exist" };
     }
 
-    if (!post.public) {
+    if (!post.public && post.authorId !== requesterId) {
         return { succes: false, message: "Post is not public" };
     }
 
@@ -288,7 +298,6 @@ async function reactOnPost(postId: string, requesterId: string, content: string,
     const reaction = {
         userId: requesterId,
         content: content,
-        postId: post.postId,
         reactionId: reactionId,
         parent: parentId,
     }

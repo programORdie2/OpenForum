@@ -12,7 +12,6 @@ const postSchema = new mongoose.Schema({
     content: { type: String, required: true },
     reactions: { 
         type: [{
-            postId: { type: String, required: true },
             userId: { type: String, required: true },
             reactionId: { type: String, required: true },
 
