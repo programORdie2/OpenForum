@@ -18,6 +18,10 @@ async function generateRandomId(serializedTitle: string) {
     return randomId.replace(/--/g, '-');
 }
 
+function generateCommentId() {
+    return Math.random().toString(36).substring(2, 8);
+}
+
 function getcommentsData(comments: any[]) {
     return comments.map((comment: any) => {
         return {
@@ -284,7 +288,7 @@ async function reactOnPost(postId: string, requesterId: string, content: string,
         return { succes: false, message: "User does not exist" };
     }
 
-    const commentId = Math.floor(Math.random() * 1000000000000000000).toString();
+    const commentId = generateCommentId();
 
     if (parentId) {
         const parent = post.comments.find((comment) => comment.commentId === parentId);
