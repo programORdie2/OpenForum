@@ -23,6 +23,8 @@ const postSchema = new mongoose.Schema({
             children: { type: Array, default: [] },
 
             likes: { type: Array, default: [] },
+
+            deleted: { type: Boolean, default: false },
         }],
         default: []
     },

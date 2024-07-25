@@ -31,7 +31,8 @@ function getcommentsData(comments: any[]) {
             updatedAt: comment.updatedAt,
             parent: comment.parent,
             commentId: comment.commentId,
-            children: comment.children
+            children: comment.children,
+            deleted: comment.deleted
         };
     });
 }
@@ -319,9 +320,44 @@ async function reactOnPost(postId: string, requesterId: string, content: string,
     await post.save();
 
     // Update user
-    await User.updateOne({ userId: post.authorId }, { $push: { comments: { postId: post.postId, commentId } } });
+    user.comments.push({ postId: post.postId, commentId });
+    await user.save();
 
     return { succes: true, comment: comment };
+}
+
+async function deleteComment(postId: string, requesterId: string, commentId: string) {
+    // Asume the author is authenticated
+    const post = await Post.findOne({ postId });
+    const user = await User.findOne({ userId: requesterId });
+
+    if (!post) {
+        return { succes: false, message: "Post does not exist" };
+    }
+
+    if (!user) {
+        return { succes: false, message: "User does not exist" };
+    }
+
+    if (post.authorId !== requesterId) {
+        return { succes: false, message: "Unauthorized" };
+    }
+
+    const comment = post.comments.find((comment) => comment.commentId === commentId);
+    if (!comment) {
+        return { succes: false, message: "Comment does not exist" };
+    }
+
+    comment.deleted = true;
+    comment.content = ".";
+
+    await post.save();
+
+    // Update user
+    user.comments.pull({ postId: post.postId, commentId });
+    await user.save();
+
+    return { succes: true };
 }
 
 async function likePost(postId: string, requesterId: string) {
@@ -370,4 +406,4 @@ async function dislikePost(postId: string, requesterId: string) {
     return { succes: true };
 }
 
-export { createPost, getPost, publishPost, unpublishPost, deletePost, updatePost, getUserPosts, reactOnPost, likePost, dislikePost };
+export { createPost, getPost, publishPost, unpublishPost, deletePost, updatePost, getUserPosts, reactOnPost, likePost, dislikePost, deleteComment };

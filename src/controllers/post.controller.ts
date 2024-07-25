@@ -151,6 +151,20 @@ async function dislikePost(req: CustomRequest, res: Response) {
     res.json(result);
 }
 
+async function deleteComment(req: CustomRequest, res: Response) {
+    const user = req.user;
+    const commentId = req.params.commentId;
+    const postId = req.params.postId;
+
+    if (!user?.authenticated) {
+        res.status(401).json({ succes: false, message: "Unauthorized" });
+        return;
+    }
+
+    const result = await postManager.deleteComment(postId, user.id as string, commentId);
+    res.json(result);
+}
+
 
 export { 
     createPost, 
@@ -162,5 +176,6 @@ export {
     setContent,
     reactOnPost,
     likePost,
-    dislikePost
+    dislikePost,
+    deleteComment
 }

@@ -69,3 +69,15 @@ async function dislikePost() {
         likesCount.innerHTML = parseInt(likesCount.innerHTML) - 1;
     }
 }
+
+async function deleteComment(commentId) {
+    const _res = await fetch("/api/posts/" + postId + "/comments/" + commentId + "/delete", {
+        method: "DELETE",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `${document.cookie.split("token=")[1].split(";")[0]}`,
+        },
+    });
+    const res = await _res.json();
+    console.log(res);
+}

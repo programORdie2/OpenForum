@@ -20,5 +20,5 @@
 - [x] Display comments on profile
 - [x] Jump to comment
 - [ ] Like comment
-- [ ] Delete comment
+- [x] Delete comment
 - [x] Like post
