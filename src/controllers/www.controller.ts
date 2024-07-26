@@ -82,7 +82,7 @@ async function sendUserProfilepage(req: CustomRequest, res: Response) {
         return;
     }
 
-    renderPage(req, res, "userProfile", `${userData.username} - Social Media`, 200, { profile: userData }, ["/css/userProfile.css"], []);
+    renderPage(req, res, "userProfile", `${userData.username} - Social Media`, 200, { profile: userData }, ["/css/userProfile.css"], ["/scripts/userProfile.js"]);
 }
 
 async function sendSettingspage(req: CustomRequest, res: Response) {

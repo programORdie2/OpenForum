@@ -38,3 +38,27 @@
     align-items: row;
     justify-content: space-between;
 }
+
+.posts {
+    display: flex;
+    flex-direction: column;
+}
+
+.post {
+    margin: 1rem;
+    background-color: #ccc;
+    padding: 1rem;
+    border-radius: 1rem;
+}
+
+.comments {
+    display: flex;
+    flex-direction: column;
+}
+
+.comment {
+    margin: 0.6rem;
+    background-color: #ccc;
+    padding: 0.5rem;
+    border-radius: 1rem;
+}

@@ -12,16 +12,12 @@
 
 <div class="bio-wrapper">
     <% for (const line of profile.bio.split("\n")) { %>
-        <p>
-            <%= line %>
-        </p>
-        <% } %>
+        <p><%= line %></p>
+    <% } %>
 </div>
 
 <div class="info">
-    <p>
-        <%= profile.pronounce %>
-    </p>
+    <p><%= profile.pronounce %></p>
 
     <p>Joined on <%= profile.createdAt %></p>
 
@@ -29,14 +25,15 @@
 </div>
 
 <div class="posts">
+    <h1>Posts:</h1>
     <% if (profile.posts.length > 0) { %>
         <% for (const post of profile.posts) { %>
             <div class="post">
                 <h2><a href="/posts/<%= post.postId %>"><%= post.title %></a></h2>
-                <p><%= post.topic %></p>
-                <p><%= post.createdAt %></p>
-                <p><%= post.updatedAt %></p>
-                <p><%= post.public %></p>
+                <p>topic: <%= post.topic %></p>
+                <p>Created: <%= post.createdAt %></p>
+                <p>Updated: <%= post.updatedAt %></p>
+                <p>Public: <%= post.public ? "yes" : "no" %></p>
             </div>
         <% } %>
     <% } else { %>
@@ -45,9 +42,14 @@
 </div>
 
 <div class="comments">
+    <h1>Comments:</h1>
     <% if (profile.comments.length > 0) { %>
         <% for (const comment of profile.comments) { %>
-            <p><%= JSON.stringify(comment) %></p>
+            <a class="comment" data-post-id="<%= comment.postId %>" href="/posts/<%= comment.postId %>/comments/<%= comment.commentId %>">
+                <h2 class="post-title">Loading...</h2>
+                <span class="post-topic"></span>
+                <p>Commented: <%= comment.at %></p>
+            </a>
         <% } %>
     <% } else { %>
         <p>No comments</p>
