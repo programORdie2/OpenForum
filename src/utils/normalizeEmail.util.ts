@@ -1,4 +1,4 @@
-export default function normalizeEmail(email: string) {
+export default function normalizeEmail(email: string): string {
     email = email.toLowerCase();
 
     if (!email.includes("@")) return email;

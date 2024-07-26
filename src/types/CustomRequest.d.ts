@@ -1,5 +1,6 @@
 import { Request } from "express";
 
+// Define custom request interface, used in auth middleware
 interface CustomRequest extends Request {
     user?: {
         authenticated: boolean;

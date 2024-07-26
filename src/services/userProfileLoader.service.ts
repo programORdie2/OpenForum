@@ -1,13 +1,13 @@
 import { User } from "../models/user.model";
 import serialize from "../utils/serialize.util";
 
-function getPostDatas(posts: Array<any>) {
+function getPostDatas(posts: Array<any>): any[] {
     const publicPosts = posts.filter((post) => post.public);
-
     return publicPosts;
 }
 
-function getcommentsData(comments: any[]) {
+// Get basic comment data
+function getcommentsData(comments: any[]): any[] {
     return comments.map((comment: any) => {
         return {
             at: comment.at,
@@ -17,7 +17,7 @@ function getcommentsData(comments: any[]) {
     });
 }
 
-function prep_return(user: any) {
+function prep_return(user: any): null | any {
     if (!user) return null;
     return {
         username: serialize(user.username),
@@ -32,14 +32,13 @@ function prep_return(user: any) {
     };
 }
 
-async function loadUserProfile(username: string) {
+async function loadUserProfile(username: string): Promise<null | any> {
     const user = await User.findOne({ username_lowercase: username.toLowerCase() });
     return prep_return(user);
 }
 
-async function loadUserProfileById(userId: string) {
+async function loadUserProfileById(userId: string): Promise<null | any> {
     const user = await User.findOne({ userId });
-    
     return prep_return(user);
 }
 

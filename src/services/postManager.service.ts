@@ -3,13 +3,13 @@ import { User } from "../models/user.model";
 import { validatePostTitle, validateTopic } from "../utils/validator.util";
 import { loadUserProfileById } from "./userProfileLoader.service";
 
-function serializeTitle(title: string) {
-    // Lowercase, replace spaces with dashes, max length 30, exlude nonalphanumeric characters;
+// Make a title lowercase, replace spaces with dashes, max length 30, exlude nonalphanumeric characters;
+function serializeTitle(title: string): string {
     return title.slice(0, 30).toLowerCase().replace(/ /g, '-').replace(/[^a-zA-Z0-9-]/g, '').replace(/--/g, '-');;
 }
 
-async function generateRandomId(serializedTitle: string) {
-    // Generate a random id of 5 digits
+// Generate a random id with format: <serializedTitle>-<5 digits>
+async function generateRandomId(serializedTitle: string): Promise<string> {
     const _postsAmount = await Post.countDocuments({ serializedTitle });
     const postsAmount = _postsAmount.toString();
     const digitsToAdd = 4 - postsAmount.length;
@@ -18,11 +18,12 @@ async function generateRandomId(serializedTitle: string) {
     return randomId
 }
 
-function generateCommentId() {
+// Generate a random id
+function generateCommentId(): string {
     return Math.random().toString(36).substring(2, 8);
 }
 
-async function getcommentsData(comment: any, requesterId?: string | undefined) {
+async function getcommentsData(comment: any, requesterId?: string | undefined): Promise<any> {
     const _author = await loadUserProfileById(comment.userId);
     let author = { username: "[deleted user]", displayName: "[deleted user]", avatar: "/uploads/avatars/defaults/1.png" };
 
@@ -46,20 +47,21 @@ async function getcommentsData(comment: any, requesterId?: string | undefined) {
     };
 }
 
-async function getcommentsDatas(comments: any[], requesterId?: string | undefined) {
+async function getcommentsDatas(comments: any[], requesterId?: string | undefined): Promise<any[]> {
     return Promise.all(comments.map(async (comment: any) => {
         return await getcommentsData(comment, requesterId);
     }));
 }
 
-function getLikesAmount(likes: any[]) {
+function getLikesAmount(likes: any[]): number {
     return likes.length;
 }
 
-async function getPostData(post: any, requesterId?: string | undefined) {
+async function getPostData(post: any, requesterId?: string | undefined): Promise<any> {
     const comments = await getcommentsDatas(post.comments, requesterId);
     const views = getViews(post.views);
 
+    // If you add new fields here, you might need to update getPostDataForProfile
     return {
         postId: post.postId,
         title: post.title,
@@ -77,7 +79,7 @@ async function getPostData(post: any, requesterId?: string | undefined) {
     };
 }
 
-function getPostDataForProfile(post: any) {
+function getPostDataForProfile(post: any): any {
     return {
         postId: post.postId,
         title: post.title,
@@ -88,7 +90,7 @@ function getPostDataForProfile(post: any) {
     };
 }
 
-function getViews(views: Map<string, number>) {
+function getViews(views: Map<string, number>): { totalViews: number, uniqueViews: number } {
     const totalViews = Array.from(views.values()).reduce((a, b) => a + b, 0);
     const uniqueViews = views.size;
 
@@ -120,12 +122,13 @@ async function createPost(authorId: string, title: string, topic: string, conten
     });
     await post.save();
 
+    // Add post to user profile
     await User.updateOne({ userId: authorId }, { $push: { posts: getPostDataForProfile(post) } });
 
     return post;
 }
 
-async function getPost(postId: string, requesterId: string | undefined, countsAsView: boolean = false) {
+async function getPost(postId: string, requesterId: string | undefined, countsAsView: boolean = false): Promise<{ succes: boolean, message?: string, post?: any }> {
     postId = postId.toLowerCase();
     const post = await Post.findOne({ postId });
 
@@ -146,8 +149,8 @@ async function getPost(postId: string, requesterId: string | undefined, countsAs
         author.avatar = _author.avatar;
     }
 
+    // If the user isn't authenticated, generate a random id
     if (requesterId === undefined) requesterId = "[guest" + Math.floor(Math.random() * 100000000) + "]";
-
 
     if (countsAsView && post.public) {
         if (post.views.get(requesterId)) {
@@ -173,7 +176,7 @@ async function getPost(postId: string, requesterId: string | undefined, countsAs
     return { succes: true, post: postData };
 }
 
-async function publishPost(postId: string, requesterId: string) {
+async function publishPost(postId: string, requesterId: string): Promise<{ succes: boolean, message?: string, post?: any }> {
     // Asume the author is authenticated
     const post = await Post.findOne({ postId });
     if (!post) {
@@ -183,6 +186,7 @@ async function publishPost(postId: string, requesterId: string) {
         return { succes: false, message: "Post already published" };
     }
 
+    // Make sure only the author can publish
     if (post.authorId !== requesterId) {
         return { succes: false, message: "Unauthorized" };
     }
@@ -198,7 +202,7 @@ async function publishPost(postId: string, requesterId: string) {
     return { succes: true, post: post };
 }
 
-async function unpublishPost(postId: string, requesterId: string) {
+async function unpublishPost(postId: string, requesterId: string): Promise<{ succes: boolean, message?: string, post?: any }> {
     // Asume the author is authenticated
     const post = await Post.findOne({ postId });
     if (!post) {
@@ -208,6 +212,7 @@ async function unpublishPost(postId: string, requesterId: string) {
         return { succes: false, message: "Post already unpublished" };
     }
 
+    // Make sure only the author can unpublish
     if (post.authorId !== requesterId) {
         return { succes: false, message: "Unauthorized" };
     }
@@ -223,7 +228,7 @@ async function unpublishPost(postId: string, requesterId: string) {
     return { succes: true, post: post };
 }
 
-async function deletePost(postId: string, requesterId: string) {
+async function deletePost(postId: string, requesterId: string): Promise<{ succes: boolean, message?: string, post?: any }> {
     // Asume the author is authenticated
     const post = await Post.findOne({ postId });
 
@@ -231,10 +236,12 @@ async function deletePost(postId: string, requesterId: string) {
         return { succes: false, message: "Post does not exist" };
     }
 
+    // Make sure only the author can delete
     if (post.authorId !== requesterId) {
         return { succes: false, message: "Unauthorized" };
     }
 
+    // Delete post
     await Post.deleteOne({ postId });
 
     // Update user
@@ -243,19 +250,20 @@ async function deletePost(postId: string, requesterId: string) {
     return { succes: true };
 }
 
-async function updatePost(postId: string, requesterId: string, title: string | undefined, content: string | undefined) {
+async function updatePost(postId: string, requesterId: string, title: string | undefined, content: string | undefined): Promise<{ succes: boolean, message?: string, post?: any }> {
     // Asume the author is authenticated
     const post = await Post.findOne({ postId });
     if (!post) {
         return { succes: false, message: "Post does not exist" };
     }
 
-    if (post.authorId !== requesterId) {
-        return { succes: false, message: "Unauthorized" };
-    }
-
     if (!title && !content) {
         return { succes: false, message: "Nothing to update" };
+    }
+
+    // Make sure only the author can update
+    if (post.authorId !== requesterId) {
+        return { succes: false, message: "Unauthorized" };
     }
 
     const now = new Date();
@@ -266,6 +274,7 @@ async function updatePost(postId: string, requesterId: string, title: string | u
         post.serializedTitle = serializedTitle;
         post.postId = await generateRandomId(serializedTitle);
         post.comments.forEach(async (comment) => {
+            // Update comment postIds in user
             const authorId = comment.userId;
             const author = await User.findOne({ userId: authorId });
             const commentId = comment.commentId;
@@ -294,7 +303,7 @@ async function updatePost(postId: string, requesterId: string, title: string | u
     return { succes: true, post: post };
 }
 
-async function getUserPosts(userId: string) {
+async function getUserPosts(userId: string): Promise<{ succes: boolean, message?: string, posts?: any[] }> {
     // Asume the author is authenticated
     const user = await User.findOne({ userId: userId });
 
@@ -307,7 +316,7 @@ async function getUserPosts(userId: string) {
     return { succes: true, posts: posts };
 }
 
-async function commentOnPost(postId: string, requesterId: string, content: string, parentId?: string) {
+async function commentOnPost(postId: string, requesterId: string, content: string, parentId?: string): Promise<{ succes: boolean, message?: string, comment?: any }> {
     // Asume the author is authenticated
     const post = await Post.findOne({ postId });
     const user = await User.findOne({ userId: requesterId });
@@ -316,6 +325,7 @@ async function commentOnPost(postId: string, requesterId: string, content: strin
         return { succes: false, message: "Post does not exist" };
     }
 
+    // Only the author can comment if the post is not public
     if (!post.public && post.authorId !== requesterId) {
         return { succes: false, message: "Post is not public" };
     }
@@ -360,7 +370,7 @@ async function commentOnPost(postId: string, requesterId: string, content: strin
     return { succes: true, comment: getcommentsData(comment) };
 }
 
-async function deleteComment(postId: string, requesterId: string, commentId: string) {
+async function deleteComment(postId: string, requesterId: string, commentId: string): Promise<{ succes: boolean, message?: string }> {
     // Asume the author is authenticated
     const post = await Post.findOne({ postId });
     const user = await User.findOne({ userId: requesterId });
@@ -373,13 +383,14 @@ async function deleteComment(postId: string, requesterId: string, commentId: str
         return { succes: false, message: "User does not exist" };
     }
 
-    if (post.authorId !== requesterId) {
-        return { succes: false, message: "Unauthorized" };
-    }
-
     const comment = post.comments.find((comment) => comment.commentId === commentId);
     if (!comment) {
         return { succes: false, message: "Comment does not exist" };
+    }
+
+    // Only the author of the post and the author of the comment can delete
+    if (post.authorId !== requesterId && comment.userId !== requesterId) {
+        return { succes: false, message: "Unauthorized" };
     }
 
     comment.deleted = true;
@@ -394,7 +405,7 @@ async function deleteComment(postId: string, requesterId: string, commentId: str
     return { succes: true };
 }
 
-async function likePost(postId: string, requesterId: string) {
+async function likePost(postId: string, requesterId: string): Promise<{ succes: boolean, message?: string }> {
     // Asume the author is authenticated
     const post = await Post.findOne({ postId });
     const user = await User.findOne({ userId: requesterId });
@@ -417,7 +428,7 @@ async function likePost(postId: string, requesterId: string) {
     return { succes: true };
 }
 
-async function unlikePost(postId: string, requesterId: string) {
+async function unlikePost(postId: string, requesterId: string): Promise<{ succes: boolean, message?: string }> {
     // Asume the author is authenticated
     const post = await Post.findOne({ postId });
     const user = await User.findOne({ userId: requesterId });
@@ -440,7 +451,7 @@ async function unlikePost(postId: string, requesterId: string) {
     return { succes: true };
 }
 
-async function likeComment(postId: string, requesterId: string, commentId: string) {
+async function likeComment(postId: string, requesterId: string, commentId: string): Promise<{ succes: boolean, message?: string }> {
     // Asume the author is authenticated
     const post = await Post.findOne({ postId });
     const user = await User.findOne({ userId: requesterId });
@@ -468,7 +479,7 @@ async function likeComment(postId: string, requesterId: string, commentId: strin
     return { succes: true };
 }
 
-async function unlikeComment(postId: string, requesterId: string, commentId: string) {
+async function unlikeComment(postId: string, requesterId: string, commentId: string): Promise<{ succes: boolean, message?: string }> {
     // Asume the author is authenticated
     const post = await Post.findOne({ postId });
     const user = await User.findOne({ userId: requesterId });

@@ -2,7 +2,8 @@ import { loadUserProfile } from "../services/userProfileLoader.service";
 import CustomRequest from "../types/CustomRequest";
 import { Response } from "express";
 
-export async function getProfile(req: CustomRequest, res: Response) {
+// Loads a user profile for the API
+export async function getProfile(req: CustomRequest, res: Response): Promise<void> {
     const username = req.params.username;
     const userData = await loadUserProfile(username);
     if (!userData) {

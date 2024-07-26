@@ -2,40 +2,39 @@ import jwt, { Secret, JwtPayload } from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import { v4 as uuidv4 } from 'uuid';
 
-import { validateEmail, validatePassword, validateUsername } from '../utils/validator.util';
 import { User } from '../models/user.model';
-
-import { uploadDefaultAvater } from './imageDatabase.service';
 
 import { JWT_SECRET } from '../config';
 import checkLogin from './loginRatelimiter.service';
 import normalizeEmail from '../utils/normalizeEmail.util';
+import { validateEmail, validatePassword, validateUsername } from '../utils/validator.util';
+
+import { uploadDefaultAvater } from './imageDatabase.service';
 
 
 // Generate JWT
-function generateToken(id: string) {
+function generateToken(id: string): string {
     return jwt.sign({ id }, JWT_SECRET, { expiresIn: "30d" });
 };
 
 // Validate token
-function _validateToken(token: string) {
-    const JWT_SECRET = process.env.JWT_SECRET as Secret;
+function _validateToken(token: string): string | JwtPayload | undefined {
     return jwt.verify(token, JWT_SECRET);
 };
 
 // Hash password
-function hashPassword(password: string) {
+function hashPassword(password: string): string {
     const salt = bcrypt.genSaltSync(10);
     return bcrypt.hashSync(password, salt);
 };
 
 // Generate userid
-function generateUserId() {
+function generateUserId(): string {
     return uuidv4();
 }
 
 // Register user
-async function registerUser(email: string, password: string, username: string) {
+async function registerUser(email: string, password: string, username: string): Promise<{ succes: boolean, message?: string, token?: string }> {
     email = normalizeEmail(email);
 
     // Validate email, password and username
@@ -84,24 +83,27 @@ async function registerUser(email: string, password: string, username: string) {
 }
 
 // Login user
-async function loginUser(emailorusername: string, password: string) {
+async function loginUser(emailorusername: string, password: string): Promise<{ succes: boolean, message?: string, token?: string }> {
     emailorusername = normalizeEmail(emailorusername);
 
+    // Make sure we don't have too many login attempts
     if (!await checkLogin(emailorusername)) return { succes: false, message: "Too many login attempts" };
 
+    // Check if email or username exists
     let user = await User.findOne({ email: emailorusername });
     if (!user) user = await User.findOne({ username_lowercase: emailorusername });
-
     if (!user) return { succes: false, message: "User does not exist" };
+
+    // Validate password
     if (!bcrypt.compareSync(password, user.password)) return { succes: false, message: "Wrong password" };
 
+    // Generate token
     const token = generateToken(user.secretId);
-
     return { succes: true, token };
 }
 
 // Validate token
-async function validateToken(token: string) {
+async function validateToken(token: string): Promise<{ succes: boolean, username?: string, email?: string, avatar?: string, pronounce?: string, bio?: string, displayName?: string, location?: string, id?: string, message?: string }> {
     let result: string | JwtPayload | undefined;
 
     try {
@@ -117,6 +119,8 @@ async function validateToken(token: string) {
 
     if (!user) return { succes: false, message: "User does not exist" };
 
+    // If you change this, change it type definition in the types/CustomRequest.d.ts file
+    // and in the definition of the validateToken function above
     return { 
         succes: true, 
         username: user.username, 

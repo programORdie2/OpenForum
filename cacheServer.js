@@ -1,5 +1,6 @@
-const express = require('express');
+// A very simple cache server
 
+const express = require('express');
 const app = express();
 
 const emailCounter = {};

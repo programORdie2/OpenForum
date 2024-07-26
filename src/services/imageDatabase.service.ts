@@ -3,26 +3,26 @@ import sharp from "sharp";
 import { UPLOAD_PATH } from "../config";
 import logger from "../utils/logger.util";
 
+// Ensure the uploads directorys exists
 if (!existsSync(UPLOAD_PATH)) {
     mkdirSync(UPLOAD_PATH);
 }
-
 if (!existsSync(UPLOAD_PATH + "/avatars")) {
     mkdirSync(UPLOAD_PATH + "/avatars");
 }
-
 if (!existsSync(UPLOAD_PATH + "/avatars/defaults")) {
     mkdirSync(UPLOAD_PATH + "/avatars/defaults");
 }
 
-async function _resizeImage(base64: string, width: number, height: number) {
+
+async function _resizeImage(base64: string, width: number, height: number): Promise<string> {
     const buffer = Buffer.from(base64, 'base64');
     const resizedImage = await sharp(buffer).resize(width, height).png().toBuffer();
     const base64out = resizedImage.toString('base64');
     return base64out;
 }
 
-async function uploadAvater(imagePath: string, base64: string) {
+async function uploadAvater(imagePath: string, base64: string): Promise<string> {
     const base64Data = base64.replace(/^data:image\/(png|jpg|jpeg);base64,/, "");
     const resizedImage = await _resizeImage(base64Data, 200, 200);
 
@@ -31,7 +31,7 @@ async function uploadAvater(imagePath: string, base64: string) {
     return imagePath;
 }
 
-async function uploadDefaultAvater(imagePath: string) {
+async function uploadDefaultAvater(imagePath: string): Promise<string> {
     const defaultAvatars = [
         "/avatars/defaults/1.png",
         "/avatars/defaults/2.png",
@@ -44,9 +44,8 @@ async function uploadDefaultAvater(imagePath: string) {
     const defaultAvatar = defaultAvatars[randomIndex];
 
     if (!existsSync(UPLOAD_PATH + defaultAvatar)) {
-        logger.critical("Default avatar not found: " + defaultAvatar);
-        process.exit(1);
-        return;
+        logger.error("Default avatar not found: " + defaultAvatar);
+        return "";
     }
     const base64 = await promises.readFile(UPLOAD_PATH + defaultAvatar, 'base64');
 

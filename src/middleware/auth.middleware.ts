@@ -6,6 +6,7 @@ import CustomRequest from "../types/CustomRequest";
 export default async (req: CustomRequest, res: Response, next: NextFunction) => {
     let token: string | undefined;
 
+    // If there is a token in the request headers, use it, otherwise use the cookies
     if (req.headers.authorization) {
         token = req.headers.authorization;
     } else {
@@ -22,6 +23,7 @@ export default async (req: CustomRequest, res: Response, next: NextFunction) => 
 
     const result = await auth.validateToken(token);
     if (result.succes) {
+        // If you change this, change it in the auth.service too
         req.user = {
             authenticated: true,
             username: result.username,
