@@ -22,9 +22,18 @@ function generateCommentId() {
     return Math.random().toString(36).substring(2, 8);
 }
 
-function getcommentsData(comment: any, requesterId?: string | undefined) {
+async function getcommentsData(comment: any, requesterId?: string | undefined) {
+    const _author = await loadUserProfileById(comment.userId);
+    let author = { username: "[deleted user]", displayName: "[deleted user]", avatar: "/uploads/avatars/defaults/1.png" };
+
+    if (_author) {
+        author.username = _author.username;
+        author.displayName = _author.displayName;
+        author.avatar = _author.avatar;
+    }
+
     return {
-        authorId: comment.userId,
+        author: author,
         content: comment.content,
         createdAt: comment.createdAt,
         updatedAt: comment.updatedAt,
@@ -37,17 +46,18 @@ function getcommentsData(comment: any, requesterId?: string | undefined) {
     };
 }
 
-function getcommentsDatas(comments: any[], requesterId?: string | undefined) {
-    return comments.map((comment: any) => {
-        return getcommentsData(comment, requesterId);
-    });
+async function getcommentsDatas(comments: any[], requesterId?: string | undefined) {
+    return Promise.all(comments.map(async (comment: any) => {
+        return await getcommentsData(comment, requesterId);
+    }));
 }
 
 function getLikesAmount(likes: any[]) {
     return likes.length;
 }
 
-function getPostData(post: any, requesterId?: string | undefined) {
+async function getPostData(post: any, requesterId?: string | undefined) {
+    const comments = await getcommentsDatas(post.comments, requesterId);
     const views = getViews(post.views);
 
     return {
@@ -63,7 +73,18 @@ function getPostData(post: any, requesterId?: string | undefined) {
         totalViews: views.totalViews,
         uniqueViews: views.uniqueViews,
         likes: getLikesAmount(post.likes),
-        comments: getcommentsDatas(post.comments, requesterId),
+        comments: comments,
+    };
+}
+
+function getPostDataForProfile(post: any) {
+    return {
+        postId: post.postId,
+        title: post.title,
+        topic: post.topic,
+        createdAt: post.createdAt,
+        updatedAt: post.updatedAt,
+        public: post.public,
     };
 }
 
@@ -99,7 +120,7 @@ async function createPost(authorId: string, title: string, topic: string, conten
     });
     await post.save();
 
-    await User.updateOne({ userId: authorId }, { $push: { posts: getPostData(post) } });
+    await User.updateOne({ userId: authorId }, { $push: { posts: getPostDataForProfile(post) } });
 
     return post;
 }
@@ -144,7 +165,7 @@ async function getPost(postId: string, requesterId: string | undefined, countsAs
     let liked = post.likes.includes(requesterId);
 
     const postData = {
-        ...getPostData(post, requesterId),
+        ...await getPostData(post, requesterId),
         author: author,
         liked: liked
     };
@@ -172,7 +193,7 @@ async function publishPost(postId: string, requesterId: string) {
 
     // Update user
     await User.updateOne({ userId: post.authorId }, { $pull: { posts: { postId: post.postId } } });
-    await User.updateOne({ userId: post.authorId }, { $push: { posts: getPostData(post) } });
+    await User.updateOne({ userId: post.authorId }, { $push: { posts: getPostDataForProfile(post) } });
 
     return { succes: true, post: post };
 }
@@ -197,7 +218,7 @@ async function unpublishPost(postId: string, requesterId: string) {
 
     // Update user
     await User.updateOne({ userId: post.authorId }, { $pull: { posts: { postId: post.postId } } });
-    await User.updateOne({ userId: post.authorId }, { $push: { posts: getPostData(post) } });
+    await User.updateOne({ userId: post.authorId }, { $push: { posts: getPostDataForProfile(post) } });
 
     return { succes: true, post: post };
 }
@@ -268,7 +289,7 @@ async function updatePost(postId: string, requesterId: string, title: string | u
 
     // Update user
     await User.updateOne({ userId: post.authorId }, { $pull: { posts: { postId: postId } } });
-    await User.updateOne({ userId: post.authorId }, { $push: { posts: getPostData(post) } });
+    await User.updateOne({ userId: post.authorId }, { $push: { posts: getPostDataForProfile(post) } });
 
     return { succes: true, post: post };
 }

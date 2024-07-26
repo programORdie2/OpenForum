@@ -186,7 +186,7 @@ function renderComment(comment) {
     <div class="comment">
         <div class="comment-inner ${extraClass}" data-comment-id="${comment.commentId}">
             <div class="comment-header">
-                <p class="comment-author">${comment.authorId}</p>
+                <p class="comment-author"><img src="${comment.author.avatar}" alt="${comment.author.username}">${comment.author.username}</p>
                 <p class="comment-date">${comment.createdAt}</p>
             </div>
             <p class="comment-content">${comment.content}</p>
