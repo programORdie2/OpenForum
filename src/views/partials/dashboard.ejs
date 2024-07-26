@@ -8,8 +8,10 @@
                 <p>Topic: <%= post.topic %></p>
                 <p>Created: <%= post.createdAt %></p>
                 <p>Edited: <%= post.updatedAt %></p>
-                <p>Public: <%= post.public %></p>
-                <p>Published: <%= post.publishedAt %></p>
+                <p>Public: <%= post.public ? "Yes" : "No" %></p>
+                <% if (post.public) { %>
+                    <p>Published: <%= post.publishedAt %></p>
+                <% } %>
             </div>
         <% } %>
     <% } %>
