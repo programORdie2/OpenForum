@@ -1,8 +1,6 @@
 const API_ROUTE = "/api";
 
-async function login() {
-    const email = document.getElementById("email").value;
-    const password = document.getElementById("password").value;
+async function login(email, password) {
     const response = await fetch(`${API_ROUTE}/login`, {
         method: "POST",
         headers: {
@@ -23,10 +21,7 @@ async function login() {
     return true;
 }
 
-async function register() {
-    const email = document.getElementById("email").value;
-    const password = document.getElementById("password").value;
-    const username = document.getElementById("username").value;
+async function register(email, password, username) {
     const response = await fetch(`${API_ROUTE}/register`, {
         method: "POST",
         headers: {

@@ -13,8 +13,11 @@
 
     document.getElementById("login").addEventListener("click", async (e) => {
         e.preventDefault();
+
+        const email = document.getElementById("email").value;
+        const password = document.getElementById("password").value;
         
-        const success = await login();
+        const success = await login(email, password);
         if (success) window.location.href = redirect;
         else alert("Login failed");
     });

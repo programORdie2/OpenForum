@@ -15,8 +15,12 @@
 
     document.getElementById("register").addEventListener("click", async (e) => {
         e.preventDefault();
+
+        const email = document.getElementById("email").value;
+        const password = document.getElementById("password").value;
+        const username = document.getElementById("username").value;
         
-        const success = await register();
+        const success = await register(email, password, username);
         if (success) window.location.href = redirect;
         else alert("Registration failed");
     });

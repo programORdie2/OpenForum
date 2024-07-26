@@ -12,6 +12,8 @@ const TOPICS = [
     "tech",
     "sport",
     "fun"
-]
+];
 
-export { UPLOAD_PATH, DATABASE_URL, PORT, JWT_SECRET, MAX_LOGIN_ATTEMPTS, TOPICS };
+const MAX_CLUSTER_SIZE = 1; // ! Remove for production
+
+export { UPLOAD_PATH, DATABASE_URL, PORT, JWT_SECRET, MAX_LOGIN_ATTEMPTS, TOPICS, MAX_CLUSTER_SIZE };

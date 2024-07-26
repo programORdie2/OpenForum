@@ -24,25 +24,17 @@
 <% } %>
 
 <div id="comments">
-    <% if (post.comments && post.comments.length > 0) { %>
-        <% post.comments.forEach(comment => { %>
-            <p><%= JSON.stringify(comment) %></p>
-        <% }) %>
-    <% } else { %>
-        <p>No comments yet</p>
-    <% } %>
+    Loading comments...
 </div>
 
 <% if (user.authenticated) { %>
     <label for="comment-content">Write a comment</label>
     <textarea id="comment-content" placeholder="Write a comment"></textarea>
-
-    <label for="comment-parent">Parent</label>
-    <input id="comment-parent" type="text" placeholder="Parent ID">
     
     <button id="comment-submit">Submit</button>
 <% } %>
 
 <script>
     const postId = '<%= post.postId %>';
+    const comments = JSON.parse('<%- JSON.stringify(post.comments) %>'); // Gives no error
 </script>

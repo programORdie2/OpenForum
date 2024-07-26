@@ -4,6 +4,8 @@ import os from "os";
 import connectDB from "./services/database.service";
 import logger from "./utils/logger.util";
 
+import { MAX_CLUSTER_SIZE } from "./config";
+
 import * as server from "./server";
 
 
@@ -12,7 +14,7 @@ async function connect() {
 }
 
 if (cluster.isPrimary) {
-  const numCPUs = os.availableParallelism();
+  const numCPUs = Math.min(os.availableParallelism(), MAX_CLUSTER_SIZE);
 
   for (let i = 0; i < numCPUs; i++) {
     logger.log(`Forking worker ${i + 1}/${numCPUs}`);

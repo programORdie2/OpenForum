@@ -22,20 +22,24 @@ function generateCommentId() {
     return Math.random().toString(36).substring(2, 8);
 }
 
-function getcommentsData(comments: any[], requesterId?: string | undefined) {
+function getcommentsData(comment: any, requesterId?: string | undefined) {
+    return {
+        authorId: comment.userId,
+        content: comment.content,
+        createdAt: comment.createdAt,
+        updatedAt: comment.updatedAt,
+        parent: comment.parent,
+        commentId: comment.commentId,
+        children: comment.children,
+        deleted: comment.deleted,
+        likes: getLikesAmount(comment.likes),
+        liked: requesterId ? comment.likes.includes(requesterId) : false,
+    };
+}
+
+function getcommentsDatas(comments: any[], requesterId?: string | undefined) {
     return comments.map((comment: any) => {
-        return {
-            authorId: comment.userId,
-            content: comment.content,
-            createdAt: comment.createdAt,
-            updatedAt: comment.updatedAt,
-            parent: comment.parent,
-            commentId: comment.commentId,
-            children: comment.children,
-            deleted: comment.deleted,
-            likes: getLikesAmount(comment.likes),
-            liked: requesterId ? comment.likes.includes(requesterId) : false,
-        };
+        return getcommentsData(comment, requesterId);
     });
 }
 
@@ -59,7 +63,7 @@ function getPostData(post: any, requesterId?: string | undefined) {
         totalViews: views.totalViews,
         uniqueViews: views.uniqueViews,
         likes: getLikesAmount(post.likes),
-        comments: getcommentsData(post.comments, requesterId),
+        comments: getcommentsDatas(post.comments, requesterId),
     };
 }
 
@@ -310,11 +314,18 @@ async function commentOnPost(postId: string, requesterId: string, content: strin
         parent.children.push(commentId);
     }
 
+    if (!parentId) parentId = "";
+
     const comment = {
         userId: requesterId,
         content: content,
         commentId: commentId,
         parent: parentId,
+        likes: [],
+        children: [],
+        deleted: false,
+        createdAt: new Date(),
+        updatedAt: new Date(),
     }
 
     post.comments.push(comment);
@@ -325,7 +336,7 @@ async function commentOnPost(postId: string, requesterId: string, content: strin
     user.comments.push({ postId: post.postId, commentId });
     await user.save();
 
-    return { succes: true, comment: comment };
+    return { succes: true, comment: getcommentsData(comment) };
 }
 
 async function deleteComment(postId: string, requesterId: string, commentId: string) {

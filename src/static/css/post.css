@@ -2,3 +2,29 @@ textarea, button {
     margin-bottom: 0.5rem;
     display: block;
 }
+
+.comment .comment {
+    margin-left: 2rem;
+}
+
+.comment-inner {
+    margin: 1rem;
+    border-radius: 1rem;
+    background-color: #bebebe;
+    padding: 1rem 0.8rem;
+}
+
+.comment-inner p {
+    margin: 0;
+}
+
+.comment-inner.comment-deleted .comment-content {
+    opacity: 0.5;
+    font-style: italic;
+}
+
+.new-comment {
+    padding: 0.6rem;
+    border-radius: 0.7rem;
+    background-color: #eaeaea;
+}
