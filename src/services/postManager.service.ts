@@ -22,7 +22,7 @@ function generateCommentId() {
     return Math.random().toString(36).substring(2, 8);
 }
 
-function getcommentsData(comments: any[]) {
+function getcommentsData(comments: any[], requesterId?: string | undefined) {
     return comments.map((comment: any) => {
         return {
             authorId: comment.userId,
@@ -32,7 +32,9 @@ function getcommentsData(comments: any[]) {
             parent: comment.parent,
             commentId: comment.commentId,
             children: comment.children,
-            deleted: comment.deleted
+            deleted: comment.deleted,
+            likes: getLikesAmount(comment.likes),
+            liked: requesterId ? comment.likes.includes(requesterId) : false,
         };
     });
 }
@@ -41,7 +43,7 @@ function getLikesAmount(likes: any[]) {
     return likes.length;
 }
 
-function getPostData(post: any) {
+function getPostData(post: any, requesterId?: string | undefined) {
     const views = getViews(post.views);
 
     return {
@@ -57,7 +59,7 @@ function getPostData(post: any) {
         totalViews: views.totalViews,
         uniqueViews: views.uniqueViews,
         likes: getLikesAmount(post.likes),
-        comments: getcommentsData(post.comments)
+        comments: getcommentsData(post.comments, requesterId),
     };
 }
 
@@ -138,7 +140,7 @@ async function getPost(postId: string, requesterId: string | undefined, countsAs
     let liked = post.likes.includes(requesterId);
 
     const postData = {
-        ...getPostData(post),
+        ...getPostData(post, requesterId),
         author: author,
         liked: liked
     };
@@ -383,7 +385,7 @@ async function likePost(postId: string, requesterId: string) {
     return { succes: true };
 }
 
-async function dislikePost(postId: string, requesterId: string) {
+async function unlikePost(postId: string, requesterId: string) {
     // Asume the author is authenticated
     const post = await Post.findOne({ postId });
     const user = await User.findOne({ userId: requesterId });
@@ -406,4 +408,74 @@ async function dislikePost(postId: string, requesterId: string) {
     return { succes: true };
 }
 
-export { createPost, getPost, publishPost, unpublishPost, deletePost, updatePost, getUserPosts, commentOnPost, likePost, dislikePost, deleteComment };
+async function likeComment(postId: string, requesterId: string, commentId: string) {
+    // Asume the author is authenticated
+    const post = await Post.findOne({ postId });
+    const user = await User.findOne({ userId: requesterId });
+
+    if (!post) {
+        return { succes: false, message: "Post does not exist" };
+    }
+
+    if (!user) {
+        return { succes: false, message: "User does not exist" };
+    }
+
+    const comment = post.comments.find((comment) => comment.commentId === commentId);
+    if (!comment) {
+        return { succes: false, message: "Comment does not exist" };
+    }
+
+    if (comment.likes.includes(user.userId)) {
+        return { succes: false, message: "Already liked" };
+    }
+
+    comment.likes.push(user.userId);
+    await post.save();
+
+    return { succes: true };
+}
+
+async function unlikeComment(postId: string, requesterId: string, commentId: string) {
+    // Asume the author is authenticated
+    const post = await Post.findOne({ postId });
+    const user = await User.findOne({ userId: requesterId });
+
+    if (!post) {
+        return { succes: false, message: "Post does not exist" };
+    }
+
+    if (!user) {
+        return { succes: false, message: "User does not exist" };
+    }
+
+    const comment = post.comments.find((comment) => comment.commentId === commentId);
+    if (!comment) {
+        return { succes: false, message: "Comment does not exist" };
+    }
+
+    if (!comment.likes.includes(user.userId)) {
+        return { succes: false, message: "Not liked" };
+    }
+
+    comment.likes.splice(comment.likes.indexOf(user.userId), 1);
+    await post.save();
+
+    return { succes: true };
+}
+
+export {
+    createPost,
+    getPost,
+    publishPost,
+    unpublishPost,
+    deletePost,
+    updatePost,
+    getUserPosts,
+    commentOnPost,
+    likePost,
+    unlikePost,
+    deleteComment,
+    likeComment,
+    unlikeComment
+};

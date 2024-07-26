@@ -138,7 +138,7 @@ async function likePost(req: CustomRequest, res: Response) {
     res.json(result);
 }
 
-async function dislikePost(req: CustomRequest, res: Response) {
+async function unlikePost(req: CustomRequest, res: Response) {
     const user = req.user;
     const postId = req.params.postId;
 
@@ -147,7 +147,7 @@ async function dislikePost(req: CustomRequest, res: Response) {
         return;
     }
 
-    const result = await postManager.dislikePost(postId, user.id as string);
+    const result = await postManager.unlikePost(postId, user.id as string);
     res.json(result);
 }
 
@@ -165,6 +165,34 @@ async function deleteComment(req: CustomRequest, res: Response) {
     res.json(result);
 }
 
+async function likeComment(req: CustomRequest, res: Response) {
+    const user = req.user;
+    const commentId = req.params.commentId;
+    const postId = req.params.postId;
+
+    if (!user?.authenticated) {
+        res.status(401).json({ succes: false, message: "Unauthorized" });
+        return;
+    }
+
+    const result = await postManager.likeComment(postId, user.id as string, commentId);
+    res.json(result);
+}
+
+async function unlikeComment(req: CustomRequest, res: Response) {
+    const user = req.user;
+    const commentId = req.params.commentId;
+    const postId = req.params.postId;
+
+    if (!user?.authenticated) {
+        res.status(401).json({ succes: false, message: "Unauthorized" });
+        return;
+    }
+
+    const result = await postManager.unlikeComment(postId, user.id as string, commentId);
+    res.json(result);
+}
+
 
 export { 
     createPost, 
@@ -176,6 +204,8 @@ export {
     setContent,
     commentOnPost,
     likePost,
-    dislikePost,
-    deleteComment
+    unlikePost,
+    deleteComment,
+    likeComment,
+    unlikeComment
 }

@@ -19,6 +19,6 @@
 - [x] User location
 - [x] Display comments on profile
 - [x] Jump to comment
-- [ ] Like comment
+- [x] Like comment
 - [x] Delete comment
 - [x] Like post
