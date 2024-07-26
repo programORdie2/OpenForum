@@ -258,11 +258,6 @@ function makeComments() {
     addCommentEventListeners();
 }
 
-makeComments();
-
-
-
-
 function createCommentInput(commentId) {
     const parentElement = document.querySelector(`[data-comment-id="${commentId}"]`);
     const commentWrapper = document.createElement("div");
@@ -290,4 +285,20 @@ function createCommentInput(commentId) {
     commentWrapper.querySelector(".new-comment-cancel").addEventListener("click", (e) => {
         parentElement.removeChild(commentWrapper);
     });
+}
+
+
+makeComments();
+
+if (highlightedComment !== "") {
+    const commentElement = document.querySelector(`[data-comment-id="${highlightedComment}"]`);
+    commentElement.classList.add("highlighted");
+
+    setTimeout(() => {
+        commentElement.scrollIntoView({ behavior: "smooth", block: "center" });
+    }, 17); // 17ms, to make sure the DOM is rendered
+
+    setTimeout(() => {
+        commentElement.classList.remove("highlighted");
+    }, 1500);
 }

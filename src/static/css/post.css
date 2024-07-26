@@ -12,6 +12,8 @@ textarea, button {
     border-radius: 1rem;
     background-color: #bebebe;
     padding: 1rem 0.8rem;
+
+    transition: background-color 0.8s ease;
 }
 
 .comment-inner p {
@@ -39,4 +41,9 @@ textarea, button {
     height: 38px;
     border-radius: 50%;
     margin-right: 0.4rem;
+}
+
+.comment-inner.highlighted {
+    background-color: #dee054;
+    transition: background-color 0s ease;
 }
