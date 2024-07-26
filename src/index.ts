@@ -1,67 +1,31 @@
-import { PORT } from "./config";
-
-import express, { Express } from "express";
-import cookieParser from "cookie-parser";
-
-import asyncHandler from "./utils/asyncHandler.util";
-
-import auth from "./middleware/auth.middleware";
-import errorMiddleware from "./middleware/error.middleware";
-
-import main from "./routes/main.route";
-import posts from "./routes/posts.route";
-import api from "./routes/api.route";
-import uploads from "./routes/uploads.route";
+import cluster from "cluster";
+import os from "os";
 
 import connectDB from "./services/database.service";
 import logger from "./utils/logger.util";
 
-const app: Express = express();
-app.set("view engine", "ejs");
-app.set("views", __dirname + "/views");
-app.use(express.static(__dirname + "/static"));
+import * as server from "./server";
 
-app.use(express.json({ limit: "10mb" }));
-app.use(cookieParser());
 
-app.use(asyncHandler(auth));
-
-app.use("/api", api);
-app.use("/posts", posts);
-app.use("/uploads", uploads);
-app.use("/", main);
-
-app.use(errorMiddleware);
-
-async function start() {
+async function connect() {
   await connectDB();
-
-  app.listen(PORT, () => {
-    logger.log(`Server is running at http://localhost:${PORT}`);
-  });
 }
 
-start();
+if (cluster.isPrimary) {
+  const numCPUs = os.availableParallelism();
 
-// Don't shut down the server directly
-process.stdin.resume();
-
-function exitHandler(error: Error | string | null) {
-  if (error) {
-    let type: string;
-    if (error === "SIGTERM" || error === "SIGINT") {
-      type = error;
-    } else {
-      type = "uncaughtException";
-
-      logger.critical(error);
-    }
-    logger.critical(`Server is shutting down due to: ${type}`);
+  for (let i = 0; i < numCPUs; i++) {
+    logger.log(`Forking worker ${i + 1}/${numCPUs}`);
+    const worker = cluster.fork();
+    logger.log(`Worker ${worker.process.pid} is starting...`);
   }
 
-  process.exit();
+  cluster.on("exit", (worker, code, signal) => {
+    logger.critical(`worker ${worker.process.pid} died. code: ${code}, signal: ${signal}`);
+    cluster.fork();
+  });
+} else {
+  logger.log(`Worker ${process.pid} is running`);
+  connect();
+  server.start();
 }
-
-process.on("SIGINT", exitHandler.bind(null, "SIGINT"));
-process.on("SIGTERM", exitHandler.bind(null, "SIGTERM"));
-process.on("uncaughtException", exitHandler);
