@@ -15,12 +15,18 @@ import main from "./routes/main.route";
 import posts from "./routes/posts.route";
 import api from "./routes/api.route";
 import uploads from "./routes/uploads.route";
+import * as config from "./config";
 
 // Init
 const app: Express = express();
 app.set("view engine", "ejs");
 app.set("views", __dirname + "/views");
-app.use(express.static(__dirname + "/static"));
+
+if (config.PRODUCTION) {
+  app.use(express.static(__dirname + "/static/min"));
+} else {
+  app.use(express.static(__dirname + "/static"));
+}
 
 // Middleware
 app.use(express.json({ limit: "10mb" }));
