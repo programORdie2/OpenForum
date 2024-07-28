@@ -35,11 +35,8 @@ async function _getAllMinifiedAssets(): Promise<string[]> {
 }
 
 async function _getNotMinifiedAssets(): Promise<string[]> {
-    const assets = await _findAllAssets();
-    const minifiedAssets = await _getAllMinifiedAssets();
-
-    const notMinifiedAssets = assets.filter((asset) => (!minifiedAssets.includes(asset) && (asset.endsWith(".css") || asset.endsWith(".js")) && !asset.endsWith("vars.css") && !asset.endsWith("navbar.css")));
-    return notMinifiedAssets;
+    // Re-add the minified assets in case they were changed
+    return await _findAllAssets();
 }
 
 async function _minify(asset: string, outPath: string, type: "css" | "js"): Promise<void> {

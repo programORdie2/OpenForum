@@ -58,35 +58,7 @@ function send500page(req: CustomRequest, res: Response): void {
  * @return {void} - This function does not return anything.
  */
 function handleNoView(req: CustomRequest, res: Response): void {
-    let filepath: string = req.path;
-
-    // If the path ends with a slash, asume it's a directory and append index.html
-    if (filepath.endsWith("/")) {
-        filepath = filepath += "index.html";
-    }
-
-    // If the file has no extension, asume it's .html
-    if (filepath.split(".").length === 0) {
-        filepath += ".html";
-    }
-
-    // If this is a production build and it's a CSS/JS file, send the minified version
-    if (config.PRODUCTION && (filepath.endsWith(".css") || filepath.endsWith(".js"))) {
-        if (!existsSync(__dirname + "/static/min/" + filepath)) {
-            send404page(req, res);
-            return;
-        }
-
-        res.sendFile(__dirname + "/static/min/" + filepath);
-        return;
-    }
-
-    // Check if the file exists
-    if (!existsSync(__dirname + "/static/" + filepath)) {
-        send404page(req, res);
-        return;
-    }
-    res.sendFile(__dirname + "/static/" + filepath);
+    send404page(req, res);
 }
 
 function sendHomepage(req: CustomRequest, res: Response): void {
