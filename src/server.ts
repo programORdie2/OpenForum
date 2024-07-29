@@ -4,6 +4,7 @@ import { PORT } from "./config";
 
 import express, { Express } from "express";
 import cookieParser from "cookie-parser";
+import compression from "compression";
 
 import logger from "./utils/logger.util";
 import asyncHandler from "./utils/asyncHandler.util";
@@ -32,6 +33,7 @@ if (config.PRODUCTION) {
 // Middleware
 app.use(express.json({ limit: "10mb" }));
 app.use(cookieParser());
+app.use(compression());
 app.use(asyncHandler(auth));
 app.use((req, res, next) => {
   loggingMiddleware(req, res, next);
