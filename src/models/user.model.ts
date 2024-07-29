@@ -1,34 +1,137 @@
-import mongoose from "mongoose";
+import sequelize from "../services/database.service";
+import { Model, DataTypes } from "sequelize";
 
-const userSchema = new mongoose.Schema({
-    username: { type: String, required: true },
-    username_lowercase: { type: String, required: true },
-    email: { type: String, required: true, unique: true },
-    password: { type: String, required: true },
+// Define the User interface
+interface UserAttributes {
+    username: string;
+    username_lowercase: string;
+    email: string;
+    password: string;
 
-    userId: { type: String, required: true },
-    secretId: { type: String, required: true },
+    userId: string;
+    secretId: string;
 
-    createdAt: { type: Date, default: Date.now },
-    permissions: { type: Object, default: {mod: false, admin: false} },
+    createdAt: Date;
+    permissions: {mod: boolean, admin: boolean};
 
-    posts: { type: Array, default: [] },
-    comments: { type: [{
-        postId: { type: String, required: true },
-        commentId: { type: String, required: true },
-        at: { type: Date, default: Date.now },
-    }], default: [] },
-    likes: { type: Array, default: [] },
+    posts: string[];
+    comments: {postId: string, commentId: string, at: Date}[];
+    likes: string[];
 
-    pronounce: { type: String, default: "" },
-    bio: { type: String, default: "" },
-    avatar: { type: String, required: true },
-    displayName: { type: String, required: true },
-    location: { type: String, default: "" },
+    pronounce: string;
+    bio: string;
+    avatar: string;
+    displayName: string;
+    location: string;
 
-    following: { type: Array, default: [] },
-    followers: { type: Array, default: [] },
+    following: string[];
+    followers: string[];
+}
+
+
+// Define the User model class
+class User extends Model<UserAttributes> implements UserAttributes {
+    public username!: string;
+    public username_lowercase!: string;
+    public email!: string;
+    public password!: string;
+
+    public userId!: string;
+    public secretId!: string;
+
+    public createdAt!: Date;
+    public permissions!: {mod: boolean, admin: boolean};
+
+    public posts!: string[];
+    public comments!: {postId: string, commentId: string, at: Date}[];
+    public likes!: string[];
+
+    public pronounce!: string;
+    public bio!: string;
+    public avatar!: string;
+    public displayName!: string;
+    public location!: string;
+
+    public following!: string[];
+    public followers!: string[];
+}
+
+
+// Initialize the User model
+User.init({
+    username: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    username_lowercase: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true
+    },
+    email: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true
+    },
+    password: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    userId: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true
+    },
+    secretId: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    createdAt: {
+        type: DataTypes.DATE,
+        defaultValue: Date.now
+    },
+    permissions: {
+        type: DataTypes.JSON,
+        defaultValue: {mod: false, admin: false}
+    },
+    posts: {
+        type: DataTypes.ARRAY(DataTypes.STRING),
+        defaultValue: []
+    },
+    comments: {
+        type: DataTypes.JSON,
+        defaultValue: []
+    },
+    likes: {
+        type: DataTypes.ARRAY(DataTypes.STRING),
+        defaultValue: []
+    },
+    pronounce: {
+        type: DataTypes.STRING
+    },
+    bio: {
+        type: DataTypes.STRING
+    },
+    avatar: {
+        type: DataTypes.STRING
+    },
+    displayName: {
+        type: DataTypes.STRING
+    },
+    location: {
+        type: DataTypes.STRING
+    },
+    following: {
+        type: DataTypes.ARRAY(DataTypes.STRING),
+        defaultValue: []
+    },
+    followers: {
+        type: DataTypes.ARRAY(DataTypes.STRING),
+        defaultValue: []
+    }
+}, {
+    sequelize,
+    tableName: 'users'
 });
 
-const User = mongoose.model("User", userSchema);
 export { User }

@@ -44,11 +44,11 @@ async function registerUser(email: string, password: string, username: string): 
 
 
     // Check if email already exists
-    let existingUser = await User.findOne({ email });
+    let existingUser = await User.findOne({ where: { email: email } });
     if (existingUser) return { succes: false, message: "Email already in use" };
 
     // Check if username already exists
-    existingUser = await User.findOne({ username_lowercase: username.toLowerCase() });
+    existingUser = await User.findOne({ where: { username_lowercase: username.toLowerCase() } });
     if (existingUser) return { succes: false, message: "Username already in use" };
 
     // Hash password
@@ -57,24 +57,34 @@ async function registerUser(email: string, password: string, username: string): 
     // Generate a user id
     const userId = generateUserId();
     const secretId = generateUserId();
-    
+
     const avatarPath = `avatars/${userId}.png`;
 
     // Upload default avatar
     await uploadDefaultAvater(avatarPath);
 
     // Add the user in the database
-    const user = new User({ 
+    const user = await User.create({
         username,
         username_lowercase: username.toLowerCase(),
-        email, 
-        password: hashedPassword, 
-        userId, 
-        secretId, 
+        email,
+        password: hashedPassword,
+        userId,
+        secretId,
         avatar: "/uploads/" + avatarPath,
-        displayName: username
+        displayName: username,
+
+        createdAt: new Date(),
+        permissions: { mod: false, admin: false },
+        posts: [],
+        comments: [],
+        likes: [],
+        followers: [],
+        following: [],
+        pronounce: "",
+        bio: "",
+        location: ""
     });
-    await user.save();
 
     // Generate token
     const token = generateToken(secretId);
@@ -90,8 +100,8 @@ async function loginUser(emailorusername: string, password: string): Promise<{ s
     if (!await checkLogin(emailorusername)) return { succes: false, message: "Too many login attempts" };
 
     // Check if email or username exists
-    let user = await User.findOne({ email: emailorusername });
-    if (!user) user = await User.findOne({ username_lowercase: emailorusername });
+    let user = await User.findOne({ where: { email: emailorusername } });
+    if (!user) user = await User.findOne({ where: { username_lowercase: emailorusername } });
     if (!user) return { succes: false, message: "User does not exist" };
 
     // Validate password
@@ -115,22 +125,22 @@ async function validateToken(token: string): Promise<{ succes: boolean, username
     if (!result) return { succes: false, message: "Invalid token" };
 
     const secretId = typeof result === 'string' ? result : result.id;
-    const user = await User.findOne({ secretId });
+    const user = await User.findOne({ where: { secretId } });
 
     if (!user) return { succes: false, message: "User does not exist" };
 
     // If you change this, change it type definition in the types/CustomRequest.d.ts file
     // and in the definition of the validateToken function above
-    return { 
-        succes: true, 
-        username: user.username, 
-        email: user.email, 
-        avatar: user.avatar, 
-        pronounce: user.pronounce, 
-        bio: user.bio, 
-        displayName: user.displayName, 
-        location: user.location, 
-        id: user.userId 
+    return {
+        succes: true,
+        username: user.username,
+        email: user.email,
+        avatar: user.avatar,
+        pronounce: user.pronounce,
+        bio: user.bio,
+        displayName: user.displayName,
+        location: user.location,
+        id: user.userId
     };
 }
 

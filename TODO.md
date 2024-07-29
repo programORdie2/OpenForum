@@ -22,3 +22,6 @@
 - [x] Like comment
 - [x] Delete comment
 - [x] Like post
+- [ ] Follow user
+- [x] Migrate to postgres
+- [ ] Fix publish date not showing up

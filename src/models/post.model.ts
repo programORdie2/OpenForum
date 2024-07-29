@@ -1,40 +1,75 @@
-import mongoose from "mongoose";
+import { DataTypes, Model } from "sequelize"
+import sequelize from "../services/database.service"
 
-const postSchema = new mongoose.Schema({
-    authorId: { type: String, required: true },
-    postId: { type: String, required: true },
-    title: { type: String, required: true },
-    topic: { type: String, required: true },
+interface Comment {
+    userId: string;
+    commentId: string;
+    content: string;
+    parent: string;
+    children: string[];
+    likes: string[];
+    createdAt?: Date;
+    updatedAt?: Date;
+    deleted: boolean;
+}
 
-    createdAt: { type: Date, default: Date.now },
-    updatedAt: { type: Date, default: Date.now },
-    publischedAt: { type: Date },
-    content: { type: String, required: true },
+// Define the Post interface
+interface PostAttributes {
+    postId: string;
+    authorId: string;
+    title: string;
+    topic: string;
+    createdAt?: Date;
+    updatedAt?: Date;
+    publishedAt?: Date;
+    serializedTitle: string;
+    likes: string[];
+    content: string;
+    public: boolean;
+    comments: Comment[];
+    views: object;
+}
+
+// Define the Post model class
+class Post extends Model<PostAttributes> implements PostAttributes {
+    public postId!: string;
+    public authorId!: string;
+    public title!: string;
+    public topic!: string;
+    public createdAt?: Date;
+    public updatedAt?: Date;
+    public publishedAt?: Date;
+    public serializedTitle!: string;
+    public likes!: string[];
+    public content!: string;
+    public public!: boolean;
+    public comments!: Comment[];
+    public views!: object;
+}
+
+Post.init({
+    authorId: { type: DataTypes.STRING, allowNull: false },
+    postId: { type: DataTypes.STRING, allowNull: false, unique: true },
+    title: { type: DataTypes.STRING, allowNull: false },
+    topic: { type: DataTypes.STRING, allowNull: false },
+
+    createdAt: { type: DataTypes.DATE, defaultValue: Date.now },
+    updatedAt: { type: DataTypes.DATE, defaultValue: Date.now },
+    publishedAt: { type: DataTypes.DATE, defaultValue: Date.now },
+    content: { type: DataTypes.TEXT, allowNull: false },
     comments: { 
-        type: [{
-            userId: { type: String, required: true },
-            commentId: { type: String, required: true },
-
-            createdAt: { type: Date, default: Date.now },
-            updatedAt: { type: Date, default: Date.now },
-
-            content: { type: String, required: true },
-            parent: { type: String, default: "" },
-            children: { type: Array, default: [] },
-
-            likes: { type: Array, default: [] },
-
-            deleted: { type: Boolean, default: false },
-        }],
-        default: []
+        type: DataTypes.JSONB,
+        defaultValue: []
     },
-    likes: { type: Array, default: [] },
+    likes: { type: DataTypes.ARRAY(DataTypes.STRING), defaultValue: [] },
 
-    public: { type: Boolean, default: false },
-    serializedTitle: { type: String, default: "" },
+    public: { type: DataTypes.BOOLEAN, defaultValue: false },
+    serializedTitle: { type: DataTypes.STRING, defaultValue: "" },
 
-    views: { type: Map, of: Number, default: {} },
+    views: { type: DataTypes.JSON, defaultValue: {} },
+}, {
+    sequelize,
+    tableName: 'posts'
 });
 
-const Post = mongoose.model("Post", postSchema);
 export { Post }

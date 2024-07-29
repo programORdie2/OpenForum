@@ -15,11 +15,11 @@ async function setSetting(id: string, settingsName: string, settingsValue: strin
         if (!validateUsername(settingsValue)) return false;
 
         // Make sure username is unique
-        const existingUser = await User.findOne({ username_lowercase: settingsValue.toLowerCase() });
+        const existingUser = await User.findOne({ where: { username_lowercase: settingsValue.toLowerCase() } });
         if (existingUser) return false;
 
-        const res = await User.updateOne({ userId: id }, { username: settingsValue, username_lowercase: settingsValue.toLowerCase() });
-        if (res.modifiedCount > 0) {
+        const [affectedCount] = await User.update({ username: settingsValue, username_lowercase: settingsValue.toLowerCase() }, { where: { userId: id } });
+        if (affectedCount > 0) {
             return true;
         }
         return false;
@@ -30,11 +30,11 @@ async function setSetting(id: string, settingsName: string, settingsValue: strin
         if (!validateEmail(settingsValue)) return false;
 
         // Make sure email is unique
-        const existingUser = await User.findOne({ email: settingsValue });
+        const existingUser = await User.findOne({ where: { email: settingsValue } });
         if (existingUser) return false;
 
-        const res = await User.updateOne({ userId: id }, { email: settingsValue.toLowerCase() });
-        if (res.modifiedCount > 0) {
+        const [affectedCount] = await User.update({ email: settingsValue.toLowerCase() }, { where: { userId: id } });
+        if (affectedCount > 0) {
             return true;
         }
 
@@ -42,11 +42,11 @@ async function setSetting(id: string, settingsName: string, settingsValue: strin
     }
 
     // Else, just update the setting
-    const res = await User.updateOne({ userId: id }, { [settingsName]: settingsValue });
-    if (res.modifiedCount > 0) {
+    const [affectedCount] = await User.update({ [settingsName]: settingsValue }, { where: { userId: id } });
+    if (affectedCount > 0) {
         return true;
     }
-    
+
     // If no changes were made
     console.log("User: " + id + " not found in database");
     return false;

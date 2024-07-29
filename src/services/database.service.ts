@@ -1,19 +1,19 @@
-import mongoose from 'mongoose';
-import { DATABASE_URL } from '../config';
+import { Sequelize } from 'sequelize';
+import { DATABASE as DB_CONFIG } from '../config';
 import logger from '../utils/logger.util';
 
-async function connectDB(): Promise<void> {
-  try {
-    logger.log('Connecting to MongoDB...');
-    
-    await mongoose.connect(DATABASE_URL);
-    
-    logger.log('MongoDB connected');
-  } catch (error) {
-    // Failed to connect
-    logger.critical('MongoDB connection error:', error);
-    process.exit(1);
-  }
-};
 
-export default connectDB;
+logger.log('Connecting to MongoDB...');
+
+const sequelize = new Sequelize(DB_CONFIG.name, DB_CONFIG.user, DB_CONFIG.password, {
+  host: DB_CONFIG.host,
+  dialect: 'postgres',
+  logging: false
+});
+
+// Create tables if they don't exist
+sequelize.sync();
+
+logger.log('Database connected');
+
+export default sequelize;

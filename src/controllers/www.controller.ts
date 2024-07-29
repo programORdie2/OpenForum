@@ -25,7 +25,7 @@ function renderPage(req: CustomRequest, res: Response, page: string, customTitle
     const user = req.user;
     const description = "Social media for everyone";
 
-    const allData = { 
+    const allData = {
         title: customTitle,
         user: user,
         description: description,
@@ -132,7 +132,7 @@ async function sendDashboardpage(req: CustomRequest, res: Response): Promise<voi
         return;
     }
 
-    const posts = await postManager.getUserPosts(user.id as string);    
+    const posts = await postManager.getUserPosts(user.id as string);
 
     renderPage(req, res, "dashboard", "Dashboard - Social Media", 200, { posts: posts.posts }, ["/css/dashboard.css"], ["/scripts/dashboard.js"]);
 }
@@ -181,15 +181,15 @@ async function sendPostEditpage(req: CustomRequest, res: Response): Promise<void
     renderPage(req, res, "postEdit", "Post Edit - Social Media", 200, { post: post.post }, ["/css/postEdit.css"], ["/scripts/editPost.js"]);
 }
 
-export { 
-    send404page, 
-    send500page, 
-    sendHomepage, 
-    handleNoView, 
-    sendLoginpage, 
-    logout, 
-    sendRegisterpage, 
-    sendUserProfilepage, 
+export {
+    send404page,
+    send500page,
+    sendHomepage,
+    handleNoView,
+    sendLoginpage,
+    logout,
+    sendRegisterpage,
+    sendUserProfilepage,
     sendSettingspage,
     sendPostPage,
     sendCreatePostPage,

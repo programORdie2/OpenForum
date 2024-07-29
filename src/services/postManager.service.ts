@@ -3,6 +3,21 @@ import { User } from "../models/user.model";
 import { validatePostTitle, validateTopic } from "../utils/validator.util";
 import { loadUserProfileById } from "./userProfileLoader.service";
 
+type Views = {
+    [key: string]: number;
+}
+interface Comment {
+    userId: string;
+    commentId: string;
+    content: string;
+    parent: string;
+    children: string[];
+    likes: string[];
+    createdAt?: Date;
+    updatedAt?: Date;
+    deleted: boolean;
+}
+
 // Make a title lowercase, replace spaces with dashes, max length 30, exlude nonalphanumeric characters;
 function serializeTitle(title: string): string {
     return title.slice(0, 30).toLowerCase().replace(/ /g, '-').replace(/[^a-zA-Z0-9-]/g, '').replace(/--/g, '-');;
@@ -10,7 +25,7 @@ function serializeTitle(title: string): string {
 
 // Generate a random id with format: <serializedTitle>-<5 digits>
 async function generateRandomId(serializedTitle: string): Promise<string> {
-    const _postsAmount = await Post.countDocuments({ serializedTitle });
+    const _postsAmount = await Post.count({ where: { serializedTitle: serializedTitle } });
     const postsAmount = _postsAmount.toString();
     const digitsToAdd = 4 - postsAmount.length;
     const randomDigits = Array.from({ length: digitsToAdd }, () => Math.floor(Math.random() * 10));
@@ -22,6 +37,43 @@ async function generateRandomId(serializedTitle: string): Promise<string> {
 function generateCommentId(): string {
     return Math.random().toString(36).substring(2, 8);
 }
+
+async function _pushPostToUser(userId: string, post: any): Promise<void> {
+    const user = await User.findOne({ where: { userId: userId } });
+
+    if (!user) {
+        return;
+    }
+
+    // Update the posts array
+    const postData = getPostDataForProfile(post);
+    const updatedPosts = [...(user.posts || []), postData];
+
+    // Assign the updated posts array
+    user.posts = updatedPosts;
+
+    // Save the updated user record
+    await user.save();
+}
+
+async function _pullPostFromUser(userId: string, postId: string): Promise<void> {
+    const user = await User.findOne({ where: { userId: userId } });
+
+    if (!user) {
+        return;
+    }
+
+    const postIdx = user.posts.findIndex((post: any) => JSON.parse(post).postId === postId);
+
+    console.log(postIdx);
+
+    user.posts.splice(postIdx, 1);
+
+    // Save the updated user record
+    user.changed('posts', true);
+    await user.save();
+}
+
 
 async function getcommentsData(comment: any, requesterId?: string | undefined): Promise<any> {
     const _author = await loadUserProfileById(comment.userId);
@@ -112,25 +164,32 @@ async function createPost(authorId: string, title: string, topic: string, conten
     const serializedTitle = serializeTitle(title);
 
     const postId = await generateRandomId(serializedTitle);
-    const post = new Post({
+    const post = await Post.create({
         authorId,
         postId,
         title,
         topic,
         content,
         serializedTitle,
+        views: [],
+        comments: [],
+        likes: [],
+        public: false,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        publishedAt: new Date(),
     });
     await post.save();
 
     // Add post to user profile
-    await User.updateOne({ userId: authorId }, { $push: { posts: getPostDataForProfile(post) } });
+    await _pushPostToUser(authorId, post);
 
     return post;
 }
 
 async function getPost(postId: string, requesterId: string | undefined, countsAsView: boolean = false): Promise<{ succes: boolean, message?: string, post?: any }> {
     postId = postId.toLowerCase();
-    const post = await Post.findOne({ postId });
+    const post = await Post.findOne({ where: { postId: postId } });
 
     if (!post) {
         return { succes: false, message: "Post does not exist" };
@@ -153,14 +212,16 @@ async function getPost(postId: string, requesterId: string | undefined, countsAs
     if (requesterId === undefined) requesterId = "[guest" + Math.floor(Math.random() * 100000000) + "]";
 
     if (countsAsView && post.public) {
-        if (post.views.get(requesterId)) {
-            post.views.set(requesterId, (post.views.get(requesterId) as number) + 1);
+        const views: Views = post.views as Views;
+
+        if (views[requesterId]) {
+            views[requesterId] += 1;
         } else {
-            post.views.set(requesterId, 1);
+            views[requesterId] = 1;
         }
 
-        // Else it won't save
-        post.markModified('views');
+        // Assign the updated views object
+        post.views = views;
 
         await post.save();
     }
@@ -178,7 +239,9 @@ async function getPost(postId: string, requesterId: string | undefined, countsAs
 
 async function publishPost(postId: string, requesterId: string): Promise<{ succes: boolean, message?: string, post?: any }> {
     // Asume the author is authenticated
-    const post = await Post.findOne({ postId });
+    const post = await Post.findOne({
+        where: { postId: postId },
+    });
     if (!post) {
         return { succes: false, message: "Post does not exist" };
     }
@@ -192,19 +255,21 @@ async function publishPost(postId: string, requesterId: string): Promise<{ succe
     }
 
     post.public = true;
-    post.publischedAt = new Date();
+    post.publishedAt = new Date();
+
+    post.changed('publishedAt', true);
     await post.save();
 
     // Update user
-    await User.updateOne({ userId: post.authorId }, { $pull: { posts: { postId: post.postId } } });
-    await User.updateOne({ userId: post.authorId }, { $push: { posts: getPostDataForProfile(post) } });
+    await _pullPostFromUser(post.authorId, post.postId);
+    await _pushPostToUser(post.authorId, post);
 
     return { succes: true, post: post };
 }
 
 async function unpublishPost(postId: string, requesterId: string): Promise<{ succes: boolean, message?: string, post?: any }> {
     // Asume the author is authenticated
-    const post = await Post.findOne({ postId });
+    const post = await Post.findOne({ where: { postId: postId } });
     if (!post) {
         return { succes: false, message: "Post does not exist" };
     }
@@ -218,19 +283,18 @@ async function unpublishPost(postId: string, requesterId: string): Promise<{ suc
     }
 
     post.public = false;
-    post.publischedAt = null;
     await post.save();
 
     // Update user
-    await User.updateOne({ userId: post.authorId }, { $pull: { posts: { postId: post.postId } } });
-    await User.updateOne({ userId: post.authorId }, { $push: { posts: getPostDataForProfile(post) } });
+    await _pullPostFromUser(post.authorId, post.postId);
+    await _pushPostToUser(post.authorId, post);
 
     return { succes: true, post: post };
 }
 
 async function deletePost(postId: string, requesterId: string): Promise<{ succes: boolean, message?: string, post?: any }> {
     // Asume the author is authenticated
-    const post = await Post.findOne({ postId });
+    const post = await Post.findOne({ where: { postId: postId } });
 
     if (!post) {
         return { succes: false, message: "Post does not exist" };
@@ -242,17 +306,17 @@ async function deletePost(postId: string, requesterId: string): Promise<{ succes
     }
 
     // Delete post
-    await Post.deleteOne({ postId });
+    await Post.destroy({ where: { postId: postId } });
 
     // Update user
-    await User.updateOne({ userId: post.authorId }, { $pull: { posts: { postId } } });
+    await _pullPostFromUser(post.authorId, postId);
 
     return { succes: true };
 }
 
 async function updatePost(postId: string, requesterId: string, title: string | undefined, content: string | undefined): Promise<{ succes: boolean, message?: string, post?: any }> {
     // Asume the author is authenticated
-    const post = await Post.findOne({ postId });
+    const post = await Post.findOne({ where: { postId: postId } });
     if (!post) {
         return { succes: false, message: "Post does not exist" };
     }
@@ -273,20 +337,20 @@ async function updatePost(postId: string, requesterId: string, title: string | u
         post.title = title;
         post.serializedTitle = serializedTitle;
         post.postId = await generateRandomId(serializedTitle);
-        post.comments.forEach(async (comment) => {
+        for (const comment of post.comments) {
             // Update comment postIds in user
             const authorId = comment.userId;
-            const author = await User.findOne({ userId: authorId });
+            const author = await User.findOne({ where: { userId: authorId } });
             const commentId = comment.commentId;
 
-            if (!author) return;
+            if (!author) continue;
 
             const commentInUser = author.comments.find((r) => r.commentId === commentId);
-            if (!commentInUser) return;
+            if (!commentInUser) continue;
 
             commentInUser.postId = post.postId;
             await author.save();
-        })
+        }
     }
 
     if (content) {
@@ -297,29 +361,35 @@ async function updatePost(postId: string, requesterId: string, title: string | u
     await post.save();
 
     // Update user
-    await User.updateOne({ userId: post.authorId }, { $pull: { posts: { postId: postId } } });
-    await User.updateOne({ userId: post.authorId }, { $push: { posts: getPostDataForProfile(post) } });
+    await _pullPostFromUser(post.authorId, postId);
+    await _pushPostToUser(post.authorId, post);
 
     return { succes: true, post: post };
 }
 
 async function getUserPosts(userId: string): Promise<{ succes: boolean, message?: string, posts?: any[] }> {
     // Asume the author is authenticated
-    const user = await User.findOne({ userId: userId });
+    const user = await User.findOne({ where: { userId: userId } });
 
     if (!user) {
         return { succes: false, message: "User does not exist" };
     }
 
-    const posts = user.posts;
+    console.log(user.posts);
+    
+
+    const posts = user.posts.map((post) => JSON.parse(post));
+
+    console.log(posts);
+    
 
     return { succes: true, posts: posts };
 }
 
 async function commentOnPost(postId: string, requesterId: string, content: string, parentId?: string): Promise<{ succes: boolean, message?: string, comment?: any }> {
     // Asume the author is authenticated
-    const post = await Post.findOne({ postId });
-    const user = await User.findOne({ userId: requesterId });
+    const post = await Post.findOne({ where: { postId: postId } });
+    const user = await User.findOne({ where: { userId: requesterId } });
 
     if (!post) {
         return { succes: false, message: "Post does not exist" };
@@ -347,7 +417,7 @@ async function commentOnPost(postId: string, requesterId: string, content: strin
 
     if (!parentId) parentId = "";
 
-    const comment = {
+    const comment: Comment = {
         userId: requesterId,
         content: content,
         commentId: commentId,
@@ -360,20 +430,24 @@ async function commentOnPost(postId: string, requesterId: string, content: strin
     }
 
     post.comments.push(comment);
+    post.changed("comments", true);
 
     await post.save();
 
     // Update user
-    user.comments.push({ postId: post.postId, commentId });
+    user.comments.push({ postId: post.postId, commentId, at: new Date() });
+    user.changed("comments", true);
     await user.save();
 
-    return { succes: true, comment: getcommentsData(comment) };
+    const commentData = await getcommentsData(comment);
+
+    return { succes: true, comment: commentData };
 }
 
 async function deleteComment(postId: string, requesterId: string, commentId: string): Promise<{ succes: boolean, message?: string }> {
     // Asume the author is authenticated
-    const post = await Post.findOne({ postId });
-    const user = await User.findOne({ userId: requesterId });
+    const post = await Post.findOne({ where: { postId: postId } });
+    const user = await User.findOne({ where: { userId: requesterId } });
 
     if (!post) {
         return { succes: false, message: "Post does not exist" };
@@ -383,8 +457,9 @@ async function deleteComment(postId: string, requesterId: string, commentId: str
         return { succes: false, message: "User does not exist" };
     }
 
-    const comment = post.comments.find((comment) => comment.commentId === commentId);
-    if (!comment) {
+    const commentIdx = post.comments.findIndex((comment) => comment.commentId === commentId);
+    const comment = post.comments[commentIdx];
+    if (commentIdx < 0) {
         return { succes: false, message: "Comment does not exist" };
     }
 
@@ -396,10 +471,14 @@ async function deleteComment(postId: string, requesterId: string, commentId: str
     comment.deleted = true;
     comment.content = ".";
 
+    post.comments[commentIdx] = comment;
+
+    post.changed('comments', true);
     await post.save();
 
     // Update user
-    user.comments.pull({ postId: post.postId, commentId });
+    user.comments = user.comments.filter((r) => r.commentId !== commentId || r.postId !== post.postId);
+    user.changed('comments', true);
     await user.save();
 
     return { succes: true };
@@ -407,8 +486,8 @@ async function deleteComment(postId: string, requesterId: string, commentId: str
 
 async function likePost(postId: string, requesterId: string): Promise<{ succes: boolean, message?: string }> {
     // Asume the author is authenticated
-    const post = await Post.findOne({ postId });
-    const user = await User.findOne({ userId: requesterId });
+    const post = await Post.findOne({ where: { postId: postId } });
+    const user = await User.findOne({ where: { userId: requesterId } });
 
     if (!post || (!post.public && post.authorId !== requesterId)) {
         return { succes: false, message: "Post does not exist" };
@@ -422,7 +501,13 @@ async function likePost(postId: string, requesterId: string): Promise<{ succes: 
         return { succes: false, message: "Already liked" };
     }
 
-    post.likes.push(user.userId);
+    const likes = post.likes || [];
+    likes.push(user.userId);
+    post.likes = likes;
+
+    // Else it won't save
+    post.changed('likes', true);
+
     await post.save();
 
     return { succes: true };
@@ -430,8 +515,8 @@ async function likePost(postId: string, requesterId: string): Promise<{ succes: 
 
 async function unlikePost(postId: string, requesterId: string): Promise<{ succes: boolean, message?: string }> {
     // Asume the author is authenticated
-    const post = await Post.findOne({ postId });
-    const user = await User.findOne({ userId: requesterId });
+    const post = await Post.findOne({ where: { postId: postId } });
+    const user = await User.findOne({ where: { userId: requesterId } });
 
     if (!post || (!post.public && post.authorId !== requesterId)) {
         return { succes: false, message: "Post does not exist" };
@@ -441,11 +526,20 @@ async function unlikePost(postId: string, requesterId: string): Promise<{ succes
         return { succes: false, message: "User does not exist" };
     }
 
-    if (!post.likes.includes(user.userId)) {
+    const likes = post.likes || [];
+
+    const idx = likes.indexOf(user.userId);
+    if (idx < 0) {
         return { succes: false, message: "Not liked" };
     }
 
-    post.likes.splice(post.likes.indexOf(user.userId), 1);
+    // Remove the user from the likes
+    likes.splice(idx, 1);
+    post.likes = likes;
+
+    // Else it won't save
+    post.changed('likes', true);
+
     await post.save();
 
     return { succes: true };
@@ -453,8 +547,8 @@ async function unlikePost(postId: string, requesterId: string): Promise<{ succes
 
 async function likeComment(postId: string, requesterId: string, commentId: string): Promise<{ succes: boolean, message?: string }> {
     // Asume the author is authenticated
-    const post = await Post.findOne({ postId });
-    const user = await User.findOne({ userId: requesterId });
+    const post = await Post.findOne({ where: { postId: postId } });
+    const user = await User.findOne({ where: { userId: requesterId } });
 
     if (!post) {
         return { succes: false, message: "Post does not exist" };
@@ -464,8 +558,9 @@ async function likeComment(postId: string, requesterId: string, commentId: strin
         return { succes: false, message: "User does not exist" };
     }
 
-    const comment = post.comments.find((comment) => comment.commentId === commentId);
-    if (!comment) {
+    const commentIdx = post.comments.findIndex((comment) => comment.commentId === commentId);
+    const comment = post.comments[commentIdx];
+    if (commentIdx < 0) {
         return { succes: false, message: "Comment does not exist" };
     }
 
@@ -473,7 +568,13 @@ async function likeComment(postId: string, requesterId: string, commentId: strin
         return { succes: false, message: "Already liked" };
     }
 
-    comment.likes.push(user.userId);
+    const likes = comment.likes || [];
+    likes.push(user.userId);
+    comment.likes = likes;
+
+    post.comments[commentIdx] = comment;
+
+    post.changed('comments', true);
     await post.save();
 
     return { succes: true };
@@ -481,8 +582,8 @@ async function likeComment(postId: string, requesterId: string, commentId: strin
 
 async function unlikeComment(postId: string, requesterId: string, commentId: string): Promise<{ succes: boolean, message?: string }> {
     // Asume the author is authenticated
-    const post = await Post.findOne({ postId });
-    const user = await User.findOne({ userId: requesterId });
+    const post = await Post.findOne({ where: { postId: postId } });
+    const user = await User.findOne({ where: { userId: requesterId } });
 
     if (!post) {
         return { succes: false, message: "Post does not exist" };
@@ -492,8 +593,9 @@ async function unlikeComment(postId: string, requesterId: string, commentId: str
         return { succes: false, message: "User does not exist" };
     }
 
-    const comment = post.comments.find((comment) => comment.commentId === commentId);
-    if (!comment) {
+    const commentIdx = post.comments.findIndex((comment) => comment.commentId === commentId);
+    const comment = post.comments[commentIdx];
+    if (commentIdx < 0) {
         return { succes: false, message: "Comment does not exist" };
     }
 
@@ -502,6 +604,9 @@ async function unlikeComment(postId: string, requesterId: string, commentId: str
     }
 
     comment.likes.splice(comment.likes.indexOf(user.userId), 1);
+    post.comments[commentIdx] = comment;
+
+    post.changed('comments', true);
     await post.save();
 
     return { succes: true };

@@ -56,8 +56,6 @@ async function _minify(asset: string, outPath: string, type: "css" | "js"): Prom
         compressor: compressor,
         options: options,
     });
-
-    logger.log(`Asset ${asset} minified to ${outPath}`);
 }
 
 async function _minifyAsset(asset: string): Promise<void> {

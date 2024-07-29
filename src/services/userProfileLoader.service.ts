@@ -2,6 +2,8 @@ import { User } from "../models/user.model";
 import serialize from "../utils/serialize.util";
 
 function getPostDatas(posts: Array<any>): any[] {
+    posts = posts.map((post) => JSON.parse(post));
+    
     const publicPosts = posts.filter((post) => post.public);
     return publicPosts;
 }
@@ -33,12 +35,12 @@ function prep_return(user: any): null | any {
 }
 
 async function loadUserProfile(username: string): Promise<null | any> {
-    const user = await User.findOne({ username_lowercase: username.toLowerCase() });
+    const user = await User.findOne({ where: { username_lowercase: username.toLowerCase() } });
     return prep_return(user);
 }
 
 async function loadUserProfileById(userId: string): Promise<null | any> {
-    const user = await User.findOne({ userId });
+    const user = await User.findOne({ where: { userId } });
     return prep_return(user);
 }
 

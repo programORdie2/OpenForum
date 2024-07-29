@@ -6,7 +6,13 @@ const PRODUCTION = false;
 process.env.NODE_ENV = PRODUCTION ? "production" : "development";
 
 const UPLOAD_PATH = join(__dirname, "../", "/uploads/");
-const DATABASE_URL = process.env.DB_URL || "mongodb://localhost:27017/openforum";
+const DATABASE = {
+    host: process.env.DATABASE_HOST || "localhost",
+    port: process.env.DATABASE_PORT || 5432,
+    name: process.env.DATABASE_NAME || "openforum",
+    user: process.env.DATABASE_USER || "postgres",
+    password: process.env.DATABASE_PASSWORD || "secret"
+}
 const PORT = process.env.PORT || 3000;
 const MAX_CLUSTER_SIZE = 1; // ! Remove for production
 const JWT_SECRET = process.env.JWT_SECRET || "secret";
@@ -18,4 +24,4 @@ const TOPICS = [
     "fun"
 ];
 
-export { UPLOAD_PATH, DATABASE_URL, PORT, JWT_SECRET, MAX_LOGIN_ATTEMPTS, TOPICS, MAX_CLUSTER_SIZE, PRODUCTION };
+export { UPLOAD_PATH, DATABASE, PORT, JWT_SECRET, MAX_LOGIN_ATTEMPTS, TOPICS, MAX_CLUSTER_SIZE, PRODUCTION };

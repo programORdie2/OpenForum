@@ -1,22 +1,17 @@
 import cluster from "cluster";
 import os from "os";
 
-import connectDB from "./services/database.service";
 import logger from "./utils/logger.util";
 
-import { MAX_CLUSTER_SIZE } from "./config";
+import { MAX_CLUSTER_SIZE, PRODUCTION } from "./config";
 
 import * as server from "./server";
 import { minifyAllAssets } from "./utils/assetMinifier.util";
 
-async function connect(): Promise<void> {
-  await connectDB();
-}
-
 async function main(): Promise<void> {
   if (cluster.isPrimary) {
     // If this is the primary process, minimize assets and fork the workers
-    await minifyAllAssets();
+    if (PRODUCTION) await minifyAllAssets();
 
     const numCPUs = Math.min(os.availableParallelism(), MAX_CLUSTER_SIZE);
 
@@ -34,8 +29,7 @@ async function main(): Promise<void> {
   } else {
     // If this is a worker process, start the server
     logger.log(`Worker ${process.pid} is running`);
-    await connect(); // First connect to the database
-    server.start(); // Then start the server
+    server.start();
   }
 }
 
