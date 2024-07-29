@@ -1,7 +1,8 @@
+import { PRODUCTION } from '../config';
 import fs from 'fs';
 import path from 'path';
 
-const logLevels = ["info", "warn", "error", "critical", "debug"];
+const logLevels = ["info", "warn", "error", "critical", "debug", "http"];
 const logDirectory = path.join(__dirname, '../../', 'logs');
 
 // Ensure the logs directory exists
@@ -34,7 +35,7 @@ function getFormattedDate() {
     return `${year}-${makeSureDoubleNumber(month)}-${makeSureDoubleNumber(day)} ${makeSureDoubleNumber(hours)}:${makeSureDoubleNumber(minutes)}:${makeSureDoubleNumber(seconds)}`
 }
 
-function _log(message: string, level: "info" | "warn" | "error" | "debug" | "critical", logs: Array<string> = ["log"]) {
+function _log(message: string, level: "info" | "warn" | "error" | "debug" | "critical" | "http", logs: Array<string> = ["log"]) {
     const timestamp = getFormattedDate();
     const formattedMessage = `[${timestamp}] [${level}] ${message}`;
 
@@ -47,6 +48,9 @@ function _log(message: string, level: "info" | "warn" | "error" | "debug" | "cri
             console.error(formattedMessage);
         } else if (level === "warn") {
             console.warn(formattedMessage);
+        } else if (level === "http"){
+            if (PRODUCTION) return;
+            console.log(formattedMessage);
         } else {
             console.log(formattedMessage);
         }
@@ -73,11 +77,16 @@ function critical(...args: any[]) {
     _log(message, "critical", ["log", "errors"]);
 }
 
+function http(...args: any[]) {
+    const message = args.join(" ");
+    _log(message, "http", ["http_log"]);
+}
+
 function debug(...args: any[]) {
     const message = args.join(" ");
     _log(message, "debug", ["debug_log"]);
 }
 
-const logger = { log, warn, error, critical, debug };
+const logger = { log, warn, error, critical, debug, http };
 
 export default logger;

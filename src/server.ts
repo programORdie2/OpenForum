@@ -10,6 +10,7 @@ import asyncHandler from "./utils/asyncHandler.util";
 
 import auth from "./middleware/auth.middleware";
 import errorMiddleware from "./middleware/error.middleware";
+import loggingMiddleware from "./middleware/logging.middleware";
 
 import main from "./routes/main.route";
 import posts from "./routes/posts.route";
@@ -32,6 +33,9 @@ if (config.PRODUCTION) {
 app.use(express.json({ limit: "10mb" }));
 app.use(cookieParser());
 app.use(asyncHandler(auth));
+app.use((req, res, next) => {
+  loggingMiddleware(req, res, next);
+});
 
 // Routes
 app.use("/api", api);
