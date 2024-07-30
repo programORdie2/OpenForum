@@ -22,6 +22,7 @@
 - [x] Like comment
 - [x] Delete comment
 - [x] Like post
-- [ ] Follow user
+- [x] Follow user
 - [x] Migrate to postgres
 - [ ] Fix publish date not showing up
+- [ ] Notification/feed when a following user posts something

@@ -88,8 +88,10 @@ function logout(req: CustomRequest, res: Response): void {
 
 async function sendUserProfilepage(req: CustomRequest, res: Response): Promise<void> {
     const username = req.params.username;
+    const user = req.user;
+    const userId = user?.id;
 
-    const userData = await loadUserProfile(username);
+    const userData = await loadUserProfile(username, userId);
     if (!userData) {
         send404page(req, res);
         return;

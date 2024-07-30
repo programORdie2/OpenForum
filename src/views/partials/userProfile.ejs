@@ -24,6 +24,19 @@
     <p>Location: <%= profile.location %></p>
 </div>
 
+<div class="followers">
+    <p>Followers: <%= profile.followerAmount %></p>
+    <p>Following: <%= profile.followingAmount %></p>
+
+    <% if (user.authenticated && user.username != profile.username) { %>
+        <% if (profile.isFollowing) { %>
+            <button id="follow-user" data-following="true" class="follow-button unfollow-button">Unfollow</button>
+        <% } else { %>
+            <button id="follow-user" data-following="false" class="follow-button">Follow</button>
+        <% } %>
+    <% } %>
+</div>
+
 <div class="posts">
     <h1>Posts:</h1>
     <% if (profile.posts.length > 0) { %>
@@ -55,3 +68,5 @@
         <p>No comments</p>
     <% } %>
 </div>
+
+<script>const username = "<%= profile.username %>";</script>

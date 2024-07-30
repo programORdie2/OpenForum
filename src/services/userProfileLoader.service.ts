@@ -19,7 +19,7 @@ function getcommentsData(comments: any[]): any[] {
     });
 }
 
-function prep_return(user: any): null | any {
+function prep_return(user: any, requesterId?: string): null | any {
     if (!user) return null;
     return {
         username: serialize(user.username),
@@ -30,13 +30,16 @@ function prep_return(user: any): null | any {
         displayName: serialize(user.displayName),
         location: serialize(user.location),
         posts: getPostDatas(user.posts),
-        comments: getcommentsData(user.comments)
+        comments: getcommentsData(user.comments),
+        followerAmount: user.followers.length,
+        followingAmount: user.following.length,
+        isFollowing: user.followers.includes(requesterId)
     };
 }
 
-async function loadUserProfile(username: string): Promise<null | any> {
+async function loadUserProfile(username: string, requesterId?: string): Promise<null | any> {
     const user = await User.findOne({ where: { username_lowercase: username.toLowerCase() } });
-    return prep_return(user);
+    return prep_return(user, requesterId);
 }
 
 async function loadUserProfileById(userId: string): Promise<null | any> {

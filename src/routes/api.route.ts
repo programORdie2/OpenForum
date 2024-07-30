@@ -1,6 +1,6 @@
 import { loginController, registerController, validateController } from "../controllers/auth.controller";
 import * as settingsController from "../controllers/settings.controller";
-import * as apiController from "../controllers/apiGet.controller";
+import * as apiController from "../controllers/api.controller";
 import * as postContoller from "../controllers/post.controller";
 
 import asyncHandler from "../utils/asyncHandler.util";
@@ -24,6 +24,10 @@ router.post('/user/location', asyncHandler(settingsController.changeLocation));
 
 // User routes
 router.get('/users/:username', asyncHandler(apiController.getProfile));
+
+// User follow routes
+router.post('/users/:username/follow', asyncHandler(apiController.followUser));
+router.post('/users/:username/unfollow', asyncHandler(apiController.unfollowUser));
 
 // Post edit and create routes
 router.post('/posts/create', asyncHandler(postContoller.createPost));
