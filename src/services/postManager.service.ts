@@ -65,8 +65,6 @@ async function _pullPostFromUser(userId: string, postId: string): Promise<void> 
 
     const postIdx = user.posts.findIndex((post: any) => JSON.parse(post).postId === postId);
 
-    console.log(postIdx);
-
     user.posts.splice(postIdx, 1);
 
     // Save the updated user record
@@ -123,7 +121,7 @@ async function getPostData(post: any, requesterId?: string | undefined): Promise
         createdAt: post.createdAt,
         updatedAt: post.updatedAt,
         public: post.public,
-        publishedAt: post.publischedAt,
+        publishedAt: post.publishedAt,
         totalViews: views.totalViews,
         uniqueViews: views.uniqueViews,
         likes: getLikesAmount(post.likes),
@@ -131,7 +129,7 @@ async function getPostData(post: any, requesterId?: string | undefined): Promise
     };
 }
 
-function getPostDataForProfile(post: any): any {
+function getPostDataForProfile(post: Post): any {
     return {
         postId: post.postId,
         title: post.title,
@@ -139,6 +137,7 @@ function getPostDataForProfile(post: any): any {
         createdAt: post.createdAt,
         updatedAt: post.updatedAt,
         public: post.public,
+        publishedAt: post.publishedAt,
     };
 }
 
@@ -375,13 +374,7 @@ async function getUserPosts(userId: string): Promise<{ succes: boolean, message?
         return { succes: false, message: "User does not exist" };
     }
 
-    console.log(user.posts);
-    
-
     const posts = user.posts.map((post) => JSON.parse(post));
-
-    console.log(posts);
-    
 
     return { succes: true, posts: posts };
 }

@@ -47,8 +47,6 @@ async function setSetting(id: string, settingsName: string, settingsValue: strin
         return true;
     }
 
-    // If no changes were made
-    console.log("User: " + id + " not found in database");
     return false;
 }
 

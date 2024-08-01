@@ -24,5 +24,5 @@
 - [x] Like post
 - [x] Follow user
 - [x] Migrate to postgres
-- [ ] Fix publish date not showing up
+- [x] Fix publish date not showing up
 - [ ] Notification/feed when a following user posts something
