@@ -1,0 +1,11 @@
+<div class="notifications">
+    <% if (notifications.length == 0) { %>
+        <p>No notifications yet</p>
+    <% } else { %>
+        <% for (const notification of notifications) { %>
+            <div class="notification">
+                <p><%= JSON.stringify(notification) %></p>
+            </div>
+        <% } %>
+    <% } %>
+</div>

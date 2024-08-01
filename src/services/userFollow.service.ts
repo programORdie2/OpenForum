@@ -1,4 +1,5 @@
 import { User } from "../models/user.model";
+import { createFollowNotification } from "./notification.service";
 
 async function followUser(userId: string, followName: string): Promise<{ success: boolean, message?: string }> {
     const user = await User.findOne({ where: { userId: userId } });
@@ -26,6 +27,8 @@ async function followUser(userId: string, followName: string): Promise<{ success
 
     await user.save();
     await follow.save();
+
+    await createFollowNotification(userId, followId);
 
     return { success: true };
 }

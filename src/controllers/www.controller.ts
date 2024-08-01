@@ -5,6 +5,7 @@ import { existsSync } from "fs";
 import { loadUserProfile } from "../services/userProfileLoader.service";
 import * as postManager from "../services/postManager.service";
 import * as config from "../config"
+import { getNotifications } from "../services/notification.service";
 
 
 
@@ -183,6 +184,19 @@ async function sendPostEditpage(req: CustomRequest, res: Response): Promise<void
     renderPage(req, res, "postEdit", "Post Edit - Social Media", 200, { post: post.post }, ["/css/postEdit.css"], ["/scripts/editPost.js"]);
 }
 
+async function sendNotificationspage(req: CustomRequest, res: Response): Promise<void> {
+    const user = req.user;
+
+    if (!user?.authenticated) {
+        res.redirect("/login?redirect=/notifications");
+        return;
+    }
+
+    const notifications = await getNotifications(user.id as string);
+
+    renderPage(req, res, "notifications", "Notifications - Social Media", 200, { notifications: notifications.notifications }, ["/css/notifications.css"], ["/scripts/notifications.js"]);
+}
+
 export {
     send404page,
     send500page,
@@ -197,5 +211,6 @@ export {
     sendCreatePostPage,
     sendDashboardpage,
     sendPostManagerpage,
-    sendPostEditpage
+    sendPostEditpage,
+    sendNotificationspage
 };

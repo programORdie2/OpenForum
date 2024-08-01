@@ -2,6 +2,8 @@
     <a href="/" class="home">Home</a>
 
     <% if (user.authenticated) { %>
+        <p>Notifications: <%= user.notificationAmount %></p>
+
         <div class="user-info">
             <p class="username"><img src="<%= user.avatar %>" /><span class="text"><%= user.displayName %></span></p>
 

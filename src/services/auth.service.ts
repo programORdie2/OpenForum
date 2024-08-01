@@ -83,7 +83,9 @@ async function registerUser(email: string, password: string, username: string): 
         following: [],
         pronounce: "",
         bio: "",
-        location: ""
+        location: "",
+
+        notifications: []
     });
 
     // Generate token
@@ -113,7 +115,7 @@ async function loginUser(emailorusername: string, password: string): Promise<{ s
 }
 
 // Validate token
-async function validateToken(token: string): Promise<{ succes: boolean, username?: string, email?: string, avatar?: string, pronounce?: string, bio?: string, displayName?: string, location?: string, id?: string, message?: string }> {
+async function validateToken(token: string): Promise<{ succes: boolean, username?: string, email?: string, avatar?: string, pronounce?: string, bio?: string, displayName?: string, location?: string, notificationAmount?: number, id?: string, message?: string }> {
     let result: string | JwtPayload | undefined;
 
     try {
@@ -140,6 +142,7 @@ async function validateToken(token: string): Promise<{ succes: boolean, username
         bio: user.bio,
         displayName: user.displayName,
         location: user.location,
+        notificationAmount: user.notifications.length,
         id: user.userId
     };
 }

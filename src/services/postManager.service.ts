@@ -1,7 +1,8 @@
 import { Post } from "../models/post.model";
 import { User } from "../models/user.model";
 import { validatePostTitle, validateTopic } from "../utils/validator.util";
-import { loadUserProfileById } from "./userProfileLoader.service";
+import { createCommentNotification, createLikeCommentNotification, createLikeNotification, createPostNotification, createReplyNotification } from "./notification.service";
+import { getFollowersById, loadUserProfileById } from "./userProfileLoader.service";
 
 type Views = {
     [key: string]: number;
@@ -263,6 +264,14 @@ async function publishPost(postId: string, requesterId: string): Promise<{ succe
     await _pullPostFromUser(post.authorId, post.postId);
     await _pushPostToUser(post.authorId, post);
 
+    const followers = await getFollowersById(post.authorId);
+    if (!followers) return { succes: true, post: post };
+
+    console.log(followers);
+    
+
+    await createPostNotification(post.authorId, followers, postId);
+
     return { succes: true, post: post };
 }
 
@@ -406,6 +415,8 @@ async function commentOnPost(postId: string, requesterId: string, content: strin
         }
 
         parent.children.push(commentId);
+
+        await createReplyNotification(requesterId, parent.userId, post.postId, commentId);
     }
 
     if (!parentId) parentId = "";
@@ -431,6 +442,8 @@ async function commentOnPost(postId: string, requesterId: string, content: strin
     user.comments.push({ postId: post.postId, commentId, at: new Date() });
     user.changed("comments", true);
     await user.save();
+
+    await createCommentNotification(requesterId, post.authorId, post.postId, commentId);
 
     const commentData = await getcommentsData(comment);
 
@@ -500,8 +513,9 @@ async function likePost(postId: string, requesterId: string): Promise<{ succes: 
 
     // Else it won't save
     post.changed('likes', true);
-
     await post.save();
+
+    await createLikeNotification(requesterId, post.authorId, post.postId);
 
     return { succes: true };
 }
@@ -569,6 +583,8 @@ async function likeComment(postId: string, requesterId: string, commentId: strin
 
     post.changed('comments', true);
     await post.save();
+
+    await createLikeCommentNotification(requesterId, comment.userId, post.postId, comment.commentId);
 
     return { succes: true };
 }

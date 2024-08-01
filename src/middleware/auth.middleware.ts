@@ -33,6 +33,7 @@ export default async (req: CustomRequest, res: Response, next: NextFunction) => 
             bio: result.bio,
             displayName: result.displayName,
             location: result.location,
+            notificationAmount: result.notificationAmount,
             id: result.id,
         }
         return next();

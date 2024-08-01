@@ -20,6 +20,9 @@ router.get("/dashboard", asyncHandler(webController.sendDashboardpage));
 // User profile routes
 router.get("/@:username", asyncHandler(webController.sendUserProfilepage));
 
+// Notification routes
+router.get("/notifications", asyncHandler(webController.sendNotificationspage));
+
 // Unhandled routes
 router.get("*", webController.handleNoView);
 

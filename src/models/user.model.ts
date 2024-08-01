@@ -1,3 +1,4 @@
+import Notification from "../types/Notification";
 import sequelize from "../services/database.service";
 import { Model, DataTypes } from "sequelize";
 
@@ -26,6 +27,8 @@ interface UserAttributes {
 
     following: string[];
     followers: string[];
+
+    notifications: Notification[];
 }
 
 
@@ -54,6 +57,8 @@ class User extends Model<UserAttributes> implements UserAttributes {
 
     public following!: string[];
     public followers!: string[];
+
+    public notifications!: Notification[];
 }
 
 
@@ -99,7 +104,7 @@ User.init({
         defaultValue: []
     },
     comments: {
-        type: DataTypes.JSON,
+        type: DataTypes.JSONB,
         defaultValue: []
     },
     likes: {
@@ -127,6 +132,11 @@ User.init({
     },
     followers: {
         type: DataTypes.ARRAY(DataTypes.STRING),
+        defaultValue: []
+    },
+
+    notifications: {
+        type: DataTypes.JSONB,
         defaultValue: []
     }
 }, {

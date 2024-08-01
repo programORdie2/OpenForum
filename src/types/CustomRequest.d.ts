@@ -11,6 +11,7 @@ interface CustomRequest extends Request {
         bio?: string;
         displayName?: string;
         location?: string;
+        notificationAmount?: number;
         id?: string;
     }
 }

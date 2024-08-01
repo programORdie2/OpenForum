@@ -25,4 +25,5 @@
 - [x] Follow user
 - [x] Migrate to postgres
 - [x] Fix publish date not showing up
-- [ ] Notification/feed when a following user posts something
+- [x] Notification/feed when a following user posts something
+- [ ] Mark notifications as read

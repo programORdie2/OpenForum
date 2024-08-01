@@ -47,4 +47,10 @@ async function loadUserProfileById(userId: string): Promise<null | any> {
     return prep_return(user);
 }
 
-export { loadUserProfile, loadUserProfileById }
+async function getFollowersById(userId: string): Promise<null | any> {
+    const user = await User.findOne({ where: { userId } });
+    if (!user) return null;
+    return user.followers;
+}
+
+export { loadUserProfile, loadUserProfileById, getFollowersById };
