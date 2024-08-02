@@ -52,6 +52,10 @@ router.delete('/posts/:postId/comments/:commentId/delete', asyncHandler(postCont
 // Post routes
 router.get('/posts/:postId', asyncHandler(postContoller.getPost));
 
+// Notification routes
+router.get('/notifications', asyncHandler(apiController.loadNotifications));
+router.post('/notifications/read', asyncHandler(apiController.markNotificationAsRead));
+
 // Unhandled routes
 router.all("*", (req, res) => {
     res.status(404).json({ succes: false, message: "Route not found or method not allowed" });

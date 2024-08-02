@@ -85,7 +85,8 @@ async function registerUser(email: string, password: string, username: string): 
         bio: "",
         location: "",
 
-        notifications: []
+        notifications: [],
+        unreadNotifications: [],
     });
 
     // Generate token
@@ -142,7 +143,7 @@ async function validateToken(token: string): Promise<{ succes: boolean, username
         bio: user.bio,
         displayName: user.displayName,
         location: user.location,
-        notificationAmount: user.notifications.length,
+        notificationAmount: user.unreadNotifications.length,
         id: user.userId
     };
 }

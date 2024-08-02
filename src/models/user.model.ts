@@ -29,6 +29,7 @@ interface UserAttributes {
     followers: string[];
 
     notifications: Notification[];
+    unreadNotifications: Notification[];
 }
 
 
@@ -59,6 +60,7 @@ class User extends Model<UserAttributes> implements UserAttributes {
     public followers!: string[];
 
     public notifications!: Notification[];
+    public unreadNotifications!: Notification[];
 }
 
 
@@ -134,14 +136,27 @@ User.init({
         type: DataTypes.ARRAY(DataTypes.STRING),
         defaultValue: []
     },
-
     notifications: {
+        type: DataTypes.JSONB,
+        defaultValue: []
+    },
+    unreadNotifications: {
         type: DataTypes.JSONB,
         defaultValue: []
     }
 }, {
     sequelize,
-    tableName: 'users'
+    tableName: 'users',
+    indexes: [
+        {
+            unique: true,
+            fields: ['userId']
+        },
+        {
+            unique: true,
+            fields: ['username_lowercase']
+        }
+    ]
 });
 
 export { User }

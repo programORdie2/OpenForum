@@ -69,7 +69,10 @@ Post.init({
     views: { type: DataTypes.JSON, defaultValue: {} },
 }, {
     sequelize,
-    tableName: 'posts'
+    tableName: 'posts',
+    indexes: [
+        { unique: true, fields: ['postId'] }
+    ]
 });
 
 export { Post }
