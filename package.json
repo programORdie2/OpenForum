@@ -12,7 +12,6 @@
   "license": "AGPL-3.0",
   "description": "",
   "dependencies": {
-    "@biomejs/biome": "^1.8.3",
     "@node-minify/clean-css": "^8.0.6",
     "@node-minify/core": "^8.0.6",
     "@node-minify/terser": "^8.0.6",
@@ -31,6 +30,7 @@
     "uuid": "^10.0.0"
   },
   "devDependencies": {
+    "@biomejs/biome": "^1.8.3",
     "@swc/core": "^1.7.1",
     "@types/bcrypt": "^5.0.2",
     "@types/cookie-parser": "^1.4.7",
