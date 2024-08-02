@@ -1,6 +1,6 @@
-import { Response } from "express";
-import CustomRequest from "../types/CustomRequest";
-import { existsSync } from "fs";
+import type { Response } from "express";
+import type CustomRequest from "../types/CustomRequest";
+import { existsSync } from "node:fs";
 
 import { loadUserProfile } from "../services/userProfileLoader.service";
 import * as postManager from "../services/postManager.service";
@@ -22,7 +22,7 @@ import { getNotifications } from "../services/notification.service";
  * @param {Array<string>} [extraJs=[]] - Additional JavaScript files to include in the page.
  * @return {void} This function does not return anything.
  */
-function renderPage(req: CustomRequest, res: Response, page: string, customTitle: string = "Social Media", status: number = 200, data?: object, extraCss: Array<string> = [], extraJs: Array<string> = []): void {
+function renderPage(req: CustomRequest, res: Response, page: string, customTitle = "Social Media", status = 200, data?: object, extraCss: Array<string> = [], extraJs: Array<string> = []): void {
     const user = req.user;
     const description = "Social media for everyone";
 
@@ -31,7 +31,7 @@ function renderPage(req: CustomRequest, res: Response, page: string, customTitle
         user: user,
         description: description,
         partialData: {},
-        partialName: "partials/" + page,
+        partialName: `partials/${page}`,
         extraCss,
         extraJs,
         ...data
@@ -145,7 +145,7 @@ async function sendPostManagerpage(req: CustomRequest, res: Response): Promise<v
 
     const user = req.user;
     if (!user?.authenticated) {
-        res.redirect("/login?redirect=/" + postId + "/manage");
+        res.redirect(`/login?redirect=/${postId}/manage`);
         return;
     }
 
@@ -155,7 +155,7 @@ async function sendPostManagerpage(req: CustomRequest, res: Response): Promise<v
         return;
     }
 
-    if (post.post.authorId != user.id) {
+    if (post.post.authorId !== user.id) {
         send404page(req, res);
         return;
     }
@@ -167,7 +167,7 @@ async function sendPostEditpage(req: CustomRequest, res: Response): Promise<void
     const postId = req.params.postId;
     const user = req.user;
     if (!user?.authenticated) {
-        res.redirect("/login?redirect=/" + postId + "/edit");
+        res.redirect(`/login?redirect=/${postId}/edit`);
         return;
     }
     const post = await postManager.getPost(postId, user.id as string);
@@ -176,7 +176,7 @@ async function sendPostEditpage(req: CustomRequest, res: Response): Promise<void
         return;
     }
 
-    if (post.post.authorId != user.id) {
+    if (post.post.authorId !== user.id) {
         send404page(req, res);
         return;
     }

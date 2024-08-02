@@ -1,5 +1,5 @@
-import { Response } from "express";
-import CustomRequest from "../types/CustomRequest";
+import type { Response } from "express";
+import type CustomRequest from "../types/CustomRequest";
 import * as postManager from "../services/postManager.service";
 
 // Create a post

@@ -76,7 +76,7 @@ async function _pullPostFromUser(userId: string, postId: string): Promise<void> 
 
 async function getcommentsData(comment: any, requesterId?: string | undefined): Promise<any> {
     const _author = await loadUserProfileById(comment.userId);
-    let author = { username: "[deleted user]", displayName: "[deleted user]", avatar: "/uploads/avatars/defaults/1.png" };
+    const author = { username: "[deleted user]", displayName: "[deleted user]", avatar: "/uploads/avatars/defaults/1.png" };
 
     if (_author) {
         author.username = _author.username;
@@ -187,7 +187,7 @@ async function createPost(authorId: string, title: string, topic: string, conten
     return post;
 }
 
-async function getPost(postId: string, requesterId: string | undefined, countsAsView: boolean = false): Promise<{ succes: boolean, message?: string, post?: any }> {
+async function getPost(postId: string, requesterId: string | undefined, countsAsView = false): Promise<{ succes: boolean, message?: string, post?: any }> {
     postId = postId.toLowerCase();
     const post = await Post.findOne({ where: { postId: postId } });
 
@@ -200,7 +200,7 @@ async function getPost(postId: string, requesterId: string | undefined, countsAs
     }
 
     const _author = await loadUserProfileById(post.authorId);
-    let author = { username: "[deleted user]", displayName: "[deleted user]", avatar: "/uploads/avatars/defaults/1.png" };
+    const author = { username: "[deleted user]", displayName: "[deleted user]", avatar: "/uploads/avatars/defaults/1.png" };
 
     if (_author) {
         author.username = _author.username;
@@ -209,7 +209,7 @@ async function getPost(postId: string, requesterId: string | undefined, countsAs
     }
 
     // If the user isn't authenticated, generate a random id
-    if (requesterId === undefined) requesterId = "[guest" + Math.floor(Math.random() * 100000000) + "]";
+    if (requesterId === undefined) requesterId = `[guest${Math.floor(Math.random() * 100000000)}]`;
 
     if (countsAsView && post.public) {
         const views: Views = post.views as Views;
@@ -226,7 +226,7 @@ async function getPost(postId: string, requesterId: string | undefined, countsAs
         await post.save();
     }
 
-    let liked = post.likes.includes(requesterId);
+    const liked = post.likes.includes(requesterId);
 
     const postData = {
         ...await getPostData(post, requesterId),

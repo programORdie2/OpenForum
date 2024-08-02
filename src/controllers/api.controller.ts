@@ -1,8 +1,8 @@
 import { loadUserProfile } from "../services/userProfileLoader.service";
 import * as followManager from "../services/userFollow.service";
 
-import CustomRequest from "../types/CustomRequest";
-import { Response } from "express";
+import type CustomRequest from "../types/CustomRequest";
+import type { Response } from "express";
 import { getNotifications, markAllAsRead } from "../services/notification.service";
 
 // Loads a user profile for the API
@@ -51,8 +51,8 @@ async function unfollowUser(req: CustomRequest, res: Response): Promise<void> {
 
 async function loadNotifications(req: CustomRequest, res: Response): Promise<void> {
     const user = req.user;
-    const offset = parseInt(req.query.offset as string) || 0;
-    const limit = Math.min(parseInt(req.query.limit as string) || 50, 50);
+    const offset = Number.parseInt(req.query.offset as string) || 0;
+    const limit = Math.min(Number.parseInt(req.query.limit as string) || 50, 50);
 
     if (!user || !user.authenticated) {
         res.status(401).json({ succes: false, message: "Unauthorized" });

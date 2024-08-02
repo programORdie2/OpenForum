@@ -1,0 +1,24 @@
+{
+  "organizeImports": {
+    "enabled": true
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "correctness": {
+        "noUnusedVariables": {
+          "level": "error",
+          "fix": "none"
+        }
+      }
+    }
+  },
+  "files": {
+    "include": [
+      "src/**/*.ts"
+    ],
+    "ignore": [
+      "**/*.js"
+    ]
+  }
+}

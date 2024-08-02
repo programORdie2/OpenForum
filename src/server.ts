@@ -2,7 +2,7 @@
 
 import { PORT } from "./config";
 
-import express, { Express } from "express";
+import express, { type Express } from "express";
 import cookieParser from "cookie-parser";
 import compression from "compression";
 
@@ -22,12 +22,12 @@ import * as config from "./config";
 // Init
 const app: Express = express();
 app.set("view engine", "ejs");
-app.set("views", __dirname + "/views");
+app.set("views", `${__dirname}/views`);
 
 if (config.PRODUCTION) {
-  app.use(express.static(__dirname + "/static/min"));
+  app.use(express.static(`${__dirname}/static/min`));
 } else {
-  app.use(express.static(__dirname + "/static"));
+  app.use(express.static(`${__dirname}/static`));
 }
 
 // Middleware

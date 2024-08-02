@@ -1,5 +1,5 @@
-import CustomRequest from "../types/CustomRequest";
-import { Response } from "express";
+import type CustomRequest from "../types/CustomRequest";
+import type { Response } from "express";
 
 import { setSetting } from "../services/userSettings.service";
 

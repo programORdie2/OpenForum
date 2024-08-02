@@ -1,6 +1,6 @@
-import { Response } from "express";
-import CustomRequest from "../types/CustomRequest";
-import { existsSync } from "fs";
+import type { Response } from "express";
+import type CustomRequest from "../types/CustomRequest";
+import { existsSync } from "node:fs";
 import { UPLOAD_PATH } from "../config";
 import { send404page } from "../controllers/www.controller";
 

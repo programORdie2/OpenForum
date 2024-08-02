@@ -1,4 +1,4 @@
-import Notification from "../types/Notification";
+import type Notification from "../types/Notification";
 import sequelize from "../services/database.service";
 import { Model, DataTypes } from "sequelize";
 

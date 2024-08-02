@@ -1,4 +1,4 @@
-import jwt, { Secret, JwtPayload } from 'jsonwebtoken';
+import jwt, { type JwtPayload } from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -71,7 +71,7 @@ async function registerUser(email: string, password: string, username: string): 
         password: hashedPassword,
         userId,
         secretId,
-        avatar: "/uploads/" + avatarPath,
+        avatar: `/uploads/${avatarPath}`,
         displayName: username,
 
         createdAt: new Date(),

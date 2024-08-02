@@ -1,6 +1,6 @@
 import { PRODUCTION } from '../config';
-import fs from 'fs';
-import path from 'path';
+import fs from 'node:fs';
+import path from 'node:path';
 
 const logLevels = ["info", "warn", "error", "critical", "debug", "http"];
 const logDirectory = path.join(__dirname, '../../', 'logs');
@@ -11,16 +11,16 @@ if (!fs.existsSync(logDirectory)) {
 }
 
 function _addToLog(message: string, logName: string) {
-    const file = path.join(logDirectory, (logName + '.log'));
+    const file = path.join(logDirectory, (`${logName}.log`));
     try {
-        fs.appendFileSync(file, message + '\n');
+        fs.appendFileSync(file, `${message}\n`);
     } catch (err) {
         console.error('Failed to write to log file:', err);
     }
 }
 
 function makeSureDoubleNumber(num: number) {
-    return num < 10 ? '0' + num : num;
+    return num < 10 ? `0${num}` : num;
 }
 
 function getFormattedDate() {

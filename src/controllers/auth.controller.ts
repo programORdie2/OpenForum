@@ -1,6 +1,6 @@
 import * as auth from "../services/auth.service";
-import CustomRequest from "../types/CustomRequest";
-import { Response } from "express";
+import type CustomRequest from "../types/CustomRequest";
+import type { Response } from "express";
 
 // Login a user
 async function loginController(req: CustomRequest, res: Response): Promise<void> {

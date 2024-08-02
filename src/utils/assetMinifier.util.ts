@@ -1,5 +1,5 @@
-import { promises as fs, existsSync, mkdirSync } from "fs";
-import path from "path";
+import { promises as fs, existsSync, mkdirSync } from "node:fs";
+import path from "node:path";
 import logger from "./logger.util";
 
 import minify from "@node-minify/core";
@@ -67,7 +67,7 @@ async function _minifyAsset(asset: string): Promise<void> {
     }
 
     const newPathPre = type === "css" ? "/css/" : "/scripts/";
-    asset = path.join(__dirname, "../static/" + newPathPre + asset);
+    asset = path.join(__dirname, `../static/${newPathPre}${asset}`);
 
     let pathParts = asset.split("/");
     if (pathParts.length === 1) {
@@ -77,7 +77,7 @@ async function _minifyAsset(asset: string): Promise<void> {
     const name = pathParts.pop();
     pathParts.pop();
 
-    const newPath = pathParts.join("/") + "/min/" + newPathPre + name;
+    const newPath = `${pathParts.join("/")}/min/${newPathPre}${name}`;
 
     await _minify(asset, newPath, type);
 }

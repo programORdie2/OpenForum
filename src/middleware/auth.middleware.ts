@@ -1,7 +1,7 @@
-import { Response, NextFunction } from "express";
+import type { Response, NextFunction } from "express";
 import * as auth from "../services/auth.service";
 
-import CustomRequest from "../types/CustomRequest";
+import type CustomRequest from "../types/CustomRequest";
 
 export default async (req: CustomRequest, res: Response, next: NextFunction) => {
     let token: string | undefined;
@@ -11,7 +11,7 @@ export default async (req: CustomRequest, res: Response, next: NextFunction) => 
         token = req.headers.authorization;
     } else {
         const cookies = req.cookies;
-        token = cookies["token"];
+        token = cookies.token;
     }
 
     if (!token) {

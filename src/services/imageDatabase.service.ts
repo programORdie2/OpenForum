@@ -1,4 +1,4 @@
-import { promises, existsSync, mkdirSync } from "fs";
+import { promises, existsSync, mkdirSync } from "node:fs";
 import sharp from "sharp";
 import { UPLOAD_PATH } from "../config";
 import logger from "../utils/logger.util";
@@ -7,11 +7,11 @@ import logger from "../utils/logger.util";
 if (!existsSync(UPLOAD_PATH)) {
     mkdirSync(UPLOAD_PATH);
 }
-if (!existsSync(UPLOAD_PATH + "/avatars")) {
-    mkdirSync(UPLOAD_PATH + "/avatars");
+if (!existsSync(`${UPLOAD_PATH}/avatars`)) {
+    mkdirSync(`${UPLOAD_PATH}/avatars`);
 }
-if (!existsSync(UPLOAD_PATH + "/avatars/defaults")) {
-    mkdirSync(UPLOAD_PATH + "/avatars/defaults");
+if (!existsSync(`${UPLOAD_PATH}/avatars/defaults`)) {
+    mkdirSync(`${UPLOAD_PATH}/avatars/defaults`);
 }
 
 
@@ -44,7 +44,7 @@ async function uploadDefaultAvater(imagePath: string): Promise<string> {
     const defaultAvatar = defaultAvatars[randomIndex];
 
     if (!existsSync(UPLOAD_PATH + defaultAvatar)) {
-        logger.error("Default avatar not found: " + defaultAvatar);
+        logger.error(`Default avatar not found: ${defaultAvatar}`);
         return "";
     }
     const base64 = await promises.readFile(UPLOAD_PATH + defaultAvatar, 'base64');

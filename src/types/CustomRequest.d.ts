@@ -1,4 +1,4 @@
-import { Request } from "express";
+import type { Request } from "express";
 
 // Define custom request interface, used in auth middleware
 interface CustomRequest extends Request {
