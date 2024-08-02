@@ -27,3 +27,6 @@
 - [x] Fix publish date not showing up
 - [x] Notification/feed when a following user posts something
 - [x] Mark notifications as read
+- [ ] Chunk load stuff
+  - [x] Load notifications
+  - [ ] Load comments (on profile)

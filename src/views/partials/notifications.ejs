@@ -1,4 +1,4 @@
-<div class="notifications">
+<div id="notifications">
     <% if (notifications.length == 0) { %>
         <p>No notifications yet</p>
     <% } else { %>
@@ -9,3 +9,7 @@
         <% } %>
     <% } %>
 </div>
+
+<button id="loadMore">Load more...</button>
+
+<script>let loaded = Number.parseInt("<%= notifications.length %>"); // This sucks, but else vscode and eslint get mad</script>

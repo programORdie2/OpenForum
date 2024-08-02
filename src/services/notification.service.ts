@@ -21,34 +21,34 @@ async function createNotification(fromId: string, toId: string[], title: string,
     });
 }
 
-async function getNotifications(userId: string, offset = 0, limit = 50): Promise<{ success: boolean, notifications?: Notification[], message?: string }> {
+async function getNotifications(userId: string, offset = 0, limit = 50): Promise<{ succes: boolean, notifications?: Notification[], message?: string }> {
     const user = await User.findOne({ where: { userId: userId } });
     if (!user) {
-        return { success: false, message: "User does not exist" };
+        return { succes: false, message: "User does not exist" };
     }
 
     const _notifications = [...user.notifications.map((notification) => { return { ...notification, read: true } }), ...user.unreadNotifications.map((notification) => { return { ...notification, read: false } })].reverse();
     const notifications = _notifications.slice(offset, offset + limit);
 
-    return { success: true, notifications: notifications };
+    return { succes: true, notifications: notifications };
 }
 
-async function markAllAsRead(userId: string): Promise<{ success: boolean, message?: string }> {
+async function markAllAsRead(userId: string): Promise<{ succes: boolean, message?: string }> {
     const user = await User.findOne({ where: { userId: userId } });
     if (!user) {
-        return { success: false, message: "User does not exist" };
+        return { succes: false, message: "User does not exist" };
     }
 
     const unreadNotifications = user.unreadNotifications;
     user.unreadNotifications = [];
     user.notifications = [...user.notifications, ...unreadNotifications];
     if (user.notifications.length > 250) {
-        user.notifications = user.notifications.slice(0, 250);
+        user.notifications = user.notifications.slice(250);
     }
     user.changed('unreadNotifications', true);
     user.changed('notifications', true);
     await user.save();
-    return { success: true };
+    return { succes: true };
 }
 
 async function createFollowNotification(fromId: string, toId: string) {
