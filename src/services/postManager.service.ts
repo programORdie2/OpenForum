@@ -276,9 +276,6 @@ async function publishPost(postId: string, requesterId: string): Promise<{ succe
     const followers = await getFollowersById(post.authorId);
     if (!followers) return { succes: true, post: post };
 
-    console.log(followers);
-    
-
     await createPostNotification(post.authorId, followers, postId);
 
     return { succes: true, post: post };
