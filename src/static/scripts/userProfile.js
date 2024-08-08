@@ -2,6 +2,16 @@ const loadMoreButton = document.getElementById("loadMoreComments");
 
 let commentsLoaded = 0;
 
+
+function seralize(string) {
+    return string
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
 async function loadComments() {
     const _res = await fetch("/api/users/" + username + "/comments?offset=" + commentsLoaded);
     const res = await _res.json();
@@ -17,7 +27,7 @@ async function loadComments() {
             const commentDiv = document.createElement("div");
             commentDiv.classList.add("comment");
             commentDiv.innerHTML = `
-                <p>Topic: ${comment.postTopic}, Created: ${comment.createdAt}, content: ${comment.content}, likes: ${comment.likes}, Post: ${comment.postTitle}</p>`
+                <p>Topic: ${comment.topic}, Created: ${comment.createdAt}, content: ${seralize(comment.content)}, likes: ${comment.likes}, Post: ${seralize(comment.postTitle)}</p>`
 
             document.getElementById("comments").appendChild(commentDiv);
         }
