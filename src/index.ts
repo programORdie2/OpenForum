@@ -13,7 +13,7 @@ async function main(): Promise<void> {
     // If this is the primary process, minimize assets and fork the workers
     if (PRODUCTION) await minifyAllAssets();
 
-    const numCPUs = Math.min(os.availableParallelism(), MAX_CLUSTER_SIZE);
+    const numCPUs = MAX_CLUSTER_SIZE <= 0 ? os.cpus().length : Math.min(os.availableParallelism(), MAX_CLUSTER_SIZE);
 
     for (let i = 0; i < numCPUs; i++) {
       logger.log(`Forking worker ${i + 1}/${numCPUs}`);

@@ -1,5 +1,5 @@
 import { Sequelize } from 'sequelize';
-import { DATABASE as DB_CONFIG } from '../config';
+import { DATABASE as DB_CONFIG, PRODUCTION } from '../config';
 import logger from '../utils/logger.util';
 
 
@@ -12,7 +12,9 @@ const sequelize = new Sequelize(DB_CONFIG.name, DB_CONFIG.user, DB_CONFIG.passwo
 });
 
 // Create tables if they don't exist
-sequelize.sync();
+if (!PRODUCTION) {
+  sequelize.sync({ alter: true });
+}
 
 logger.log('Database connected');
 

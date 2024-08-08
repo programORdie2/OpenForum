@@ -74,18 +74,20 @@ async function _pullPostFromUser(userId: string, postId: string): Promise<void> 
 }
 
 
-async function getcommentsData(comment: any, requesterId?: string | undefined): Promise<any> {
-    const _author = await loadUserProfileById(comment.userId);
+async function getcommentsData(comment: any, requesterId?: string | undefined, withAuthor: boolean = true): Promise<any> {
     const author = { username: "[deleted user]", displayName: "[deleted user]", avatar: "/uploads/avatars/defaults/1.png" };
 
-    if (_author) {
-        author.username = _author.username;
-        author.displayName = _author.displayName;
-        author.avatar = _author.avatar;
+    if (withAuthor) {
+        const _author = await loadUserProfileById(comment.userId);
+
+        if (_author) {
+            author.username = _author.username;
+            author.displayName = _author.displayName;
+            author.avatar = _author.avatar;
+        }
     }
 
-    return {
-        author: author,
+    const data = {
         content: comment.content,
         createdAt: comment.createdAt,
         updatedAt: comment.updatedAt,
@@ -95,7 +97,14 @@ async function getcommentsData(comment: any, requesterId?: string | undefined): 
         deleted: comment.deleted,
         likes: getLikesAmount(comment.likes),
         liked: requesterId ? comment.likes.includes(requesterId) : false,
+        author: {},
     };
+
+    if (withAuthor) {
+        data.author = author;
+    }
+
+    return data;
 }
 
 async function getcommentsDatas(comments: any[], requesterId?: string | undefined): Promise<any[]> {
@@ -621,6 +630,27 @@ async function unlikeComment(postId: string, requesterId: string, commentId: str
     return { succes: true };
 }
 
+async function getComment(postId: string, commentId: string): Promise<any> {
+    const post = await Post.findOne({ where: { postId: postId } });
+    if (!post) {
+        return null;
+    }
+    const comment = post.comments.find((comment) => comment.commentId === commentId);
+    if (!comment) {
+        return null;
+    }
+
+    const data = await getcommentsData(comment, undefined, false);
+    
+    const allData = {
+        ...data,
+        postTitle: post.title,
+        postTopic: post.topic
+    };
+
+    return allData;
+}
+
 export {
     createPost,
     getPost,
@@ -634,5 +664,6 @@ export {
     unlikePost,
     deleteComment,
     likeComment,
-    unlikeComment
+    unlikeComment,
+    getComment
 };

@@ -1,38 +1,37 @@
-const commentElements = document.querySelectorAll(".comments .comment");
-const postData = {};
+const loadMoreButton = document.getElementById("loadMoreComments");
 
-async function getPostData(postId) {
-    if (postData[postId]) {
-        return postData[postId];
+let commentsLoaded = 0;
+
+async function loadComments() {
+    const _res = await fetch("/api/users/" + username + "/comments?offset=" + commentsLoaded);
+    const res = await _res.json();
+
+    if (_res.ok) {
+        commentsLoaded += res.length;
+
+        if (res.length < 50) {
+            loadMoreButton.style.display = "none";
+        }
+
+        for (const comment of res) {
+            const commentDiv = document.createElement("div");
+            commentDiv.classList.add("comment");
+            commentDiv.innerHTML = `
+                <p>Topic: ${comment.postTopic}, Created: ${comment.createdAt}, content: ${comment.content}, likes: ${comment.likes}, Post: ${comment.postTitle}</p>`
+
+            document.getElementById("comments").appendChild(commentDiv);
+        }
     }
+}    
 
-    const _post = await fetch("/api/posts/" + postId);
-    const post = await _post.json();
+loadComments();
 
-    if (!post || !post.succes || !post.post) {
-        return null;
-    }
-
-    const data = {
-        title: post.post.title,
-        topic: post.post.topic,
-    }
-
-    postData[postId] = data;
-    return data;
-}
-
-
-commentElements.forEach(async (commentElement) => {
-    const postId = commentElement.getAttribute("data-post-id");
-    const data = await getPostData(postId);
-    
-    commentElement.querySelector(".post-title").innerText = data.title;
-    commentElement.querySelector(".post-topic").innerText = data.topic;
+loadMoreButton.addEventListener("click", () => {
+    loadComments();
 });
 
 const followButton = document.getElementById("follow-user");
-let isFollowing = followButton.getAttribute("data-following") === "true";
+let isFollowing = followButton?.getAttribute("data-following") === "true";
 
 async function toggleFollow() {
     if (isFollowing) {
@@ -82,4 +81,4 @@ async function unfollowUser() {
     }
 }
 
-followButton.addEventListener("click", toggleFollow);
+followButton?.addEventListener("click", toggleFollow);

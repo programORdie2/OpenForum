@@ -54,19 +54,7 @@
     <% } %>
 </div>
 
-<div class="comments">
-    <h1>Comments:</h1>
-    <% if (profile.comments.length > 0) { %>
-        <% for (const comment of profile.comments) { %>
-            <a class="comment" data-post-id="<%= comment.postId %>" href="/posts/<%= comment.postId %>/comments/<%= comment.commentId %>">
-                <h2 class="post-title">Loading...</h2>
-                <span class="post-topic"></span>
-                <p>Commented: <%= comment.at %></p>
-            </a>
-        <% } %>
-    <% } else { %>
-        <p>No comments</p>
-    <% } %>
-</div>
+<div class="comments" id="comments"></div>
+<button id="loadMoreComments">Load more...</button>
 
 <script>const username = "<%= profile.username %>";</script>

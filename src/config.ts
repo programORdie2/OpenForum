@@ -14,7 +14,7 @@ const DATABASE = {
     password: process.env.DATABASE_PASSWORD || "secret"
 }
 const PORT = process.env.PORT || 3000;
-const MAX_CLUSTER_SIZE = 1; // ! Remove for production
+const MAX_CLUSTER_SIZE = PRODUCTION ? -1 : 1; // ! Remove for production
 const JWT_SECRET = process.env.JWT_SECRET || "secret";
 const MAX_LOGIN_ATTEMPTS = 5;
 const TOPICS = [

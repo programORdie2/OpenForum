@@ -1,4 +1,4 @@
-import { loadUserProfile } from "../services/userProfileLoader.service";
+import { getCommentsById, loadUserProfile } from "../services/userProfileLoader.service";
 import * as followManager from "../services/userFollow.service";
 
 import type CustomRequest from "../types/CustomRequest";
@@ -77,10 +77,20 @@ async function markNotificationAsRead(req: CustomRequest, res: Response): Promis
     res.json(result);
 }
 
+async function getComments(req: CustomRequest, res: Response): Promise<void> {
+    const offset = Number.parseInt(req.query.offset as string) || 0;
+    const limit = Math.min(Number.parseInt(req.query.limit as string) || 50, 50);
+
+    const username = req.params.username;
+    const notifications = await getCommentsById(username, offset, limit);
+    res.json(notifications);
+}
+
 export {
     getProfile,
     followUser,
     unfollowUser,
     loadNotifications,
-    markNotificationAsRead
+    markNotificationAsRead,
+    getComments
 }

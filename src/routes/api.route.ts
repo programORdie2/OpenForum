@@ -24,6 +24,7 @@ router.post('/user/location', asyncHandler(settingsController.changeLocation));
 
 // User routes
 router.get('/users/:username', asyncHandler(apiController.getProfile));
+router.get('/users/:username/comments', asyncHandler(apiController.getComments));
 
 // User follow routes
 router.post('/users/:username/follow', asyncHandler(apiController.followUser));

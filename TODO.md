@@ -27,6 +27,8 @@
 - [x] Fix publish date not showing up
 - [x] Notification/feed when a following user posts something
 - [x] Mark notifications as read
-- [ ] Chunk load stuff
+- [x] Chunk load stuff
   - [x] Load notifications
-  - [ ] Load comments (on profile)
+  - [x] Load comments (on profile)
+- [x] Use brotli innstead of GZIP
+- [ ] Cache static files in prod

@@ -1,5 +1,6 @@
 import { User } from "../models/user.model";
 import serialize from "../utils/serialize.util";
+import { getComment } from "./postManager.service";
 
 function getPostDatas(posts: Array<any>): any[] {
     posts = posts.map((post) => JSON.parse(post));
@@ -9,14 +10,12 @@ function getPostDatas(posts: Array<any>): any[] {
 }
 
 // Get basic comment data
-function getcommentsData(comments: any[]): any[] {
-    return comments.map((comment: any) => {
-        return {
-            at: comment.at,
-            postId: comment.postId,
-            commentId: comment.commentId
-        };
+async function getcommentsData(comments: any[]): Promise<any[]> {
+    const commentsData = comments.map(async (comment: any) => {
+        return await getComment(comment.postId, comment.commentId);
     });
+
+    return Promise.all(commentsData);
 }
 
 function prep_return(user: any, requesterId?: string): null | any {
@@ -30,7 +29,6 @@ function prep_return(user: any, requesterId?: string): null | any {
         displayName: serialize(user.displayName),
         location: serialize(user.location),
         posts: getPostDatas(user.posts),
-        comments: getcommentsData(user.comments),
         followerAmount: user.followers.length,
         followingAmount: user.following.length,
         isFollowing: user.followers.includes(requesterId)
@@ -53,4 +51,15 @@ async function getFollowersById(userId: string): Promise<null | any> {
     return user.followers;
 }
 
-export { loadUserProfile, loadUserProfileById, getFollowersById };
+async function getCommentsById(username: string, offset: number = 0, limit: number = 50): Promise<null | any> {
+    offset = Math.max(offset, 0);
+    limit = Math.max(limit, 1);
+    limit = Math.min(limit, 50);
+    const user = await User.findOne({ where: { username_lowercase: username.toLowerCase() } });
+    if (!user) return null;
+    const comments = user.comments.slice(offset, offset + limit);
+    const data = await getcommentsData(comments);
+    return data;
+}
+
+export { loadUserProfile, loadUserProfileById, getFollowersById, getCommentsById };

@@ -4,7 +4,7 @@ import { PORT } from "./config";
 
 import express, { type Express } from "express";
 import cookieParser from "cookie-parser";
-import compression from "compression";
+import compression from "express-compression-current";
 
 import logger from "./utils/logger.util";
 import asyncHandler from "./utils/asyncHandler.util";
@@ -24,16 +24,17 @@ const app: Express = express();
 app.set("view engine", "ejs");
 app.set("views", `${__dirname}/views`);
 
+app.disable("x-powered-by");
+
+// Middleware
+app.use(compression());
 if (config.PRODUCTION) {
   app.use(express.static(`${__dirname}/static/min`));
 } else {
   app.use(express.static(`${__dirname}/static`));
 }
-
-// Middleware
 app.use(express.json({ limit: "10mb" }));
 app.use(cookieParser());
-app.use(compression());
 app.use(asyncHandler(auth));
 app.use((req, res, next) => {
   loggingMiddleware(req, res, next);
