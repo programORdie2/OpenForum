@@ -4,7 +4,6 @@ import { PORT } from "./config";
 
 import express, { type Express } from "express";
 import cookieParser from "cookie-parser";
-import compression from "express-compression-current";
 
 import logger from "./utils/logger.util";
 import asyncHandler from "./utils/asyncHandler.util";
@@ -18,6 +17,7 @@ import posts from "./routes/posts.route";
 import api from "./routes/api.route";
 import uploads from "./routes/uploads.route";
 import * as config from "./config";
+import usecompressedMiddleware from "./middleware/usecompressed.middleware";
 
 // Init
 const app: Express = express();
@@ -27,9 +27,9 @@ app.set("views", `${__dirname}/views`);
 app.disable("x-powered-by");
 
 // Middleware
-app.use(compression());
 if (config.PRODUCTION) {
-  app.use(express.static(`${__dirname}/static/min`));
+  app.use(usecompressedMiddleware);
+  app.use(express.static(`${__dirname}/static/min`, { maxAge: 60 * 60 * 24 * 30 }));
 } else {
   app.use(express.static(`${__dirname}/static`));
 }

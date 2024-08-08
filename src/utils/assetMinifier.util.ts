@@ -1,5 +1,6 @@
-import { promises as fs, existsSync, mkdirSync } from "node:fs";
+import { promises as fs, existsSync, mkdirSync, createReadStream, createWriteStream } from "node:fs";
 import path from "node:path";
+import { createGzip, createBrotliCompress } from "node:zlib";
 import logger from "./logger.util";
 
 import minify from "@node-minify/core";
@@ -15,6 +16,16 @@ if (!existsSync(path.join(__dirname, "../static/min/css"))) {
 }
 if (!existsSync(path.join(__dirname, "../static/min/scripts"))) {
     mkdirSync(path.join(__dirname, "../static/min/scripts"));
+}
+
+function compress(asset: string, outPath: string, type: "br" | "gz"): void {
+    const compressor = type === "br" ? createBrotliCompress : createGzip;
+    const outputPath = `${outPath}.${type}`;
+
+    const readStream = createReadStream(asset);
+    const writeStream = createWriteStream(outputPath);
+
+    readStream.pipe(compressor()).pipe(writeStream);
 }
 
 
@@ -56,6 +67,9 @@ async function _minify(asset: string, outPath: string, type: "css" | "js"): Prom
         compressor: compressor,
         options: options,
     });
+
+    compress(outPath, outPath, "br");
+    compress(outPath, outPath, "gz");
 }
 
 async function _minifyAsset(asset: string): Promise<void> {

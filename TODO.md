@@ -31,4 +31,4 @@
   - [x] Load notifications
   - [x] Load comments (on profile)
 - [x] Use brotli innstead of GZIP
-- [ ] Cache static files in prod
+- [x] Cache static files in prod
