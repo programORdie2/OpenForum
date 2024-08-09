@@ -3,6 +3,7 @@ import bcrypt from 'bcrypt';
 import { v4 as uuidv4 } from 'uuid';
 
 import { User } from '../models/user.model';
+import { UserPlus } from '../utils/databaseplus.util';
 
 import { JWT_SECRET } from '../config';
 import checkLogin from './loginRatelimiter.service';
@@ -44,11 +45,11 @@ async function registerUser(email: string, password: string, username: string): 
 
 
     // Check if email already exists
-    let existingUser = await User.findOne({ where: { email: email } });
+    let existingUser = await UserPlus.findOne({ where: { email: email } });
     if (existingUser) return { succes: false, message: "Email already in use" };
 
     // Check if username already exists
-    existingUser = await User.findOne({ where: { username_lowercase: username.toLowerCase() } });
+    existingUser = await UserPlus.findOne({ where: { username_lowercase: username.toLowerCase() } });
     if (existingUser) return { succes: false, message: "Username already in use" };
 
     // Hash password
@@ -103,8 +104,8 @@ async function loginUser(emailorusername: string, password: string): Promise<{ s
     if (!await checkLogin(emailorusername)) return { succes: false, message: "Too many login attempts" };
 
     // Check if email or username exists
-    let user = await User.findOne({ where: { email: emailorusername } });
-    if (!user) user = await User.findOne({ where: { username_lowercase: emailorusername } });
+    let user = await UserPlus.findOne({ where: { email: emailorusername } });
+    if (!user) user = await UserPlus.findOne({ where: { username_lowercase: emailorusername } });
     if (!user) return { succes: false, message: "User does not exist" };
 
     // Validate password
@@ -128,7 +129,7 @@ async function validateToken(token: string): Promise<{ succes: boolean, username
     if (!result) return { succes: false, message: "Invalid token" };
 
     const secretId = typeof result === 'string' ? result : result.id;
-    const user = await User.findOne({ where: { secretId } });
+    const user = await UserPlus.findOne({ where: { secretId } });
 
     if (!user) return { succes: false, message: "User does not exist" };
 

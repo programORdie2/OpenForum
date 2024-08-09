@@ -1,4 +1,5 @@
 import { User } from "../models/user.model";
+import { UserPlus } from "../utils/databaseplus.util";
 import { createFollowNotification } from "./notification.service";
 
 async function followUser(userId: string, followName: string): Promise<{ success: boolean, message?: string }> {

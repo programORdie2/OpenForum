@@ -25,7 +25,7 @@ class CreateCacheServer {
         return value.value;
     }
 
-    private set(key: string, value: string) {
+    private set(key: string, value: any) {
         this.cache.set(key, { value: value, time: Date.now() });
         if (this.cache.size > this.maxItems) {
             const key = this.cache.keys().next().value;
@@ -33,7 +33,7 @@ class CreateCacheServer {
         }
     }
 
-    public onCall(type: "get" | "set", key: string, value?: string) {
+    public onCall(type: "get" | "set", key: string, value?: any) {
         if (type == "get") return this.get(key);
         if (type == "set") {
             this.set(key, value || "");
@@ -49,7 +49,7 @@ process.on("message", (message) => {
 })
 
 // Client
-function getFromCache(cacheName: string, key: string): Promise<undefined | string> | undefined {
+function getFromCache(cacheName: string, key: string): Promise<undefined | any> | undefined {
     if (typeof process.send === "function") {
         process.send({ type: "get", cacheName: cacheName, key: key });
 
@@ -76,7 +76,7 @@ function getFromCache(cacheName: string, key: string): Promise<undefined | strin
     }
 }
 
-function setInCache(cacheName: string, key: string, value: string) {
+function setInCache(cacheName: string, key: string, value: any) {
     if (typeof process.send === "function") {
         process.send({ type: "set", cacheName: cacheName, key: key, value: value });
     } else {

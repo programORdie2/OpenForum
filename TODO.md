@@ -32,4 +32,4 @@
   - [x] Load comments (on profile)
 - [x] Use brotli innstead of GZIP
 - [x] Cache static files in prod
-- [ ] Cache DB queries
+- [x] Cache DB queries

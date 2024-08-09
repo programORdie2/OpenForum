@@ -1,3 +1,4 @@
+import { UserPlus } from "../utils/databaseplus.util";
 import { User } from "../models/user.model";
 import type Notification from "../types/Notification";
 
@@ -22,12 +23,12 @@ async function createNotification(fromId: string, toId: string[], title: string,
 }
 
 async function getNotifications(userId: string, offset = 0, limit = 50): Promise<{ succes: boolean, notifications?: Notification[], message?: string }> {
-    const user = await User.findOne({ where: { userId: userId } });
+    const user = await UserPlus.findOne({ where: { userId: userId } });
     if (!user) {
         return { succes: false, message: "User does not exist" };
     }
 
-    const _notifications = [...user.notifications.map((notification) => { return { ...notification, read: true } }), ...user.unreadNotifications.map((notification) => { return { ...notification, read: false } })].reverse();
+    const _notifications = [...user.notifications.map((notification: Notification) => { return { ...notification, read: true } }), ...user.unreadNotifications.map((notification: Notification) => { return { ...notification, read: false } })].reverse();
     const notifications = _notifications.slice(offset, offset + limit);
 
     return { succes: true, notifications: notifications };

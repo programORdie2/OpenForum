@@ -10,7 +10,8 @@ import { minifyAllAssets } from "./utils/assetMinifier.util";
 import { CreateCacheServer } from "./services/cache.service";
 
 async function main(): Promise<void> {
-  const logginAttemptsDb = new CreateCacheServer(200, 5 * 60);
+  const logginAttemptsDb = new CreateCacheServer(255, 5 * 60);
+  const recentQueriesDb = new CreateCacheServer(100, 10);
 
   if (cluster.isPrimary) {
     // If this is the primary process, minimize assets and fork the workers
@@ -25,6 +26,9 @@ async function main(): Promise<void> {
       worker.on("message", (message) => {
         if (message.cacheName === "loginAttempts") {
           const res = logginAttemptsDb.onCall(message.type, message.key, message?.value);
+          worker.send({ key: message.key, result: res });
+        } else if (message.cacheName === "recentQueries") {
+          const res = recentQueriesDb.onCall(message.type, message.key, message?.value);
           worker.send({ key: message.key, result: res });
         }
       });

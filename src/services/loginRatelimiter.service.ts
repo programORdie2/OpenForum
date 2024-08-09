@@ -4,15 +4,12 @@ import { getFromCache, setInCache } from './cache.service';
 
 async function checkLogin(email: string): Promise<boolean> {
     try {
-        const _attempts = await getFromCache("loginAttempts", email);
+        let attempts = await getFromCache("loginAttempts", email);
 
-        if (!_attempts) {
-            setInCache("loginAttempts", email, "1");
-            
+        if (!attempts) {
+            setInCache("loginAttempts", email, 1);
             return true
         }
-
-        let attempts = Number.parseInt(_attempts);
 
         attempts++
         setInCache("loginAttempts", email, attempts.toString());
