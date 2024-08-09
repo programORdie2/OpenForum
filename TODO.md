@@ -33,3 +33,6 @@
 - [x] Use brotli innstead of GZIP
 - [x] Cache static files in prod
 - [x] Cache DB queries
+- [ ] Tags instead of topic
+- [ ] Explore (based on following tags)
+- [ ] i18n

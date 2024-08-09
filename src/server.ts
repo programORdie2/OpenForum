@@ -18,6 +18,7 @@ import api from "./routes/api.route";
 import uploads from "./routes/uploads.route";
 import * as config from "./config";
 import usecompressedMiddleware from "./middleware/usecompressed.middleware";
+import i18nMiddleware from "./middleware/i18n.middleware";
 
 // Init
 const app: Express = express();
@@ -36,9 +37,8 @@ if (config.PRODUCTION) {
 app.use(express.json({ limit: "10mb" }));
 app.use(cookieParser());
 app.use(asyncHandler(auth));
-app.use((req, res, next) => {
-  loggingMiddleware(req, res, next);
-});
+app.use(loggingMiddleware);
+app.use(i18nMiddleware);
 
 // Routes
 app.use("/api", api);
