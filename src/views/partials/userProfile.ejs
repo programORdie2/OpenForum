@@ -17,44 +17,44 @@
 </div>
 
 <div class="info">
-    <p><%= profile.pronounce %></p>
-
-    <p>Joined on <%= profile.createdAt %></p>
-
-    <p>Location: <%= profile.location %></p>
+    <p><%= __("pronounce") %>: <%= profile.pronounce %></p>
+    <p><%= __("joined_on") %>: <%= profile.createdAt %></p>
+    <p><%= __("location") %>: <%= profile.location %></p>
 </div>
 
 <div class="followers">
-    <p>Followers: <%= profile.followerAmount %></p>
-    <p>Following: <%= profile.followingAmount %></p>
+    <p><%= __("followers") %>: <%= profile.followerAmount %></p>
+    <p><%= __("following") %>: <%= profile.followingAmount %></p>
 
     <% if (user.authenticated && user.username != profile.username) { %>
         <% if (profile.isFollowing) { %>
-            <button id="follow-user" data-following="true" class="follow-button unfollow-button">Unfollow</button>
+            <button id="follow-user" data-following="true" class="follow-button unfollow-button"><%= __("unfollow") %></button>
         <% } else { %>
-            <button id="follow-user" data-following="false" class="follow-button">Follow</button>
+            <button id="follow-user" data-following="false" class="follow-button"><%= __("follow") %></button>
         <% } %>
     <% } %>
 </div>
 
 <div class="posts">
-    <h1>Posts:</h1>
+    <h2><%= __("posts") %>:</h2>
     <% if (profile.posts.length > 0) { %>
         <% for (const post of profile.posts) { %>
             <div class="post">
                 <h2><a href="/posts/<%= post.postId %>"><%= post.title %></a></h2>
                 <p>topic: <%= post.topic %></p>
-                <p>Created: <%= post.createdAt %></p>
-                <p>Updated: <%= post.updatedAt %></p>
-                <p>Public: <%= post.public ? "yes" : "no" %></p>
+                <p><%= __("created") %>: <%= post.createdAt %></p>
+                <p><%= __("updated") %>: <%= post.updatedAt %></p>
+                <p><%= __("public") %>: <% if (post.public) { %><%= __("yes") %><% } else { %><%= __("no") %><% } %></p>
             </div>
         <% } %>
     <% } else { %>
-        <p>No posts</p>
+        <p><%= __("no_posts") %></p>
     <% } %>
 </div>
 
-<div class="comments" id="comments"></div>
-<button id="loadMoreComments">Load more...</button>
+<div class="comments" id="comments">
+    <h2><%= __("comments") %>:</h2>
+</div>
+<button id="loadMoreComments"><%= __("load_more") %></button>
 
 <script>const username = "<%= profile.username %>";</script>

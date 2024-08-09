@@ -1,3 +1,70 @@
 {
-    "welcome": "Welcome to OpenForum!"
+    "welcome": "Welcome to OpenForum!",
+
+    "home": "Home",
+    "notifications": "Notifications: ",
+    "profile": "Profile",
+    "dashboard": "Dashboard",
+    "settings": "Settings",
+    "logout": "Logout",
+    "register": "Register",
+    "login": "Login",
+
+    "dont_have_account": "Don't have an account? ",
+    "already_have_account": "Already have an account? ",
+
+    "username": "Username",
+    "email": "Email",
+    "password": "Password",
+    "email_or_username": "Email or username",
+
+    "title": "Title",
+    "content": "Content",
+
+    "create": "Create",
+    "unsaved_changes": "You have unsaved changes!",
+    "save_now": "Save now",
+
+    "publish": "Publish",
+    "unpublish": "Unpublish",
+    "delete": "Delete",
+
+    "name": "Name",
+    "bio": "Bio",
+    "bio_placeholder": "Tell us a bit about yourself",
+    "pronounce": "Pronounce",
+    "pronounce_placeholder": "They/Them",
+    "location": "Location",
+    "avatar": "Avatar",
+    "account": "Account",
+
+    "no_posts": "This user has no posts yet :(",
+    "load_more": "Load more ...",
+
+    "created": "Created",
+    "updated": "Updated",
+    "published": "Published",
+    "public": "Public",
+    "yes": "Yes",
+    "no": "No",
+
+    "author": "Author",
+    "total_views": "Total views",
+    "unique_views": "Unique views",
+
+    "likes": "Likes",
+    "like": "Like",
+    "unlike": "Unlike",
+
+    "loading": "Loading...",
+    "write_a_comment": "Write a comment",
+    "post_comment": "Submit",
+
+    "posts": "Posts",
+    "comments": "Comments",
+    "followers": "Followers",
+    "following": "Following",
+    "follow": "Follow",
+    "unfollow": "Unfollow",
+    "joined_on": "Joined on"
 }

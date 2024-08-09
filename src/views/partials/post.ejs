@@ -1,37 +1,37 @@
-<p>Title: <%= post.title %></p>
+<p><%= __("title") %>: <%= post.title %></p>
 <p>Topic:  <%= post.topic %></p>
-<p>Content: <%= post.content %></p>
-<p>Author: <%= JSON.stringify(post.author) %></p>
-<p>Created: <%= post.createdAt %></p>
-<p>Updated: <%= post.updatedAt %></p>
-<p>Public: <%= post.public %></p>
-<p>Published: <%= post.publishedAt %></p>
-<p>Total Views: <%= post.totalViews %></p>
-<p>Unique Views: <%= post.uniqueViews %></p>
+<p><%= __("content") %>: <%= post.content %></p>
+<p><%= __("author") %>: <%= JSON.stringify(post.author) %></p>
+<p><%= __("created") %>: <%= post.createdAt %></p>
+<p><%= __("updated") %>: <%= post.updatedAt %></p>
+<p><%= __("public") %>: <%= post.public %></p>
+<p><%= __("published") %>: <%= post.publishedAt %></p>
+<p><%= __("total_views") %>: <%= post.totalViews %></p>
+<p><%= __("unique_views") %>: <%= post.uniqueViews %></p>
 
 <% if (highlightedComment) { %>
     <p><%= JSON.stringify(highlightedComment) %></p>
 <% } %>
 
-<p>Likes: <span id="likes-count"><%= post.likes %></span></p>
+<p><%= __("likes") %>: <span id="likes-count"><%= post.likes %></span></p>
 
 <% if (post.liked) { %>
-    <button id="like-post" class="button hidden">Like</button>
-    <button id="unlike-post" class="button">Unlike</button>
+    <button id="like-post" class="button hidden"><%= __("like") %></button>
+    <button id="unlike-post" class="button"><%= __("unlike") %></button>
 <% } else { %>
-    <button id="like-post" class="button">Like</button>
-    <button id="unlike-post" class="button hidden">Unlike</button>
+    <button id="like-post" class="button"><%= __("like") %></button>
+    <button id="unlike-post" class="button hidden"><%= __("unlike") %></button>
 <% } %>
 
 <div id="comments">
-    Loading comments...
+    <%= __("loading") %>
 </div>
 
 <% if (user.authenticated) { %>
-    <label for="comment-content">Write a comment</label>
-    <textarea id="comment-content" placeholder="Write a comment"></textarea>
+    <label for="comment-content"><%= __("write_a_comment") %></label>
+    <textarea id="comment-content" placeholder="<%= __("write_a_comment") %>"></textarea>
     
-    <button id="comment-submit">Submit</button>
+    <button id="comment-submit"><%= __("post_comment") %></button>
 <% } %>
 
 <script>

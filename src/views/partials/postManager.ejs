@@ -1,13 +1,12 @@
-<!-- <p><%= JSON.stringify(post) %></p> -->
 <h1><%= post.title %></h1>
 <h2><%= post.topic %></h2>
 
-<script>const postId = "<%= post.postId %>"</script>
-
 <% if (post.public) { %>
-    <button id="unpublish-post" class="button">Unpublish</button>
+    <button id="unpublish-post" class="button"><%= __('unpublish') %></button>
 <% } else { %>
-    <button id="publish-post" class="button">Publish</button>
+    <button id="publish-post" class="button"><%= __('publish') %></button>
 <% } %>
 
-<button id="delete-post" class="button">Delete</button>
+<button id="delete-post" class="button"><%= __('delete') %></button>
+
+<script>const postId = "<%= post.postId %>"</script>

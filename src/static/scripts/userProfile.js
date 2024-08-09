@@ -23,6 +23,10 @@ async function loadComments() {
             loadMoreButton.style.display = "none";
         }
 
+        if (commentsLoaded === 0) {
+            document.getElementById("comments").innerHTML += "<p>No comments yet :(</p>";
+        }
+
         for (const comment of res) {
             const commentDiv = document.createElement("div");
             commentDiv.classList.add("comment");

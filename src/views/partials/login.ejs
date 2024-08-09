@@ -1,12 +1,12 @@
 <form id="login-form">
-    <input id="email" type="text" placeholder="email or username" autocomplete="username" />
+    <input id="email" type="text" placeholder="<%= __("email_or_username") %" autocomplete="username" />
     <br>
-    <input id="password" type="password" placeholder="password" autocomplete="current-password" />
+    <input id="password" type="password" placeholder="<%= __("password") %" autocomplete="current-password" />
     <br><br>
-    <input type="submit" id="login" value="Login"/>
+    <input type="submit" id="login" value="<%= __("login") %>"/>
 </form>
 
-<p>Don't have an account?<a href="/register">Register</a></p>
+<p><%= __("dont_have_account") %><a href="/register"><%= __("register") %></a></p>
 
 <script>
     const redirect = new URLSearchParams(window.location.search).get("redirect") || "/";

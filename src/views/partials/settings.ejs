@@ -1,23 +1,23 @@
 <div class="settings">
     <div>
-        <h2>Profile</h2>
+        <h2><%= __("profile") %></h2>
 
-        <label for="displayName">Name</label>
+        <label for="displayName"><%= __("name") %></label>
         <input type="text" id="displayName" name="displayName" data-value="<%- data.displayName %>"
             value="<%- data.displayName %>" placeholder="John Doe" autocomplete="name" />
 
-        <label for="bio">Bio</label>
+        <label for="bio"><%= __("bio") %></label>
         <textarea id="bio" name="bio" data-value="<%- data.bio %>"
-            placeholder="Tell us a little bit about yourself"><%- data.bio %></textarea>
+            placeholder="<%= __("bio_placeholder") %>"><%- data.bio %></textarea>
 
-        <label for="pronounce">Pronounce</label>
+        <label for="pronounce"><%= __("pronounce") %></label>
         <input type="text" id="pronounce" name="pronounce" data-value="<%- data.pronounce %>"
-            value="<%- data.pronounce %>" placeholder="he/him" autocomplete="off" />
+            value="<%- data.pronounce %>" placeholder="<%= __("pronounce_placeholder") %>" autocomplete="off" />
 
-        <label for="location">Location</label>
+        <label for="location"><%= __("location") %></label>
         <input type="text" id="location" name="location" data-value="<%- data.location %>" value="<%- data.location %>" autocomplete="country-name">
 
-        <label for="avatar">Avatar</label>
+        <label for="avatar"><%= __("avatar") %></label>
         <div class="avatar">
             <img class="preview-avatar" id="preview-avatar" src="<%- data.avatar %>" />
             <input type="file" id="avatar" accept="image/*" name="avatar" />
@@ -25,15 +25,15 @@
     </div>
 
     <div>
-        <h2>Account</h2>
-        <label for="username">Username</label>
+        <h2><%= __("account") %></h2>
+        <label for="username"><%= __("username") %></label>
         <input type="text" id="username" name="username" data-value="<%- data.username %>" value="<%- data.username %>"
             placeholder="john_doe" autocomplete="off" />
 
-        <label for="email">Email</label>
+        <label for="email"><%= __("email") %></label>
         <input type="email" id="email" name="email" data-value="<%- data.email %>" value="<%- data.email %>"
             placeholder="me@example.com" autocomplete="email" />
     </div>
 </div>
 
-<div id="unsavedChanges" style="display: none;">You have unsaved changes! <a id="saveChanges">Save now</a></div>
+<div id="unsavedChanges" style="display: none;"><%= __("unsaved_changes") %> <a id="saveChanges"><%= __("save_now") %></a></div>

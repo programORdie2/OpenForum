@@ -35,4 +35,5 @@
 - [x] Cache DB queries
 - [ ] Tags instead of topic
 - [ ] Explore (based on following tags)
-- [ ] i18n
+- [x] i18n
+- [ ] Render i18n also in client js

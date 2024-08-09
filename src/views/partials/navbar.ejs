@@ -1,23 +1,23 @@
 <div class="navbar">
-    <a href="/" class="home">Home</a>
+    <a href="/" class="home"><%= __("home") %></a>
 
     <% if (user.authenticated) { %>
-        <p><a href="/notifications">Notifications: <%= user.notificationAmount %></a></p>
+        <p><a href="/notifications"><%= __("notifications") %><%= user.notificationAmount %></a></p>
 
         <div class="user-info">
             <p class="username"><img src="<%= user.avatar %>" /><span class="text"><%= user.displayName %></span></p>
 
             <div class="user-actions">
-                <a class="profile-link" href="/@<%= user.username %>">Profile</a>
-                <a class="dashboard-link" href="/dashboard">Dashboard</a>
-                <a class="settings-link" href="/settings">Settings</a>
-                <a class="logout-link" href="/logout">Logout</a>
+                <a class="profile-link" href="/@<%= user.username %>"><%= __("profile") %></a>
+                <a class="dashboard-link" href="/dashboard"><%= __("dashboard") %></a>
+                <a class="settings-link" href="/settings"><%= __("settings") %></a>
+                <a class="logout-link" href="/logout"><%= __("logout") %></a>
             </div>
         </div>
     <% } else { %>
             <div class="user-info">
-                <a href="/register">Register</a>
-                <a href="/login">Login</a>
+                <a href="/register"><%= __("register") %></a>
+                <a href="/login"><%= __("login") %></a>
             </div>
     <% } %>
 </div>
