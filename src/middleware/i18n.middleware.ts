@@ -1,4 +1,4 @@
-import i18n from "../services/i18n";
+import i18n from "../services/i18n.service";
 
 import type CustomRequest from "types/CustomRequest";
 import type { NextFunction, Response } from "express";

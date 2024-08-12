@@ -36,4 +36,4 @@
 - [ ] Tags instead of topic
 - [ ] Explore (based on following tags)
 - [x] i18n
-- [ ] Render i18n also in client js
+- [x] Render i18n also in client js

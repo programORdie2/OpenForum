@@ -24,14 +24,21 @@ async function loadComments() {
         }
 
         if (commentsLoaded === 0) {
-            document.getElementById("comments").innerHTML += "<p>No comments yet :(</p>";
+            document.getElementById("comments").innerHTML += `<p>${__("no_comments")}</p>`;
+            return;
         }
 
         for (const comment of res) {
             const commentDiv = document.createElement("div");
             commentDiv.classList.add("comment");
             commentDiv.innerHTML = `
-                <p>Topic: ${comment.topic}, Created: ${comment.createdAt}, content: ${seralize(comment.content)}, likes: ${comment.likes}, Post: ${seralize(comment.postTitle)}</p>`
+                <p>
+                    ${__("topic")}: ${comment.topic}, 
+                    ${__("created_at")}: ${comment.createdAt}, 
+                    ${__("content")}: ${seralize(comment.content)}, 
+                    ${__("likes")}: ${comment.likes}, 
+                    ${__("post")}: ${seralize(comment.postTitle)}
+                </p>`
 
             document.getElementById("comments").appendChild(commentDiv);
         }
@@ -70,7 +77,7 @@ async function followUser() {
 
     if (res.succes) {
         followButton.setAttribute("data-is-following", "true");
-        followButton.innerText = "Unfollow";
+        followButton.innerText = `${__("unfollow")}`;
         isFollowing = true;
     }
 }
@@ -90,7 +97,7 @@ async function unfollowUser() {
 
     if (res.succes) {
         followButton.setAttribute("data-is-following", "false");
-        followButton.innerText = "Follow";
+        followButton.innerText = `${__("follow")}`;
         isFollowing = false;
     }
 }

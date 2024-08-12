@@ -84,6 +84,11 @@ class i18n {
         const value = language_keys[key];
         if (!value) {
             logger.warn(`Locale ${language} is missing key ${key}`);
+            const defVal = this.locales_data[this.fallbackLng][key]
+            if (defVal) {
+                return defVal
+            }
+            logger.warn(`Locale ${this.fallbackLng} is missing key ${key}`);
             return key
         }
 

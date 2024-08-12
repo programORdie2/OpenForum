@@ -170,28 +170,37 @@ function makeCommentTree(comments) {
     return commentThree;
 }
 
+function seralize(string) {
+    return string
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
 function renderComment(comment) {
     let extraClass = "";
     if (comment.deleted) {
-        comment.content = "[This comment has been deleted]";
+        comment.content = `[${__("comment_deleted")}]`;
         extraClass = "comment-deleted";
     }
 
-    let likeButton = "<button class='like-button'>Like</button>";
+    let likeButton = `<button class='like-button'>${__("like")}</button>`;
     if (comment.liked) {
-        likeButton = "<button class='like-button liked'>Unlike</button>";
+        likeButton = `<button class='like-button liked'>${__("unlike")}</button>`;
     }
 
     const commentHtml = `
     <div class="comment">
         <div class="comment-inner ${extraClass}" data-comment-id="${comment.commentId}">
             <div class="comment-header">
-                <p class="comment-author"><img src="${comment.author.avatar}" alt="${comment.author.username}">${comment.author.username}</p>
+                <p class="comment-author"><img src="${comment.author.avatar}" alt="${seralize(comment.author.username)}">${seralize(comment.author.displayName)}</p>
                 <p class="comment-date">${comment.createdAt}</p>
             </div>
-            <p class="comment-content">${comment.content}</p>
+            <p class="comment-content">${seralize(comment.content)}</p>
             <p class="comment-likes flex">${likeButton}<span class="comment-likes-count">${comment.likes}</span></p>
-            <button class="reply-button">Reply</button>
+            <button class="reply-button">${__("reply")}</button>
         </div>
         <div class="children">
             ${renderComments(comment.children)}
@@ -227,7 +236,7 @@ function addCommentEventListeners() {
 
                 if (succes) {
                     button.classList.remove("liked");
-                    button.innerHTML = "Like";
+                    button.innerHTML = `${__("like")}`;
                     updateCounter(button.parentElement, -1);
                 }
             } else {
@@ -235,7 +244,7 @@ function addCommentEventListeners() {
 
                 if (succes) {
                     button.classList.add("liked");
-                    button.innerHTML = "Unlike";
+                    button.innerHTML = `${__("unlike")}`;
                     updateCounter(button.parentElement, 1);
                 }
             }
@@ -264,9 +273,9 @@ function createCommentInput(commentId) {
     commentWrapper.classList.add("new-comment");
 
     commentWrapper.innerHTML = `
-        <input type="text" class="new-comment-content" placeholder="Enter your comment..." />
-        <button class="new-comment-submit">Submit</button>
-        <button class="new-comment-cancel">Cancel</button>
+        <input type="text" class="new-comment-content" placeholder="${__("enter_comment")}" />
+        <button class="new-comment-submit">${__("post_comment")}</button>
+        <button class="new-comment-cancel">${__("cancel")}</button>
     `;
 
     parentElement.appendChild(commentWrapper);

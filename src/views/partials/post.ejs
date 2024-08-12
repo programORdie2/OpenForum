@@ -34,8 +34,20 @@
     <button id="comment-submit"><%= __("post_comment") %></button>
 <% } %>
 
+<% var _required_locale=["write_a_comment", "loading", "like", "unlike", "comment_deleted", "title", "content", "author", "created", "updated", "public", "published", "total_views", "unique_views", "likes", "reply", "enter_comment", "cancel", "post_comment"] %>
 <script>
     const postId = '<%= post.postId %>';
     const comments = JSON.parse('<%- JSON.stringify(post.comments) %>'); // Gives no error
     const highlightedComment = '<%- highlightedComment %>';
+        
+    const _locales_data = JSON.parse('<%- JSON.stringify(_required_locale.map(x => ({ key: x,  value: __(x) }))) %>'); // Ugly, but prevents eslint errors
+    const locales_data = {};
+    _locales_data.forEach(x => locales_data[x.key] = x.value);
+    function __(key) {
+        const value = locales_data[key];
+        if (value) {
+            return value;
+        }
+        return key;
+    }
 </script>
