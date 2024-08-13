@@ -1,6 +1,6 @@
 import { Sequelize } from 'sequelize';
 import { DATABASE as DB_CONFIG, PRODUCTION } from '../config';
-import logger from '../utils/logger.util';
+import logger from './logger.util';
 
 
 logger.log('Connecting to MongoDB...');

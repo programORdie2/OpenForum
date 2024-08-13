@@ -1,5 +1,5 @@
 import { DataTypes, Model } from "sequelize"
-import sequelize from "../services/database.service"
+import sequelize from "../utils/database.util"
 
 interface Comment {
     userId: string;
@@ -18,7 +18,7 @@ interface PostAttributes {
     postId: string;
     authorId: string;
     title: string;
-    topic: string;
+    tags: string[];
     createdAt?: Date;
     updatedAt?: Date;
     publishedAt?: Date;
@@ -35,7 +35,7 @@ class Post extends Model<PostAttributes> implements PostAttributes {
     public postId!: string;
     public authorId!: string;
     public title!: string;
-    public topic!: string;
+    public tags!: string[];
     public createdAt?: Date;
     public updatedAt?: Date;
     public publishedAt?: Date;
@@ -51,7 +51,7 @@ Post.init({
     authorId: { type: DataTypes.STRING, allowNull: false },
     postId: { type: DataTypes.STRING, allowNull: false, unique: true },
     title: { type: DataTypes.STRING, allowNull: false },
-    topic: { type: DataTypes.STRING, allowNull: false },
+    tags: { type: DataTypes.ARRAY(DataTypes.STRING), defaultValue: [] },
 
     createdAt: { type: DataTypes.DATE, defaultValue: Date.now },
     updatedAt: { type: DataTypes.DATE, defaultValue: Date.now },

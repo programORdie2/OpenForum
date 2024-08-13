@@ -1,5 +1,5 @@
 import type Notification from "../types/Notification";
-import sequelize from "../services/database.service";
+import sequelize from "../utils/database.util";
 import { Model, DataTypes } from "sequelize";
 
 // Define the User interface

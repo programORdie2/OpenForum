@@ -10,16 +10,16 @@ async function createPost(req: CustomRequest, res: Response): Promise<void> {
         return;
     }
 
-    const { title, topic, content } = req.body;
+    const { title, tags, content } = req.body;
 
-    // Check if title, topic and content are provided
-    if (!title || !topic || !content) {
-        res.status(400).json({ succes: false, message: "Missing title, topic or content" });
+    // Check if title, tags and content are provided
+    if (!title || !tags || !Array.isArray(tags) || !content) {
+        res.status(400).json({ succes: false, message: "Missing title, tags or content" });
         return;
     }
 
     // Create the post
-    const post = await postManager.createPost(req.user.id as string, title, topic, content);
+    const post = await postManager.createPost(req.user.id as string, title, tags, content);
     res.json({ succes: true, post: post });
 }
 

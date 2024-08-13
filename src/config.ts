@@ -17,11 +17,5 @@ const PORT = process.env.PORT || 3000;
 const MAX_CLUSTER_SIZE = PRODUCTION ? -1 : 1; // ! Remove for production
 const JWT_SECRET = process.env.JWT_SECRET || "secret";
 const MAX_LOGIN_ATTEMPTS = 5;
-const TOPICS = [
-    "news",
-    "tech",
-    "sport",
-    "fun"
-];
 
-export { UPLOAD_PATH, DATABASE, PORT, JWT_SECRET, MAX_LOGIN_ATTEMPTS, TOPICS, MAX_CLUSTER_SIZE, PRODUCTION };
+export { UPLOAD_PATH, DATABASE, PORT, JWT_SECRET, MAX_LOGIN_ATTEMPTS, MAX_CLUSTER_SIZE, PRODUCTION };

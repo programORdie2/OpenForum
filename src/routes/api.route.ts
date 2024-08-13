@@ -57,6 +57,13 @@ router.get('/posts/:postId', asyncHandler(postContoller.getPost));
 router.get('/notifications', asyncHandler(apiController.loadNotifications));
 router.post('/notifications/read', asyncHandler(apiController.markNotificationAsRead));
 
+// Tag routes
+router.get('/tag_autocomplete', asyncHandler(apiController.autocompleteTag));
+
+
+// Admin routes
+router.post('/admin/create_tag', asyncHandler(apiController.createTag));
+
 // Unhandled routes
 router.all("*", (req, res) => {
     res.status(404).json({ succes: false, message: "Route not found or method not allowed" });

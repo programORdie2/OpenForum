@@ -35,6 +35,7 @@ export default async (req: CustomRequest, res: Response, next: NextFunction) => 
             location: result.location,
             notificationAmount: result.notificationAmount,
             id: result.id,
+            permissions: result.permissions
         }
         return next();
     }

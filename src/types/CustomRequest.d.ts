@@ -15,6 +15,10 @@ interface CustomRequest extends Request {
         location?: string;
         notificationAmount?: number;
         id?: string;
+        permissions?: {
+            mod: boolean;
+            admin: boolean;
+        }
     }
 }
 

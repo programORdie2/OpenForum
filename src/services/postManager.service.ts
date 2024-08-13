@@ -1,7 +1,7 @@
-import { UserPlus, PostPlus } from "../utils/databaseplus.util";
+import { UserPlus, PostPlus } from "../services/databaseplus.service";
 import { Post } from "../models/post.model";
 import { User } from "../models/user.model";
-import { validatePostTitle, validateTopic } from "../utils/validator.util";
+import { validatePostTitle, validateTags } from "../utils/validator.util";
 import { createCommentNotification, createLikeCommentNotification, createLikeNotification, createPostNotification, createReplyNotification } from "./notification.service";
 import { getFollowersById, loadUserProfileById } from "./userProfileLoader.service";
 
@@ -126,7 +126,7 @@ async function getPostData(post: any, requesterId?: string | undefined): Promise
     return {
         postId: post.postId,
         title: post.title,
-        topic: post.topic,
+        tags: post.tags,
         content: post.content,
         authorId: post.authorId,
         createdAt: post.createdAt,
@@ -144,7 +144,7 @@ function getPostDataForProfile(post: Post): any {
     return {
         postId: post.postId,
         title: post.title,
-        topic: post.topic,
+        tags: post.tags,
         createdAt: post.createdAt,
         updatedAt: post.updatedAt,
         public: post.public,
@@ -160,15 +160,19 @@ function getViews(views: Map<string, number>): { totalViews: number, uniqueViews
 }
 
 
-async function createPost(authorId: string, title: string, topic: string, content: string) {
+async function createPost(authorId: string, title: string, tags: string[], content: string) {
     // Asume the author is authenticated
 
     if (!validatePostTitle(title)) {
         return { succes: false, message: "Invalid title" };
     }
 
-    if (!validateTopic(topic)) {
-        return { succes: false, message: "Invalid topic" };
+    if (!validateTags(tags)) {
+        return { succes: false, message: "Invalid tags" };
+    }
+
+    if (tags.length < 0 || tags.length > 5) {
+        return { succes: false, message: "Max 5 tags, min 0" };
     }
 
     const serializedTitle = serializeTitle(title);
@@ -178,7 +182,7 @@ async function createPost(authorId: string, title: string, topic: string, conten
         authorId,
         postId,
         title,
-        topic,
+        tags,
         content,
         serializedTitle,
         views: [],
@@ -643,7 +647,7 @@ async function getComment(postId: string, commentId: string): Promise<any> {
     const allData = {
         ...data,
         postTitle: post.title,
-        postTopic: post.topic
+        postTags: post.tags
     };
 
     return allData;

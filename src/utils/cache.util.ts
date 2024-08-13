@@ -1,4 +1,4 @@
-import logger from "../utils/logger.util";
+import logger from "./logger.util";
 
 // Server
 class CreateCacheServer {
@@ -60,7 +60,7 @@ function getFromCache(cacheName: string, key: string): Promise<undefined | any> 
                 logger.warn("Cache request timed out. ");
                 delete listeners[listenerId];
                 resolve(undefined);
-            }, 1000);
+            }, 100);
 
             listeners[listenerId] = ((message: any) => {
                 if (message?.key === key) {

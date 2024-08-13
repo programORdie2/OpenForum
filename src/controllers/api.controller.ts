@@ -5,6 +5,8 @@ import type CustomRequest from "../types/CustomRequest";
 import type { Response } from "express";
 import { getNotifications, markAllAsRead } from "../services/notification.service";
 
+import * as tagManager from "../services/tagManager.service";
+
 // Loads a user profile for the API
 async function getProfile(req: CustomRequest, res: Response): Promise<void> {
     const username = req.params.username;
@@ -86,11 +88,51 @@ async function getComments(req: CustomRequest, res: Response): Promise<void> {
     res.json(notifications);
 }
 
+async function autocompleteTag(req: CustomRequest, res: Response): Promise<void> {
+    const name = req.query.name;
+    const limit = 10;
+
+    if (!name) {
+        res.status(400).json({ succes: false, message: "No name provided" });
+        return;
+    }
+
+    const tags = await tagManager.findTagNames(0, limit, name as string);
+
+    res.json({ succes: true, tags: tags });
+}
+
+async function createTag(req: CustomRequest, res: Response): Promise<void> {
+    if (!req?.user?.authenticated) {
+        res.status(401).json({ succes: false, message: "Unauthorized" });
+        return;
+    }
+
+    if (!req?.user?.permissions?.admin) {
+        res.status(403).json({ succes: false, message: "Forbidden" });
+        return;
+    }
+
+    const { name, description } = req.body;
+
+    if (!name || !description) {
+        res.status(400).json({ succes: false, message: "No name or description" });
+        return;
+    }
+
+    const result = await tagManager.createTag(name, description);
+
+    res.json(result);
+}
+
+
 export {
     getProfile,
     followUser,
     unfollowUser,
     loadNotifications,
     markNotificationAsRead,
-    getComments
+    getComments,
+    autocompleteTag,
+    createTag
 }

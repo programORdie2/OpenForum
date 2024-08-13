@@ -41,7 +41,7 @@
         <% for (const post of profile.posts) { %>
             <div class="post">
                 <h2><a href="/posts/<%= post.postId %>"><%= post.title %></a></h2>
-                <p>topic: <%= post.topic %></p>
+                <p><%= __("tags") %>: <%= post.tags %></p>
                 <p><%= __("created") %>: <%= post.createdAt %></p>
                 <p><%= __("updated") %>: <%= post.updatedAt %></p>
                 <p><%= __("public") %>: <% if (post.public) { %><%= __("yes") %><% } else { %><%= __("no") %><% } %></p>
@@ -57,7 +57,7 @@
 </div>
 <button id="loadMoreComments"><%= __("load_more") %></button>
 
-<% var _required_locale=["follow", "unfollow", "no_comments", "topic", "created_at", "content", "likes", "post"] %>
+<% var _required_locale=["follow", "unfollow", "no_comments", "tags", "created_at", "content", "likes", "post"] %>
 <script>
 const username = "<%= profile.username %>";
 

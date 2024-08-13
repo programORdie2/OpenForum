@@ -7,11 +7,11 @@ import { MAX_CLUSTER_SIZE, PRODUCTION } from "./config";
 
 import * as server from "./server";
 import { minifyAllAssets } from "./utils/assetMinifier.util";
-import { CreateCacheServer } from "./services/cache.service";
+import { CreateCacheServer } from "./utils/cache.util";
 
 async function main(): Promise<void> {
   const logginAttemptsDb = new CreateCacheServer(255, 5 * 60);
-  const recentQueriesDb = new CreateCacheServer(100, 10);
+  const recentQueriesDb = new CreateCacheServer(100, 5);
 
   if (cluster.isPrimary) {
     // If this is the primary process, minimize assets and fork the workers

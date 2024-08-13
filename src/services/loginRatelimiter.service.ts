@@ -1,6 +1,6 @@
 import { MAX_LOGIN_ATTEMPTS } from '../config';
 import logger from '../utils/logger.util';
-import { getFromCache, setInCache } from './cache.service';
+import { getFromCache, setInCache } from '../utils/cache.util';
 
 async function checkLogin(email: string): Promise<boolean> {
     try {

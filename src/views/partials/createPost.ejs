@@ -4,13 +4,10 @@
 <label for="post-content"><%= __('content') %></label>
 <textarea id="post-content" name="post-content"></textarea>
 
-<label for="post-topic">Topic</label>
-<select id="post-topic" name="post-topic">
-    <option value="">-- Select Topic --</option>
-    <option value="news">News</option>
-    <option value="tech">Tech</option>
-    <option value="sport">Sport</option>
-    <option value="fun">Fun</option>
-</select>
+<label for="current-tag"><%= __('tags') %></label>
+<div id="select-tags">
+    <input type="text" id="current-tag" placeholder="<%= __('add_tag') %>" />
+</div>
+<ul id="suggested-tags"></ul>
 
 <button type="submit" id="create-post"><%= __('create') %></button>

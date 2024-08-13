@@ -3,7 +3,7 @@ import bcrypt from 'bcrypt';
 import { v4 as uuidv4 } from 'uuid';
 
 import { User } from '../models/user.model';
-import { UserPlus } from '../utils/databaseplus.util';
+import { UserPlus } from '../services/databaseplus.service';
 
 import { JWT_SECRET } from '../config';
 import checkLogin from './loginRatelimiter.service';
@@ -117,7 +117,7 @@ async function loginUser(emailorusername: string, password: string): Promise<{ s
 }
 
 // Validate token
-async function validateToken(token: string): Promise<{ succes: boolean, username?: string, email?: string, avatar?: string, pronounce?: string, bio?: string, displayName?: string, location?: string, notificationAmount?: number, id?: string, message?: string }> {
+async function validateToken(token: string): Promise<{ succes: boolean, username?: string, email?: string, avatar?: string, pronounce?: string, bio?: string, displayName?: string, location?: string, notificationAmount?: number, id?: string, message?: string, permissions?: { mod: boolean, admin: boolean } }> {
     let result: string | JwtPayload | undefined;
 
     try {
@@ -145,7 +145,8 @@ async function validateToken(token: string): Promise<{ succes: boolean, username
         displayName: user.displayName,
         location: user.location,
         notificationAmount: user.unreadNotifications.length,
-        id: user.userId
+        id: user.userId,
+        permissions: user.permissions
     };
 }
 

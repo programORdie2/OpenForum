@@ -1,4 +1,4 @@
-import { TOPICS } from "../config";
+import { TagPlus } from "../services/databaseplus.service";
 
 function validateEmail(email: string): boolean {
     const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -19,8 +19,13 @@ function validatePostTitle(title: string): boolean {
     return title.length >= 3 && title.length <= 80;
 }
 
-function validateTopic(topic: string): boolean {
-    return TOPICS.includes(topic);
+function validateTags(tags: string[]): boolean {
+    for (const tag of tags) {
+        if (!TagPlus.findOne({ where: { name: tag } })) {
+            return false;
+        }
+    }
+    return true;
 }  
 
-export { validateEmail, validatePassword, validateUsername, validatePostTitle, validateTopic };
+export { validateEmail, validatePassword, validateUsername, validatePostTitle, validateTags };

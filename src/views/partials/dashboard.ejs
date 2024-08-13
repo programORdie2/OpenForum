@@ -5,7 +5,7 @@
         <% for (const post of posts) { %>
             <div class="post">
                 <h2><a href="/posts/<%= post.postId %>"><%= post.title %></a></h2>
-                <p>Topic: <%= post.topic %></p>
+                <p><%= __("tags") %>: <%= post.tags %></p>
                 <p><%= __("created") %>: <%= post.createdAt %></p>
                 <p><%= __("updated") %>: <%= post.updatedAt %></p>
                 
