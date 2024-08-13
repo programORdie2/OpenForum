@@ -33,7 +33,7 @@ async function loadComments() {
             commentDiv.classList.add("comment");
             commentDiv.innerHTML = `
                 <p>
-                    ${__("tags")}: ${comment.tags}, 
+                    ${__("tags")}: ${comment.postTags}, 
                     ${__("created_at")}: ${comment.createdAt}, 
                     ${__("content")}: ${seralize(comment.content)}, 
                     ${__("likes")}: ${comment.likes}, 
