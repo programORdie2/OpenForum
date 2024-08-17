@@ -288,7 +288,7 @@ async function publishPost(postId: string, requesterId: string): Promise<{ succe
 
 async function unpublishPost(postId: string, requesterId: string): Promise<{ succes: boolean, message?: string, post?: any }> {
     // Asume the author is authenticated
-    const post = await PostPlus.findOne({ where: { postId: postId } });
+    const post = await Post.findOne({ where: { postId: postId } });
     if (!post) {
         return { succes: false, message: "Post does not exist" };
     }
@@ -635,6 +635,9 @@ async function unlikeComment(postId: string, requesterId: string, commentId: str
 async function getComment(postId: string, commentId: string): Promise<any> {
     const post = await PostPlus.findOne({ where: { postId: postId } });
     if (!post) {
+        return null;
+    }
+    if (!post.public) {
         return null;
     }
     const comment = post.comments.find((comment: any) => comment.commentId === commentId);

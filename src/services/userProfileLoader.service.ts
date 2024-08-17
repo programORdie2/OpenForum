@@ -59,7 +59,9 @@ async function getCommentsById(username: string, offset: number = 0, limit: numb
     const user = await UserPlus.findOne({ where: { username_lowercase: username.toLowerCase() } });
     if (!user) return null;
     const comments = user.comments.slice(offset, offset + limit);
-    const data = await getcommentsData(comments);
+    let data = await getcommentsData(comments);
+    // Filter all null values
+    data = data.filter((comment) => comment !== null);
     return data;
 }
 
