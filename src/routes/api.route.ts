@@ -59,7 +59,8 @@ router.post('/notifications/read', asyncHandler(apiController.markNotificationAs
 
 // Tag routes
 router.get('/tag_autocomplete', asyncHandler(apiController.autocompleteTag));
-
+router.get('/tag/:tag', asyncHandler(apiController.getTag));
+router.get('/tag/:tag/posts', asyncHandler(apiController.getPostsOfTag));
 
 // Admin routes
 router.post('/admin/create_tag', asyncHandler(apiController.createTag));

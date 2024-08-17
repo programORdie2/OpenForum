@@ -4,7 +4,7 @@ import { existsSync } from "node:fs";
 
 import { loadUserProfile } from "../services/userProfileLoader.service";
 import * as postManager from "../services/postManager.service";
-import * as config from "../config"
+import * as tagManager from "../services/tagManager.service";
 import { getNotifications } from "../services/notification.service";
 
 
@@ -197,6 +197,18 @@ async function sendNotificationspage(req: CustomRequest, res: Response): Promise
     renderPage(req, res, "notifications", "Notifications - Social Media", 200, { notifications: notifications.notifications }, ["/css/notifications.css"], ["/scripts/notifications.js"]);
 }
 
+async function sendTagPage(req: CustomRequest, res: Response): Promise<void> {
+    const tag = req.params.tag;
+    const tagInfo = await tagManager.getTagInfo(tag);
+
+    if (!tagInfo.succes) {
+        send404page(req, res);
+        return;
+    }
+
+    renderPage(req, res, "tag", `${tag} - Social Media`, 200, { tagInfo: tagInfo.tag }, ["/css/tag.css"], ["/scripts/tag.js"]);
+}
+
 export {
     send404page,
     send500page,
@@ -212,5 +224,6 @@ export {
     sendDashboardpage,
     sendPostManagerpage,
     sendPostEditpage,
-    sendNotificationspage
+    sendNotificationspage,
+    sendTagPage
 };

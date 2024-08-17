@@ -16,9 +16,12 @@ import main from "./routes/main.route";
 import posts from "./routes/posts.route";
 import api from "./routes/api.route";
 import uploads from "./routes/uploads.route";
-import * as config from "./config";
+import tag from "./routes/tag.route";
+
 import usecompressedMiddleware from "./middleware/usecompressed.middleware";
 import i18nMiddleware from "./middleware/i18n.middleware";
+
+import * as config from "./config";
 
 // Init
 const app: Express = express();
@@ -42,6 +45,7 @@ app.use(i18nMiddleware);
 
 // Routes
 app.use("/api", api);
+app.use("/tag", tag);
 app.use("/posts", posts);
 app.use("/uploads", uploads);
 app.use("/", main);

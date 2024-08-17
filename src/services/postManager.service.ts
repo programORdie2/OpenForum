@@ -4,6 +4,7 @@ import { User } from "../models/user.model";
 import { validatePostTitle, validateTags } from "../utils/validator.util";
 import { createCommentNotification, createLikeCommentNotification, createLikeNotification, createPostNotification, createReplyNotification } from "./notification.service";
 import { getFollowersById, loadUserProfileById } from "./userProfileLoader.service";
+import { addPostToTags, pullPostFromTags } from "./tagManager.service";
 
 type Views = {
     [key: string]: number;
@@ -197,13 +198,14 @@ async function createPost(authorId: string, title: string, tags: string[], conte
 
     // Add post to user profile
     await _pushPostToUser(authorId, post);
+    await addPostToTags(tags, postId);
 
     return post;
 }
 
 async function getPost(postId: string, requesterId: string | undefined, countsAsView = false): Promise<{ succes: boolean, message?: string, post?: any }> {
     postId = postId.toLowerCase();
-    const post = await PostPlus.findOne({ where: { postId: postId } }) as Post;
+    const post = await Post.findOne({ where: { postId: postId } });
 
     if (!post) {
         return { succes: false, message: "Post does not exist" };
@@ -329,6 +331,7 @@ async function deletePost(postId: string, requesterId: string): Promise<{ succes
 
     // Update user
     await _pullPostFromUser(post.authorId, postId);
+    await pullPostFromTags(post.tags, postId);
 
     return { succes: true };
 }

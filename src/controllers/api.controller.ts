@@ -125,6 +125,22 @@ async function createTag(req: CustomRequest, res: Response): Promise<void> {
     res.json(result);
 }
 
+async function getTag(req: CustomRequest, res: Response): Promise<void> {
+    const name = req.params.tag;
+    const tag = await tagManager.getTagInfo(name);
+    
+    res.json(tag);
+}
+
+async function getPostsOfTag(req: CustomRequest, res: Response): Promise<void> {
+    const name = req.params.tag;
+    const offset = Number.parseInt(req.query.offset as string) || 0;
+    const limit = Math.min(Number.parseInt(req.query.limit as string) || 50, 50);
+
+    const posts = await tagManager.getPostsOfTag(name, offset, limit);
+    res.json(posts);
+}
+
 
 export {
     getProfile,
@@ -134,5 +150,7 @@ export {
     markNotificationAsRead,
     getComments,
     autocompleteTag,
-    createTag
+    createTag,
+    getTag,
+    getPostsOfTag
 }

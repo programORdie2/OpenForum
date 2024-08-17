@@ -76,5 +76,9 @@
     "enter_comment": "Enter your comment ...",
 
     "comment_deleted": "Comment deleted",
-    "reply": "Reply"
+    "reply": "Reply",
+
+    "add_tag": "Add tag",
+    "tag": "Tag",
+    "description": "Description"
 }
