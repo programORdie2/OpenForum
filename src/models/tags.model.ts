@@ -25,4 +25,4 @@ Tag.init({
     ]
 });
 
-export { Tag, TagAttributes }
+export { Tag, type TagAttributes }

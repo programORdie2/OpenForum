@@ -1,9 +1,10 @@
+import { Post } from "models/post.model";
 import { User } from "../models/user.model";
 import { UserPlus } from "../services/databaseplus.service";
 import serialize from "../utils/serialize.util";
 import { getComment } from "./postManager.service";
 
-function getPostDatas(posts: Array<any>): any[] {
+function getPostDatas(posts: any[]): any[] {
     posts = posts.map((post) => JSON.parse(post));
     
     const publicPosts = posts.filter((post) => post.public);
@@ -19,7 +20,7 @@ async function getcommentsData(comments: any[]): Promise<any[]> {
     return Promise.all(commentsData);
 }
 
-function prep_return(user: any, requesterId?: string): null | any {
+function prep_return(user: User, requesterId?: string): null | any {
     if (!user) return null;
     return {
         username: serialize(user.username),
@@ -32,22 +33,22 @@ function prep_return(user: any, requesterId?: string): null | any {
         posts: getPostDatas(user.posts),
         followerAmount: user.followers.length,
         followingAmount: user.following.length,
-        isFollowing: user.followers.includes(requesterId)
+        isFollowing: user.followers.includes(requesterId as string)
     };
 }
 
 async function loadUserProfile(username: string, requesterId?: string): Promise<null | any> {
-    const user = await UserPlus.findOne({ where: { username_lowercase: username.toLowerCase() } });
+    const user = await UserPlus.findOne({ where: { username_lowercase: username.toLowerCase() } }) as User;
     return prep_return(user, requesterId);
 }
 
 async function loadUserProfileById(userId: string): Promise<null | any> {
-    const user = await UserPlus.findOne({ where: { userId } });
+    const user = await UserPlus.findOne({ where: { userId } }) as User;
     return prep_return(user);
 }
 
-async function getFollowersById(userId: string): Promise<null | any> {
-    const user = await UserPlus.findOne({ where: { userId } });
+async function getFollowersById(userId: string): Promise<null | string[]> {
+    const user = await UserPlus.findOne({ where: { userId } }) as User;
     if (!user) return null;
     return user.followers;
 }
@@ -56,11 +57,12 @@ async function getCommentsById(username: string, offset: number = 0, limit: numb
     offset = Math.max(offset, 0);
     limit = Math.max(limit, 1);
     limit = Math.min(limit, 50);
-    const user = await UserPlus.findOne({ where: { username_lowercase: username.toLowerCase() } });
+    
+    const user = await UserPlus.findOne({ where: { username_lowercase: username.toLowerCase() } }) as User;
     if (!user) return null;
+
     const comments = user.comments.slice(offset, offset + limit);
     let data = await getcommentsData(comments);
-    // Filter all null values
     data = data.filter((comment) => comment !== null);
     return data;
 }

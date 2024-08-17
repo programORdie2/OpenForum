@@ -11,7 +11,7 @@ class DatabasePlus {
         this._instanceName = instance;
     }
 
-    public async findOne(options: object): Promise<any | null> {
+    public async findOne(options: object): Promise<User | Post | Tag | null> {
         const optionsId = this._instanceName + JSON.stringify(options);
 
         const cacheValue = await getFromCache("recentQueries", optionsId);
@@ -31,8 +31,8 @@ class DatabasePlus {
         return data;
     }
 
-    public async find(options: object): Promise<any | null> {
-        const optionsId = "all" + this._instanceName + JSON.stringify(options);
+    public async find(options: object): Promise<User[] | Post[] | Tag[] | null> {
+        const optionsId = `all-${this._instanceName}-${JSON.stringify(options)}`;
         const cacheValue = await getFromCache("recentQueries", optionsId);
         if (cacheValue) {
             return cacheValue;

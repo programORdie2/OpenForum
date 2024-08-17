@@ -40,8 +40,8 @@ function generateCommentId(): string {
     return Math.random().toString(36).substring(2, 8);
 }
 
-async function _pushPostToUser(userId: string, post: any): Promise<void> {
-    const user = await UserPlus.findOne({ where: { userId: userId } });
+async function _pushPostToUser(userId: string, post: Post): Promise<void> {
+    const user = await UserPlus.findOne({ where: { userId: userId } }) as User;
 
     if (!user) {
         return;
@@ -65,7 +65,7 @@ async function _pullPostFromUser(userId: string, postId: string): Promise<void> 
         return;
     }
 
-    const postIdx = user.posts.findIndex((post: any) => JSON.parse(post).postId === postId);
+    const postIdx = user.posts.findIndex((post: string) => JSON.parse(post).postId === postId);
 
     user.posts.splice(postIdx, 1);
 
@@ -75,7 +75,7 @@ async function _pullPostFromUser(userId: string, postId: string): Promise<void> 
 }
 
 
-async function getcommentsData(comment: any, requesterId?: string | undefined, withAuthor: boolean = true): Promise<any> {
+async function getcommentsData(comment: Comment, requesterId?: string | undefined, withAuthor: boolean = true): Promise<{ content: string, createdAt?: Date, updatedAt?: Date, parent: string, commentId: string, children: string[], deleted: boolean, likes: number, liked: boolean, author: any }> {
     const author = { username: "[deleted user]", displayName: "[deleted user]", avatar: "/uploads/avatars/defaults/1.png" };
 
     if (withAuthor) {
@@ -108,13 +108,13 @@ async function getcommentsData(comment: any, requesterId?: string | undefined, w
     return data;
 }
 
-async function getcommentsDatas(comments: any[], requesterId?: string | undefined): Promise<any[]> {
-    return Promise.all(comments.map(async (comment: any) => {
+async function getcommentsDatas(comments: Comment[], requesterId?: string | undefined): Promise<any[]> {
+    return Promise.all(comments.map(async (comment: Comment) => {
         return await getcommentsData(comment, requesterId);
     }));
 }
 
-function getLikesAmount(likes: any[]): number {
+function getLikesAmount(likes: string[]): number {
     return likes.length;
 }
 
@@ -203,7 +203,7 @@ async function createPost(authorId: string, title: string, tags: string[], conte
 
 async function getPost(postId: string, requesterId: string | undefined, countsAsView = false): Promise<{ succes: boolean, message?: string, post?: any }> {
     postId = postId.toLowerCase();
-    const post = await PostPlus.findOne({ where: { postId: postId } });
+    const post = await PostPlus.findOne({ where: { postId: postId } }) as Post;
 
     if (!post) {
         return { succes: false, message: "Post does not exist" };
@@ -335,7 +335,7 @@ async function deletePost(postId: string, requesterId: string): Promise<{ succes
 
 async function updatePost(postId: string, requesterId: string, title: string | undefined, content: string | undefined): Promise<{ succes: boolean, message?: string, post?: any }> {
     // Asume the author is authenticated
-    const post = await PostPlus.findOne({ where: { postId: postId } });
+    const post = await PostPlus.findOne({ where: { postId: postId } }) as Post;
     if (!post) {
         return { succes: false, message: "Post does not exist" };
     }
@@ -359,7 +359,7 @@ async function updatePost(postId: string, requesterId: string, title: string | u
         for (const comment of post.comments) {
             // Update comment postIds in user
             const authorId = comment.userId;
-            const author = await UserPlus.findOne({ where: { userId: authorId } });
+            const author = await UserPlus.findOne({ where: { userId: authorId } }) as User;
             const commentId = comment.commentId;
 
             if (!author) continue;
@@ -388,7 +388,7 @@ async function updatePost(postId: string, requesterId: string, title: string | u
 
 async function getUserPosts(userId: string): Promise<{ succes: boolean, message?: string, posts?: any[] }> {
     // Asume the author is authenticated
-    const user = await UserPlus.findOne({ where: { userId: userId } });
+    const user = await UserPlus.findOne({ where: { userId: userId } }) as User;
 
     if (!user) {
         return { succes: false, message: "User does not exist" };
@@ -504,7 +504,7 @@ async function deleteComment(postId: string, requesterId: string, commentId: str
 async function likePost(postId: string, requesterId: string): Promise<{ succes: boolean, message?: string }> {
     // Asume the author is authenticated
     const post = await Post.findOne({ where: { postId: postId } });
-    const user = await UserPlus.findOne({ where: { userId: requesterId } });
+    const user = await UserPlus.findOne({ where: { userId: requesterId } }) as User;
 
     if (!post || (!post.public && post.authorId !== requesterId)) {
         return { succes: false, message: "Post does not exist" };
@@ -534,7 +534,7 @@ async function likePost(postId: string, requesterId: string): Promise<{ succes: 
 async function unlikePost(postId: string, requesterId: string): Promise<{ succes: boolean, message?: string }> {
     // Asume the author is authenticated
     const post = await Post.findOne({ where: { postId: postId } });
-    const user = await UserPlus.findOne({ where: { userId: requesterId } });
+    const user = await UserPlus.findOne({ where: { userId: requesterId } }) as User;
 
     if (!post || (!post.public && post.authorId !== requesterId)) {
         return { succes: false, message: "Post does not exist" };
@@ -566,7 +566,7 @@ async function unlikePost(postId: string, requesterId: string): Promise<{ succes
 async function likeComment(postId: string, requesterId: string, commentId: string): Promise<{ succes: boolean, message?: string }> {
     // Asume the author is authenticated
     const post = await Post.findOne({ where: { postId: postId } });
-    const user = await UserPlus.findOne({ where: { userId: requesterId } });
+    const user = await UserPlus.findOne({ where: { userId: requesterId } }) as User;
 
     if (!post) {
         return { succes: false, message: "Post does not exist" };
@@ -603,7 +603,7 @@ async function likeComment(postId: string, requesterId: string, commentId: strin
 async function unlikeComment(postId: string, requesterId: string, commentId: string): Promise<{ succes: boolean, message?: string }> {
     // Asume the author is authenticated
     const post = await Post.findOne({ where: { postId: postId } });
-    const user = await UserPlus.findOne({ where: { userId: requesterId } });
+    const user = await UserPlus.findOne({ where: { userId: requesterId } }) as User;
 
     if (!post) {
         return { succes: false, message: "Post does not exist" };
@@ -632,8 +632,8 @@ async function unlikeComment(postId: string, requesterId: string, commentId: str
     return { succes: true };
 }
 
-async function getComment(postId: string, commentId: string): Promise<any> {
-    const post = await PostPlus.findOne({ where: { postId: postId } });
+async function getComment(postId: string, commentId: string): Promise<null | any> {
+    const post = await PostPlus.findOne({ where: { postId: postId } }) as Post;
     if (!post) {
         return null;
     }

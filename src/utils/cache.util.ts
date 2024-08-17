@@ -62,7 +62,7 @@ function getFromCache(cacheName: string, key: string): Promise<undefined | any> 
                 resolve(undefined);
             }, 100);
 
-            listeners[listenerId] = ((message: any) => {
+            listeners[listenerId] = ((message: { key?: string, result: any }) => {
                 if (message?.key === key) {
                     clearTimeout(timeout);
                     delete listeners[listenerId];

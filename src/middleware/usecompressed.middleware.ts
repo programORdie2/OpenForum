@@ -1,5 +1,5 @@
-import { Response, NextFunction } from "express";
-import CustomRequest from "../types/CustomRequest";
+import type { Response, NextFunction } from "express";
+import type CustomRequest from "../types/CustomRequest";
 
 export default (req: CustomRequest, res: Response, next: NextFunction) => {
     if (!req.url.endsWith(".css") && !req.url.endsWith(".js")) {
@@ -12,7 +12,7 @@ export default (req: CustomRequest, res: Response, next: NextFunction) => {
         res.setHeader("Content-Encoding", "br");
         res.setHeader("Content-Type", contentType);
         res.setHeader("vary", "Accept-Encoding");
-        req.url = req.url + ".br";
+        req.url = `${req.url}.br`;
 
         return next();
     }
@@ -21,7 +21,7 @@ export default (req: CustomRequest, res: Response, next: NextFunction) => {
         res.setHeader("Content-Encoding", "gzip");
         res.setHeader("Content-Type", contentType);
         res.setHeader("vary", "Accept-Encoding");
-        req.url = req.url + ".gz";
+        req.url = `${req.url}.gz`;
 
         return next();
     }
