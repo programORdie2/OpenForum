@@ -2,17 +2,10 @@ import cluster from "node:cluster";
 import os from "node:os";
 
 import logger from "./utils/logger.util";
-
+import { minifyAllAssets } from "./utils/assetMinifier.util";
 import { MAX_CLUSTER_SIZE, PRODUCTION } from "./config";
 
-import * as server from "./server";
-import { minifyAllAssets } from "./utils/assetMinifier.util";
-import { CreateCacheServer } from "./utils/cache.util";
-
 async function main(): Promise<void> {
-  const logginAttemptsDb = new CreateCacheServer(255, 5 * 60);
-  const recentQueriesDb = new CreateCacheServer(100, 5);
-
   if (cluster.isPrimary) {
     // If this is the primary process, minimize assets and fork the workers
     if (PRODUCTION) await minifyAllAssets();
@@ -21,17 +14,7 @@ async function main(): Promise<void> {
 
     for (let i = 0; i < numCPUs; i++) {
       logger.log(`Forking worker ${i + 1}/${numCPUs}`);
-      const worker = cluster.fork();
-      
-      worker.on("message", (message) => {
-        if (message.cacheName === "loginAttempts") {
-          const res = logginAttemptsDb.onCall(message.type, message.key, message?.value);
-          worker.send({ key: message.key, result: res });
-        } else if (message.cacheName === "recentQueries") {
-          const res = recentQueriesDb.onCall(message.type, message.key, message?.value);
-          worker.send({ key: message.key, result: res });
-        }
-      });
+      cluster.fork();
     }
 
     // If a worker dies, restart it
@@ -40,8 +23,10 @@ async function main(): Promise<void> {
       cluster.fork();
     });
   } else {
-    // If this is a worker process, start the server
-    logger.log(`Worker ${process.pid} is running`);
+    logger.log(`Worker ${process.pid} started and loading server...`);
+    const server = await import("./server");
+
+    logger.log(`Server ${process.pid} is running`);
     server.start();
   }
 }

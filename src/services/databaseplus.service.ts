@@ -2,7 +2,7 @@ import { Post } from "../models/post.model";
 import { User } from "../models/user.model";
 import { Tag } from "../models/tags.model";
 
-import { getFromCache, setInCache } from "../utils/cache.util";
+import redisClient from "../utils/redis.util";
 
 class DatabasePlus {
     private _instanceName: "User" | "Post" | "Tag";
@@ -11,12 +11,17 @@ class DatabasePlus {
         this._instanceName = instance;
     }
 
-    public async findOne(options: object): Promise<User | Post | Tag | null> {
-        const optionsId = this._instanceName + JSON.stringify(options);
+    private instanceToString(instance: User | Post | Tag | User[] | Post[] | Tag[]) {
+        const data = JSON.stringify(instance);
+        return data;
+    }
 
-        const cacheValue = await getFromCache("recentQueries", optionsId);
+    public async findOne(options: object): Promise<User | Post | Tag | null> {
+        const redisId = `recentQueries:${this._instanceName}:${JSON.stringify(options)}`;
+
+        const cacheValue = await redisClient.get(redisId);
         if (cacheValue) {
-            return cacheValue;
+            return JSON.parse(cacheValue);
         }
 
         const data = 
@@ -26,16 +31,17 @@ class DatabasePlus {
 
         if (!data) return data;
 
-        setInCache("recentQueries", optionsId, data);
+        await redisClient.set(redisId, this.instanceToString(data));
+        await redisClient.expire(redisId, 10);
 
         return data;
     }
 
     public async find(options: object): Promise<User[] | Post[] | Tag[] | null> {
-        const optionsId = `all-${this._instanceName}-${JSON.stringify(options)}`;
-        const cacheValue = await getFromCache("recentQueries", optionsId);
+        const optionsId = `recentQueries:all:${this._instanceName}:${JSON.stringify(options)}`;
+        const cacheValue = await redisClient.get(optionsId);
         if (cacheValue) {
-            return cacheValue;
+            return JSON.parse(cacheValue);
         }
 
         const data = 
@@ -45,7 +51,8 @@ class DatabasePlus {
 
         if (!data) return data;
 
-        setInCache("recentQueries", optionsId, data);
+        await redisClient.set(optionsId, this.instanceToString(data));
+        await redisClient.expire(optionsId, 10);
 
         return data;
     }

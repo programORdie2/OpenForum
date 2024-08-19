@@ -3,7 +3,7 @@ import { DATABASE as DB_CONFIG, PRODUCTION } from '../config';
 import logger from './logger.util';
 
 
-logger.log('Connecting to MongoDB...');
+logger.log('Connecting to Postgres...');
 
 const sequelize = new Sequelize(DB_CONFIG.name, DB_CONFIG.user, DB_CONFIG.password, {
   host: DB_CONFIG.host,

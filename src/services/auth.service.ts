@@ -6,7 +6,7 @@ import { User } from '../models/user.model';
 import { UserPlus } from '../services/databaseplus.service';
 
 import { JWT_SECRET } from '../config';
-import checkLogin from './loginRatelimiter.service';
+import checkLogin from '../utils/loginRatelimiter.util';
 import normalizeEmail from '../utils/normalizeEmail.util';
 import { validateEmail, validatePassword, validateUsername } from '../utils/validator.util';
 
@@ -104,8 +104,8 @@ async function loginUser(emailorusername: string, password: string): Promise<{ s
     if (!await checkLogin(emailorusername)) return { succes: false, message: "Too many login attempts" };
 
     // Check if email or username exists
-    let user = await UserPlus.findOne({ where: { email: emailorusername } });
-    if (!user) user = await UserPlus.findOne({ where: { username_lowercase: emailorusername } });
+    let user = await UserPlus.findOne({ where: { email: emailorusername } }) as User;
+    if (!user) user = await UserPlus.findOne({ where: { username_lowercase: emailorusername } }) as User;
     if (!user) return { succes: false, message: "User does not exist" };
 
     // Validate password
@@ -129,7 +129,7 @@ async function validateToken(token: string): Promise<{ succes: boolean, username
     if (!result) return { succes: false, message: "Invalid token" };
 
     const secretId = typeof result === 'string' ? result : result.id;
-    const user = await UserPlus.findOne({ where: { secretId } });
+    const user = await UserPlus.findOne({ where: { secretId } }) as User;
 
     if (!user) return { succes: false, message: "User does not exist" };
 
