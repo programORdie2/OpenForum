@@ -1,4 +1,4 @@
-import { UserPlus, PostPlus } from "../services/databaseplus.service";
+import { UserPlus, PostPlus } from "../utils/databaseplus.util";
 import { Post } from "../models/post.model";
 import { User } from "../models/user.model";
 import { validatePostTitle, validateTags } from "../utils/validator.util";

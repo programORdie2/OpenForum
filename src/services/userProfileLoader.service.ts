@@ -1,6 +1,6 @@
 import { Post } from "models/post.model";
 import { User } from "../models/user.model";
-import { UserPlus } from "../services/databaseplus.service";
+import { UserPlus } from "../utils/databaseplus.util";
 import serialize from "../utils/serialize.util";
 import { getComment } from "./postManager.service";
 

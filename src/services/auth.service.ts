@@ -3,7 +3,7 @@ import bcrypt from 'bcrypt';
 import { v4 as uuidv4 } from 'uuid';
 
 import { User } from '../models/user.model';
-import { UserPlus } from '../services/databaseplus.service';
+import { UserPlus } from '../utils/databaseplus.util';
 
 import { JWT_SECRET } from '../config';
 import checkLogin from '../utils/loginRatelimiter.util';

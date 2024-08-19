@@ -2,7 +2,7 @@ import { Post } from "../models/post.model";
 import { User } from "../models/user.model";
 import { Tag } from "../models/tags.model";
 
-import redisClient from "../utils/redis.util";
+import redisClient from "./redis.util";
 
 class DatabasePlus {
     private _instanceName: "User" | "Post" | "Tag";
@@ -32,7 +32,7 @@ class DatabasePlus {
         if (!data) return data;
 
         await redisClient.set(redisId, this.instanceToString(data));
-        await redisClient.expire(redisId, 10);
+        await redisClient.expire(redisId, 5);
 
         return data;
     }
@@ -52,7 +52,7 @@ class DatabasePlus {
         if (!data) return data;
 
         await redisClient.set(optionsId, this.instanceToString(data));
-        await redisClient.expire(optionsId, 10);
+        await redisClient.expire(optionsId, 5);
 
         return data;
     }

@@ -1,7 +1,7 @@
 import { Post } from "../models/post.model";
-import { PostPlus } from "../services/databaseplus.service";
+import { PostPlus } from "../utils/databaseplus.util";
 import { Tag } from "../models/tags.model";
-import { TagPlus } from "../services/databaseplus.service";
+import { TagPlus } from "../utils/databaseplus.util";
 import { Op } from "sequelize";
 
 async function findTagNames(offset: number = 0, limit: number = 50, search: string): Promise<string[]> {

@@ -1,4 +1,4 @@
-import { UserPlus } from "../services/databaseplus.service";
+import { UserPlus } from "../utils/databaseplus.util";
 import { User } from "../models/user.model";
 import type Notification from "../types/Notification";
 

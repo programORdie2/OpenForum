@@ -1,5 +1,5 @@
 import { User } from "../models/user.model";
-import { UserPlus } from "../services/databaseplus.service";
+import { UserPlus } from "../utils/databaseplus.util";
 import { uploadAvater } from "./imageDatabase.service";
 import { validateEmail, validateUsername } from "../utils/validator.util";
 
