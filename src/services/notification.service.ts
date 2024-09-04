@@ -23,7 +23,7 @@ async function createNotification(fromId: string, toId: string[], title: string,
 }
 
 async function getNotifications(userId: string, offset = 0, limit = 50): Promise<{ succes: boolean, notifications?: Notification[], message?: string }> {
-    const user = await UserPlus.findOne({ where: { userId: userId } });
+    const user = await UserPlus.findOne({ where: { userId: userId } }) as User;
     if (!user) {
         return { succes: false, message: "User does not exist" };
     }
